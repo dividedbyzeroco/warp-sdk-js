@@ -1,5 +1,5 @@
 {
-  "name": "warp-js",
+  "name": "warp-client",
   "version": "1.0.0",
   "description": "Warp JavaScript SDK",
   "main": "index.js",
