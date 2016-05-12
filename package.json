@@ -1,5 +1,5 @@
 {
-  "name": "warp-client",
+  "name": "warp-js-sdk",
   "version": "1.0.0",
   "description": "Warp JavaScript SDK",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jakejosol/warp-js.git"
+    "url": "git+https://github.com/jakejosol/warp-sdk-js.git"
   },
   "keywords": [
     "warp",
@@ -17,7 +17,7 @@
   "author": "Warp",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jakejosol/warp-js/issues"
+    "url": "https://github.com/jakejosol/warp-sdk-js/issues"
   },
-  "homepage": "https://github.com/jakejosol/warp-js#readme"
+  "homepage": "https://github.com/jakejosol/warp-sdk-js#readme"
 }
