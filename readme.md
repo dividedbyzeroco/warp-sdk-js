@@ -17,7 +17,7 @@ To initialize the SDK, simply add the following configruation to the main file o
 
 ```javascript
 // Require Warp
-var Warp = require('warp-js');
+var Warp = require('warp-sdk-js');
 
 // Initialize Warp
 Warp.initialize({ apiKey: '12345678abcdefg', baseURL: 'http://my-warp-server.com/api/1' });
