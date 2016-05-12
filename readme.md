@@ -8,7 +8,7 @@ __The Warp JS SDK__ is a library for implementing the Warp Framework using clien
 To install the Warp JS SDK via npm, simply use the install command to save it in your package.json:
 
 ```javascript
-npm install --save warp-client
+npm install --save warp-sdk-js
 ```
 
 ### Configuration
