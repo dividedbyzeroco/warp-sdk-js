@@ -1,7 +1,7 @@
 Warp JavaScript SDK
 ===================
 
-__The Warp JS SDK__ is a library for implementing the Warp Framework using client-side JavaScript. It can easily be configured to work with projects built on-top of the WarpServer.
+__The Warp JS SDK__ is a library for implementing the Warp Framework using client-side JavaScript. It is designed to work with projects built on-top of the WarpServer.
 
 ### Installation
 
