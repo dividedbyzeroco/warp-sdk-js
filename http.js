@@ -2,16 +2,17 @@
 var Promise = require('promise');
 var _ = require('underscore');
 var WarpError = require('./error');
+var Storage = require('./storage');
 
 // Class constructor
 var Http = {
     _baseURL: 'api/1/',
     _apiKey: null,
-    _storage: null,
+    _storage: Storage,
     _request: function(method, url, args) {
         // Make sure configurations are made
         if(!method || !url)
-            throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP methods');
+            throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing url and/or HTTP method');
             
         // Prepare url and method
         url = this._baseURL + url;
@@ -81,7 +82,6 @@ var Http = {
         if(!config.apiKey) throw new WarpError(WarpError.Code.MissingConfiguration, 'API Key must be set');
         this._apiKey = config.apiKey;
         this._baseURL = config.baseURL || this._baseURL;
-        this._storage = config.storage;
     },
     setSessionToken: function(sessionToken) {
         this._storage.setItem('x-warp-session-token', sessionToken);
