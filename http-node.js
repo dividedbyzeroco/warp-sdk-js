@@ -11,7 +11,6 @@ var Http = {
     initialize: function(api) {
         if(!api) throw new WarpError(WarpError.Code.MissingConfiguration, 'API must be set');
         this._api = api;
-        this._baseURL = config.baseURL || this._baseURL;
     },
     setSessionToken: function(sessionToken) {
         this._storage.setItem('x-warp-session-token', sessionToken);
