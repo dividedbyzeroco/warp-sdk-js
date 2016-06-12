@@ -2,7 +2,7 @@
 var Promise = require('promise');
 var _ = require('underscore');
 var WarpError = require('./error');
-var Stroage = require('./storage-node');
+var Storage = require('./storage-node');
 
 // Class constructor
 var Http = {
