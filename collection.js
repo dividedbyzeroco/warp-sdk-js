@@ -55,7 +55,17 @@ _.extend(WarpCollection.prototype, {
         return this._list.map(iteratee);
     },
     toList: function() {
-        return _.filter(this._list, function() { return true; });
+        return this._list.map(function(item) {
+            delete item['className'];
+            delete item['_isNew'];
+            delete item['_isDirty'];
+            var attrs = item['attributes'];
+            Object.keys(attrs).forEach(function(attr, key) {
+                item[key] = attr;
+            });
+            return item;
+        });
+        
     }
 });
 
