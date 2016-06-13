@@ -101,7 +101,7 @@ _.extend(WarpQuery.prototype, {
         if(!WarpQuery._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Query');
         var request = WarpQuery._http.find('classes/' + this.className, params).then(function(result) {
             var list = result.map(function(item) {
-                var object = new this._subclass(this.className);
+                var object = new this._subclass();
                 for(var key in item)
                     object.set(key, item[key]);
                 object.id = item.id;
