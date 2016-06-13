@@ -60,9 +60,11 @@ _.extend(WarpCollection.prototype, {
             delete item['_isNew'];
             delete item['_isDirty'];
             var attrs = item['_attributes'];
-            Object.keys(attrs).forEach(function(attr, key) {
+            for(var key in attrs)
+            {
+                var attr = attrs[key];
                 item[key] = attr;
-            });
+            }
             return item;
         });
         
