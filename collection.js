@@ -65,6 +65,7 @@ _.extend(WarpCollection.prototype, {
                 var attr = attrs[key];
                 item[key] = attr;
             }
+            delete item['_attributes'];
             return item;
         });
         
