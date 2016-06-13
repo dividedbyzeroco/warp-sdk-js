@@ -35,21 +35,21 @@ var Http = {
     },
     first: function(endpoint, id) {
         var className = endpoint.replace('classes/', '');
-        return this._api.getModel(className).first(id);
+        return this._api._getModel(className).first(id);
     },
     create: function(endpoint, args) {
         var className = endpoint.replace('classes/', '');
         var fields = args;
-        return this._api.getModel(className).create({ fields: fields });
+        return this._api._getModel(className).create({ fields: fields });
     },
     update: function(endpoint, id, args) {
         var className = endpoint.replace('classes/', '');
         var fields = args;
-        return this._api.getModel(className).update({ id: id, fields: fields });
+        return this._api._getModel(className).update({ id: id, fields: fields });
     },
     destroy: function(endpoint, id) {
         var className = endpoint.replace('classes/', '');
-        return this._api.getModel(className).destroy({ id: id });
+        return this._api._getModel(className).destroy({ id: id });
     },
     logIn: function(args) {
         throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot log in using JS SDK for Node');
