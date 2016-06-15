@@ -8,7 +8,7 @@ var Storage = {
         this.items[name] = value;
     },
     removeItem: function(name) {
-        this.items[name] = undefined;
+        delete this.items[name];
     },
     clear: function(name) {
         this.items = {};
