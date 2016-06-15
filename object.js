@@ -24,7 +24,7 @@ _.extend(WarpObject.prototype, {
         if(typeof attr !== 'undefined' && value == null)
             this._attributes[attr] = null;
         else if(typeof value === 'object' && value.className)
-            this._attributes[attr] = { type: 'Pointer', id: value.id };
+            this._attributes[attr] = { type: 'Pointer', className: value.className, id: value.id };
         else if(typeof attr !== 'undefined' && typeof value !== 'undefined')
             if(attr != 'id' && attr != 'created_at' && attr != 'updated_at')
                 this._attributes[attr] = value;
