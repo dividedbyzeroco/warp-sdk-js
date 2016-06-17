@@ -19,5 +19,10 @@
   "bugs": {
     "url": "https://github.com/jakejosol/warp-sdk-js/issues"
   },
-  "homepage": "https://github.com/jakejosol/warp-sdk-js#readme"
+  "homepage": "https://github.com/jakejosol/warp-sdk-js#readme",
+  "dependencies": {
+    "moment-timezone": "^0.5.4",
+    "promise": "^7.1.1",
+    "underscore": "^1.8.3"
+  }
 }
