@@ -7,6 +7,7 @@ var WarpCollection = require('./collection');
 var WarpQuery = function(className) {
     this.className = (typeof className === 'function') ? className.className : className;
     this._subclass = (typeof className === 'function') ? className : WarpQuery._object.getSubclass(className);
+    this._include = [];
     this._where = {};
     this._order = [];
     this._limit;
@@ -29,6 +30,10 @@ _.extend(WarpQuery.prototype, {
     },
     initialize: function(http) {
         this._http = http;
+    },
+    include: function(key) {
+        this._include.push(key);
+        return this;
     },
     equalTo: function(key, value) {
         return this._addWhere('eq', key, value);
@@ -92,6 +97,7 @@ _.extend(WarpQuery.prototype, {
     },
     find: function(next, fail) {
         var params = {
+            include: this._include,
             where: this._where,
             order: this._order,
             limit: this._limit,
