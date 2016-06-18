@@ -23,8 +23,13 @@ _.extend(WarpObject.prototype, {
     _set: function(attr, value) {
         if(typeof attr !== 'undefined' && value == null)
             this._attributes[attr] = null;
-        else if(typeof value === 'object' && value.className)
-            this._attributes[attr] = { type: 'Pointer', className: value.className, id: value.id };
+        else if(typeof value === 'object')
+            if(value.className)
+                this._attributes[attr] = value;
+            else if(value.fileKey)
+                this._attributes[attr] = value;
+            else if(value.type === 'Pointer' || value.type === 'File')
+                this._attributes[attr] = value;
         else if(typeof attr !== 'undefined' && typeof value !== 'undefined')
             if(attr != 'id' && attr != 'created_at' && attr != 'updated_at')
                 this._attributes[attr] = value;
@@ -60,11 +65,24 @@ _.extend(WarpObject.prototype, {
                 request.catch(fail);
             return request;
         }
+        
+        // Set the `isDirty` toggle to false
         this._isDirty = false;
         
         // Prepare params and request
         var params = this._attributes;
         var request = null;
+        
+        // Modify `pointer` and `file` params
+        for(var index in params)
+        {
+            var param = params[index];
+            if(typeof param === 'object')
+                if(param.className)
+                    params[index] = { type: 'Pointer', className: param.className, id: param.id };
+                else if(param.fileKey)
+                    params[index] = { type: 'File', key: param.fileKey };
+        }
         
         if(this._isNew)
             request = WarpObject._http.create(this._getEndpoint(this.className), params).then(function(result) {
@@ -80,7 +98,7 @@ _.extend(WarpObject.prototype, {
                     if(key !== 'id' && key !== 'created_at' && key !== 'updated_at')
                         this.set(key, result[key]);
                 }.bind(this));
-                this._isDirty = false;
+                this.updatedAt = result.updated_at;
                 return this;
             }.bind(this));
             

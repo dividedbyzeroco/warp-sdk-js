@@ -103,7 +103,44 @@ _.extend(WarpQuery.prototype, {
             var list = result.map(function(item) {
                 var object = new this._subclass();
                 for(var key in item)
+                {
+                    // Get value
+                    var value = item[key];
+                    
+                    // Check if value is an object
+                    if(typeof value === 'object')
+                    {
+                        // If value is a `pointer`
+                        if(value.type === 'Pointer')
+                        {
+                            // Create pointer
+                            var pointer = WarpQuery._object.getSubclass(value.className);
+                            
+                            // Iterate through each attribute, if they exist
+                            if(value.attributes)
+                                for(var attr in value.attributes)
+                                {
+                                    // Set the pointer attr value
+                                    pointer.set(attr, value.attributes[attr]);
+                                }
+                                
+                            // Set the pointer id
+                            pointer.id = value.id;
+                            pointer._isNew = false;
+                            pointer._isDirty = false;
+                        }
+                        
+                        // If value is a `File`
+                        if(value.type === 'File')
+                        {
+                            // Create file
+                            // To-Do
+                        }
+                    }
+                    
+                    // Set the key value
                     object.set(key, item[key]);
+                }
                 object.id = item.id;
                 object.createdAt = item.created_at;
                 object.updatedAt = item.updated_at;
@@ -138,9 +175,10 @@ _.extend(WarpQuery.prototype, {
 
 _.extend(WarpQuery, {
     _http: null,
-    initialize: function(http, object) {
+    initialize: function(http, object, file) {
         this._http = http;
         this._object = object;
+        this._file = file;
     }
 });
 

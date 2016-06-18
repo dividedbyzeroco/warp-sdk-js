@@ -7,7 +7,8 @@ var Warp = {
     Object: require('./object'),
     Query: require('./query'),
     Error: require('./error'),
-    User: require('./user')
+    User: require('./user'),
+    File: require('./file')
 };
 
 _.extend(Warp, {
@@ -16,7 +17,7 @@ _.extend(Warp, {
     _initializeClasses: function() {        
         // Prepare query and object
         this.Object.initialize(this._http);
-        this.Query.initialize(this._http, this.Object);
+        this.Query.initialize(this._http, this.Object, this.File);
         this.User.initialize(this._storage);
     },
     initialize: function(config) {        
