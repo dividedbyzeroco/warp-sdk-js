@@ -9,6 +9,7 @@ var WarpFile = function() {
 // Instance methods
 _.extend(WarpFile, {
     _url: null,
+    _isNew: true,
     fileKey: null,
     getUrl: function() {
         return this._url;

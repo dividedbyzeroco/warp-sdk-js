@@ -25,9 +25,15 @@ _.extend(WarpObject.prototype, {
             this._attributes[attr] = null;
         else if(typeof value === 'object')
             if(value.className)
-                this._attributes[attr] = value;
+                if(!value._isNew)
+                    this._attributes[attr] = value;
+                else
+                    throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot set a new Pointer as a key, please save the Pointer before using it');
             else if(value.fileKey)
-                this._attributes[attr] = value;
+                if(!value._isNew)
+                    this._attributes[attr] = value;
+                else
+                    throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot set a new File as a key, please save the File before using it');
             else if(value.type === 'Pointer' || value.type === 'File')
                 this._attributes[attr] = value;
         else if(typeof attr !== 'undefined' && typeof value !== 'undefined')
