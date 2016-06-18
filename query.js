@@ -120,7 +120,8 @@ _.extend(WarpQuery.prototype, {
                         if(value.type === 'Pointer')
                         {
                             // Create pointer
-                            var pointer = WarpQuery._object.getSubclass(value.className);
+                            var pointerSubclass = WarpQuery._object.getSubclass(value.className);
+                            var pointer = new pointerSubclass();
                             
                             // Iterate through each attribute, if they exist
                             if(value.attributes)
@@ -134,6 +135,7 @@ _.extend(WarpQuery.prototype, {
                             pointer.id = value.id;
                             pointer._isNew = false;
                             pointer._isDirty = false;
+                            value = pointer;
                         }
                         
                         // If value is a `File`
@@ -145,7 +147,7 @@ _.extend(WarpQuery.prototype, {
                     }
                     
                     // Set the key value
-                    object.set(key, item[key]);
+                    object.set(key, value);
                 }
                 object.id = item.id;
                 object.createdAt = item.created_at;

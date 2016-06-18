@@ -46,15 +46,16 @@ var Http = {
             {
                 var parsed = [];
                 for(var item in args)
-                {
-                    value = typeof args[item] === 'object' ? JSON.stringify(args[item]) : args[item];
+                {                            
+                    var value = args[item];
                             
-                    if(!value)
+                    if(typeof value === 'undefined' || typeof value === 'null')
                         continue;
-                            
-                    if(typeof value === 'object')
-                        if(Object.keys(value).length == 0)
+                    else if(typeof value === 'object')
+                        if(typeof value.map !== 'function' && Object.keys(value).length == 0)
                             continue;
+                        else
+                            value = JSON.stringify(value);
                     
                     parsed.push(encodeURIComponent(item) + '=' + encodeURIComponent(value));
                 }

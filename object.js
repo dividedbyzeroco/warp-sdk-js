@@ -11,8 +11,8 @@ var WarpObject = function(className, attributes) {
     this._isNew = true;
     this._isDirty = false;
     this._attributes = {};
-    this.set(attributes);
-    this.initialize.apply(this, arguments);
+    if(attributes) this.set(attributes);
+    this.initialize();
 };
 
 // Instance methods
@@ -21,9 +21,10 @@ _.extend(WarpObject.prototype, {
         return 'classes/' + className;
     },
     _set: function(attr, value) {
-        if(typeof attr !== 'undefined' && value == null)
+        if(typeof attr !== 'undefined' && typeof value === 'null')
             this._attributes[attr] = null;
         else if(typeof value === 'object')
+        {
             if(value.className)
                 if(!value._isNew)
                     this._attributes[attr] = value;
@@ -36,6 +37,7 @@ _.extend(WarpObject.prototype, {
                     throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot set a new File as a key, please save the File before using it');
             else if(value.type === 'Pointer' || value.type === 'File')
                 this._attributes[attr] = value;
+        }
         else if(typeof attr !== 'undefined' && typeof value !== 'undefined')
             if(attr != 'id' && attr != 'created_at' && attr != 'updated_at')
                 this._attributes[attr] = value;
