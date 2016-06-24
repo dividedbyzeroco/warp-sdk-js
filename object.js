@@ -168,7 +168,10 @@ _.extend(WarpObject.prototype, {
             // Check if attr is an object
             if(attr && typeof attr === 'object')
                 if(attr.className)
+                {
                     attr = attr.toJSON();
+                    attr.type = 'Pointer';
+                }
                 else if(attr.fileKey)
                     attr = { type: 'File', key: attr.fileKey };
 
