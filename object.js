@@ -23,7 +23,7 @@ _.extend(WarpObject.prototype, {
     _set: function(attr, value) {
         if(typeof attr !== 'undefined' && typeof value === 'null')
             this._attributes[attr] = null;
-        else if(typeof value === 'object')
+        else if(value && typeof value === 'object')
         {
             if(value.className)
                 if(!value._isNew)
@@ -85,7 +85,7 @@ _.extend(WarpObject.prototype, {
         for(var index in params)
         {
             var param = params[index];
-            if(typeof param === 'object')
+            if(param && typeof param === 'object')
                 if(param.className)
                     params[index] = { type: 'Pointer', className: param.className, id: param.id };
                 else if(param.fileKey)
@@ -166,7 +166,7 @@ _.extend(WarpObject.prototype, {
             var attr = attrs[key];
             
             // Check if attr is an object
-            if(typeof attr === 'object')
+            if(attr && typeof attr === 'object')
                 if(attr.className)
                     attr = attr.toJSON();
                 else if(attr.fileKey)
