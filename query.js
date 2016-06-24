@@ -65,6 +65,15 @@ _.extend(WarpQuery.prototype, {
     notContainedIn: function(key, value) {
         return this._addWhere('nin', key, value);
     },
+    startsWith: function(key, value) {
+        return this._addWhere('con', key, value + '%');
+    },
+    endsWith: function(key, value) {
+        return this._addWhere('con', key, '%' + value);
+    },
+    contains: function(key, value) {
+        return this._addWhere('con', key, '%' + value + '%');
+    },
     sortBy: function(key) {
         if(typeof key === 'object')
         {
