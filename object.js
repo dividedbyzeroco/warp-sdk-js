@@ -169,8 +169,15 @@ _.extend(WarpObject.prototype, {
             if(attr && typeof attr === 'object')
                 if(attr.className)
                 {
-                    attr = attr.toJSON();
-                    attr.type = 'Pointer';
+                    var pointer = attr.toJSON();
+                    attr = {
+                        type: 'Pointer',
+                        className: pointer.className,
+                        id: pointer.id
+                    }
+                    delete pointer.className;
+                    delete pointer.id;
+                    if(Object.keys(pointer).length > 0) attr._attributes = pointer;
                 }
                 else if(attr.fileKey)
                     attr = { type: 'File', key: attr.fileKey };
