@@ -66,13 +66,13 @@ _.extend(WarpQuery.prototype, {
         return this._addWhere('nin', key, value);
     },
     startsWith: function(key, value) {
-        return this._addWhere('con', key, value + '%');
+        return this._addWhere('str', key, value);
     },
     endsWith: function(key, value) {
-        return this._addWhere('con', key, '%' + value);
+        return this._addWhere('end', key, value);
     },
     contains: function(key, value) {
-        return this._addWhere('con', key, '%' + value + '%');
+        return this._addWhere('has', key, value);
     },
     sortBy: function(key) {
         if(typeof key === 'object')
