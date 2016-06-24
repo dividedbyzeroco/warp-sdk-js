@@ -24,7 +24,7 @@ var Http = {
     find: function(endpoint, args) {
         var className = endpoint.replace('classes/', '');
         var options = {
-            select: args.select || {},
+            include: args.include || {},
             where: args.where || {},
             sort: args.order || [],
             limit: args.limit || 100,
