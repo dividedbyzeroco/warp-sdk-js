@@ -108,6 +108,11 @@ _.extend(WarpQuery.prototype, {
         var request = WarpQuery._http.find('classes/' + this.className, params).then(function(result) {
             var list = result.map(function(item) {
                 var object = new this._subclass();
+
+                // Set default className
+                if(typeof object.className === 'undefined')
+                    object.className = this.className;
+                
                 for(var key in item)
                 {
                     // Get value
@@ -122,6 +127,10 @@ _.extend(WarpQuery.prototype, {
                             // Create pointer
                             var pointerSubclass = WarpQuery._object.getSubclass(value.className);
                             var pointer = new pointerSubclass();
+                            
+                            // Set default className
+                            if(typeof pointer.className === 'undefined')
+                                pointer.className = value.className;
                             
                             // Iterate through each attribute, if they exist
                             if(value.attributes)
