@@ -39,7 +39,7 @@ _.extend(WarpObject.prototype, {
                 this._attributes[attr] = value;
         }
         else if(typeof attr !== 'undefined' && typeof value !== 'undefined')
-            if(attr != 'id' && attr != 'created_at' && attr != 'updated_at')
+            if(attr != 'className' && attr != 'id' && attr != 'created_at' && attr != 'updated_at')
                 this._attributes[attr] = value;
     },
     initialize: function() {
@@ -152,6 +152,31 @@ _.extend(WarpObject.prototype, {
         if(typeof fail === 'function')
             request.catch(fail);            
         return request;                
+    },
+    toJSON: function() {
+        var item = {
+            className: this.className,
+            id: this.id
+        };
+
+        var attrs = this._attributes;
+        
+        for(var key in attrs)
+        {
+            var attr = attrs[key];
+            
+            // Check if attr is an object
+            if(typeof attr === 'object')
+                if(attr.className)
+                    attr = attr.toJSON();
+                else if(attr.fileKey)
+                    attr = { type: 'File', key: attr.fileKey };
+
+            // Set item attribute
+            item[key] = attr;
+        }
+
+        return item;
     }
 });
 

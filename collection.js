@@ -59,19 +59,8 @@ _.extend(WarpCollection.prototype, {
     },
     toJSON: function() {
         return this._list.map(function(item) {
-            delete item['className'];
-            delete item['_isNew'];
-            delete item['_isDirty'];
-            var attrs = item['_attributes'];
-            for(var key in attrs)
-            {
-                var attr = attrs[key];
-                item[key] = attr;
-            }
-            delete item['_attributes'];
-            return item;
+            return item.toJSON();
         });
-        
     }
 });
 
