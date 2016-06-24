@@ -128,7 +128,7 @@ _.extend(WarpQuery.prototype, {
                     var value = item[key];
                     
                     // Check if value is an object
-                    if(typeof value === 'object')
+                    if(value && typeof value === 'object')
                     {
                         // If value is a `pointer`
                         if(value.type === 'Pointer')
