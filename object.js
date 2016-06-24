@@ -177,7 +177,7 @@ _.extend(WarpObject.prototype, {
                     }
                     delete pointer.className;
                     delete pointer.id;
-                    if(Object.keys(pointer).length > 0) attr._attributes = pointer;
+                    if(Object.keys(pointer).length > 0) attr.attributes = pointer;
                 }
                 else if(attr.fileKey)
                     attr = { type: 'File', key: attr.fileKey };
