@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/jakejosol/warp-sdk-js#readme",
   "dependencies": {
-    "async": "^2.0.0-rc.6",
     "moment-timezone": "^0.5.4",
     "promise": "^7.1.1",
     "underscore": "^1.8.3"
