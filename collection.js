@@ -43,13 +43,23 @@ _.extend(WarpCollection.prototype, {
         return new WarpCollection(list);
     },
     each: function(iteratee) {
-        for(var index in this._list)
-            try {
-                iteratee(this._list[index]);
-            } catch(e) {
-                console.log('[WarpCollection] Error in `each` function', e);
-                break;
-            }
+        var promise = Promise.resolve();
+        var list = _.filter(this._list, function() { return true; });
+        
+        // Loop through the list
+        while(list.length > 0)
+        {
+            promise = promise.then(function() {
+                return iteratee(list.shift());
+            });
+        }
+        
+        // Catch any possible error
+        promise.catch(function(e) {
+            console.log('[WarpCollection] Error in `each` function', e);
+        });
+        
+        return promise;
     },
     map: function(iteratee) {
         return this._list.map(iteratee);
