@@ -2,6 +2,7 @@
 var _ = require('underscore');
 var WarpObject = require('./object');
 var WarpError = require('./error');
+var Storage = require('./storage');
 
 // Prepare class
 var WarpUser = WarpObject.extend('user', {        
@@ -120,7 +121,7 @@ var WarpUser = WarpObject.extend('user', {
         return request;
     }
 }, {
-    _storage: null,
+    _storage: Storage,
     _setSessionToken(sessionToken) {
         if(sessionToken)
             WarpObject._http.setSessionToken(sessionToken);
@@ -155,9 +156,6 @@ var WarpUser = WarpObject.extend('user', {
         current._isNew = false;
         current._isDirty = false;
         return current;
-    },
-    initialize: function(storage) {
-        this._storage = storage;
     },
     logIn: function(username, password, next, fail) {
         // Check configurations
@@ -195,15 +193,20 @@ var WarpUser = WarpObject.extend('user', {
         // Check configurations
         if(!WarpObject._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Query');
         if(!this.getSessionToken())
-            return new Promise(function(resolve, reject) {
-                resolve();
-            });
+            return Promise.resolve();
+
+        // Reset current user
+        this._setCurrent(null);
         
         // Prepare logout request
         var request = WarpObject._http.logOut()
         .then(function(result) {
-            this._setCurrent(null);
             this._setSessionToken(null);
+            return;
+        }.bind(this))
+        .catch(function(error) {
+            // If session does not exist, reset the current token
+            if(error.code === 103) this._setSessionToken(null);
             return;
         }.bind(this));
         

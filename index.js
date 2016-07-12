@@ -18,7 +18,6 @@ _.extend(Warp, {
         // Prepare query and object
         this.Object.initialize(this._http);
         this.Query.initialize(this._http, this.Object, this.File);
-        this.User.initialize(this._storage);
     },
     initialize: function(config) {        
         // Check if the API Key has been set
