@@ -31,25 +31,44 @@ var Http = {
             skip: args.skip || 0
         };
         
-        return this._api._getModel(className).find(options);
+        if(className === 'users')
+            return this._api._getUserModel().find(options);
+        else
+            return this._api._getModel(className).find(options);
     },
     first: function(endpoint, id) {
         var className = endpoint.replace('classes/', '');
-        return this._api._getModel(className).first(id);
+
+        if(className === 'users')
+            return this._api._getUserModel().first(id);
+        else
+            return this._api._getModel(className).first(id);
     },
     create: function(endpoint, args) {
         var className = endpoint.replace('classes/', '');
         var fields = args;
-        return this._api._getModel(className).create({ fields: fields });
+        
+        if(className === 'users')
+            return this._api._getUserModel().create({ fields: fields });
+        else
+            return this._api._getModel(className).create({ fields: fields });
     },
     update: function(endpoint, id, args) {
         var className = endpoint.replace('classes/', '');
         var fields = args;
-        return this._api._getModel(className).update({ id: id, fields: fields });
+        
+        if(className === 'users')
+            return this._api._getUserModel().update({ id: id, fields: fields });
+        else
+            return this._api._getModel(className).update({ id: id, fields: fields });
     },
     destroy: function(endpoint, id) {
         var className = endpoint.replace('classes/', '');
-        return this._api._getModel(className).destroy({ id: id });
+        
+        if(className === 'users')
+            return this._api._getUserModel().destroy({ id: id });
+        else
+            return this._api._getModel(className).destroy({ id: id });
     },
     logIn: function(args) {
         throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot log in using JS SDK for Node');
