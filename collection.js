@@ -47,7 +47,7 @@ _.extend(WarpCollection.prototype, {
         var list = _.filter(this._list, function() { return true; });
         
         // Loop through the list
-        while(list.length > 0)
+        for(var item in list)
         {
             promise = promise.then(function() {
                 return iteratee(list.shift());
