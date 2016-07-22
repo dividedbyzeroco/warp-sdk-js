@@ -20,8 +20,8 @@ __The Warp JS SDK__ is a library for implementing the Warp Framework using JavaS
         - **[Validating Users/Fetching Current User](#validating-usersfetching-current-user)**
         - **[Signing Up](#signing-up)**
         - **[Logging Out](#logging-out)**
-    - **Files - COMING SOON**
-    - **Functions - COMING SOON** 
+    - **Files - Coming Soon**
+    - **Functions - Coming Soon** 
     
 ## Installation
 
