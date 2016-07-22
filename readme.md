@@ -1,7 +1,7 @@
 Warp JavaScript SDK
 ===================
 
-__The Warp JS SDK__ is a library for implementing the Warp Framework using client-side JavaScript. It is designed to work with projects built on-top of the WarpServer.
+__The Warp JS SDK__ is a library for implementing the Warp Framework using JavaScript. It is designed to work with projects built on-top of the WarpServer.
 
 ## Table of Contents
 - **[Installation](#installation)**  
@@ -42,6 +42,18 @@ var Warp = require('warp-sdk-js');
 // Initialize Warp
 Warp.initialize({ apiKey: '12345678abcdefg', baseURL: 'http://my-warp-server.com/api/1' });
 ```
+
+Or, if you are going to use the SDK on the same server as your `Warp Server`, simply use the `Warp` property of your `Warp Server` instance:
+
+```javascript
+var api = new WarpServer(config);
+var Warp = api.Warp;
+```
+
+NOTE: If you use the `Warp` property of your `Warp Server` instance, you do not need to call the `.initialize()` method. This is the recommended approach especially for Warp Functions and Warp Models.
+
+### Objects
+
 
 ### Warp.Object
 
