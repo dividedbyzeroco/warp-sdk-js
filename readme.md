@@ -8,7 +8,9 @@ __The Warp JS SDK__ is a library for implementing the Warp Framework using JavaS
 - **[Configuration](#configuration)**
 - **Features**
     - **[Objects](#objects)**
-        - **[Subclasses](#subclasses)**
+        - **[Creating Objects](#creating-objects)**
+        - **[Updating Objects](#updating-objects)**
+        - **[Deleting Objects](#deleting-objects)**
         - **[Pointers](#pointers)**
     - **[Queries](#queries)**
         - **[Constraints](#constraints)**
@@ -51,3 +53,54 @@ var Warp = api.Warp;
 ```
 
 NOTE: If you use the `Warp` property of your `Warp Server` instance, you do not need to call the `.initialize()` method. This is the recommended approach especially for Warp Functions and Warp Models.
+
+## Objects
+
+Objects represent individual instances of models. In terms of the database, an Object can be thought of as being a `row` in a table. Throughout the Warp Framework, Objects are the basic vehicles for data to be transmitted to and fro the server.
+
+Each Object contains different keys which can be set or retrieved as needed. Among these keys are three special ones:
+
+- id: a unique identifier that distinguishes an object inside a table
+- created_at: a timestamp that records the date and time when a particular object was created (UTC)
+- uppdated_at: a timestamp that records the date and time when a particular object was last modified (UTC)
+
+These keys are specifically set by the server and cannot be modified by the user.
+
+
+### Creating Objects
+
+To create an Object for a specific model, use the `Warp.Object` class:
+
+```javascript
+var alien = new Warp.Object('alien');
+```
+
+You can set the values of the Object's keys using the `.set()` method:
+
+```javascript
+alien.set('name', 'The Doctor');
+alien.set('age', 150000);
+alien.set('type', 4);
+```
+
+Then, save the Object using the `.save()` method:
+
+```javascript
+alien.save();
+```
+
+Additionally, the `.save()` method returns a promise, which you can chain other processes to:
+
+```javascript
+alien.save().then(function() {
+    alert('The alien has been created with the following ID: ' + alien.id);
+    alert('The alien has been named: ' + alien.get('name'));
+});
+
+// or
+
+alien.save(function() {
+    alert('The alien has been created at: ' + alien.createdAt);
+    alert('The alien has been updated at: ' + alien.updatedAt);
+});
+```
