@@ -69,6 +69,12 @@ dalekQuery.greaterThan('age', 100)
     daleks.each(dalek => dalek.greet());
 });
 
+var dalekQuery = new Warp.Query(Dalek);
+var companionQuery = new Warp.Query('companion');
+var doctorQuery = new Warp.Query(Doctor);
+dalekQuery.foundIn('enemy', 'name', companionQuery);
+dalekQuery.notFoundIn('friend', 'name', doctorQuery);
+
 // Collections
 var daleks = dalekCollection;
 daleks.count();

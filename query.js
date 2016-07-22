@@ -74,6 +74,26 @@ _.extend(WarpQuery.prototype, {
     contains: function(key, value) {
         return this._addWhere('has', key, value);
     },
+    foundIn: function(key, value, query) {
+        var subQuery = {
+            className: query.className,
+            select: value,
+            where: query._where,
+            limit: query._limit,
+            skip: query._skip
+        };
+        return this._addWhere('fi', key, subQuery);
+    },
+    notFoundIn: function(key, value, query) {
+        var subQuery = {
+            className: query.className,
+            select: value,
+            where: query._where,
+            limit: query._limit,
+            skip: query._skip
+        };
+        return this._addWhere('nfi', key, subQuery);
+    },
     sortBy: function(key) {
         if(typeof key === 'object')
         {
