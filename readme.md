@@ -3,6 +3,26 @@ Warp JavaScript SDK
 
 __The Warp JS SDK__ is a library for implementing the Warp Framework using client-side JavaScript. It is designed to work with projects built on-top of the WarpServer.
 
+## Table of Contents
+- **[Installation](#installation)**  
+- **[Configuration](#configuration)**
+- **Features**
+    - **[Objects](#objects)**
+        - **[Subclasses](#subclasses)**
+        - **[Pointers](#pointers)**
+    - **[Queries](#queries)**
+        - **[Constraints](#constraints)**
+        - **[Limit](#limit)**
+        - **[Sorting](#sorting)**
+        - **[Including Pointer Keys](#including-pointer-keys)**
+    - **[Users](#users)**
+        - **[Logging In](#logging-in)**
+        - **[Validating Users/Fetching Current User](#validating-usersfetching-current-user)**
+        - **[Signing Up](#signing-up)**
+        - **[Logging Out](#logging-out)**
+    - **Files - COMING SOON**
+    - **Functions - COMING SOON** 
+    
 ### Installation
 
 To install the Warp JS SDK via npm, simply use the install command to save it in your package.json:
