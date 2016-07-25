@@ -197,9 +197,11 @@ _.extend(WarpObject, {
     initialize: function(http) {
         this._http = http;
     },
-    createWithoutData: function(id) {        
+    createWithoutData: function(id, className) {        
         var instance = new this();
         instance.id = id;
+        instance._isNew = false;
+        if(className) instance.className = className;
         return instance;
     },
     registerSubclass: function(subclass) {
