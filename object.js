@@ -52,7 +52,8 @@ _.extend(WarpObject.prototype, {
                 this._set(key, attr[key]);
         else
             this._set(attr, value);
-        if(!_.isEqual(oldAttr, this._attributes)) this._isDirty = true;
+        //if(!_.isEqual(oldAttr, this._attributes)) this._isDirty = true;
+        this._isDirty = true;
         return this;
     },
     get: function(attr) {
