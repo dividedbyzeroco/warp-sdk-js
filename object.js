@@ -1,6 +1,7 @@
 // References
 var Promise = require('promise');
 var _ = require('underscore');
+var WarpError = require('./error');
 
 // Class constructor
 var WarpObject = function(className, attributes) {
@@ -11,6 +12,7 @@ var WarpObject = function(className, attributes) {
     this._isNew = true;
     this._isDirty = false;
     this._attributes = {};
+    this._increments = {};
     if(attributes) this.set(attributes);
     this.initialize();
 };
@@ -37,6 +39,8 @@ _.extend(WarpObject.prototype, {
                     throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot set a new File as a key, please save the File before using it');
             else if(value.type === 'Pointer' || value.type === 'File')
                 this._attributes[attr] = value;
+            else if(value.type === 'Increment')
+                    throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot directly set an increment object, please use the `increment` function instead');
         }
         else if(typeof attr !== 'undefined' && typeof value !== 'undefined')
             if(attr != 'className' && attr != 'id' && attr != 'created_at' && attr != 'updated_at')
@@ -58,6 +62,12 @@ _.extend(WarpObject.prototype, {
     },
     get: function(attr) {
         return this._attributes[attr];
+    },
+    increment: function(attr, value) {
+        if(value === null) this._increments[attr] = 0;
+        if(isNaN(value) || parseInt(value) != value) throw new WarpError(WarpError.Code.InvalidObjectKey, 'The increment value must be an integer');
+        this._increments[attr] = parseInt(value);
+        return this;
     },
     save: function(next, fail) {
         // Check configurations
@@ -83,14 +93,21 @@ _.extend(WarpObject.prototype, {
         var request = null;
         
         // Modify `pointer` and `file` params
-        for(var index in params)
+        for(var key in params)
         {
-            var param = params[index];
+            var param = params[key];
             if(param && typeof param === 'object')
                 if(param.className)
-                    params[index] = { type: 'Pointer', className: param.className, id: param.id };
+                    params[key] = { type: 'Pointer', className: param.className, id: param.id };
                 else if(param.fileKey)
-                    params[index] = { type: 'File', key: param.fileKey };
+                    params[key] = { type: 'File', key: param.fileKey };
+        }
+
+        // Modify `increment` params
+        for(var key in this._increments)
+        {
+            var increment = this._increments[key];
+            params[key] = { type: 'Increment', value: increment };
         }
         
         if(this._isNew)
