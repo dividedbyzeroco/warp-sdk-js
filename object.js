@@ -67,6 +67,7 @@ _.extend(WarpObject.prototype, {
         if(value === null) this._increments[attr] = 0;
         if(isNaN(value) || parseInt(value) != value) throw new WarpError(WarpError.Code.InvalidObjectKey, 'The increment value must be an integer');
         this._increments[attr] = parseInt(value);
+        this._isDirty = true;
         return this;
     },
     save: function(next, fail) {
