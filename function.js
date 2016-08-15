@@ -9,7 +9,6 @@ var WarpFunction = {};
 // Static methods
 _.extend(WarpFunction, {
     _http: null,
-    _subclasses: {},
     initialize: function(http) {
         this._http = http;
     },

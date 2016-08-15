@@ -9,7 +9,7 @@ var Http = {
     _baseURL: 'api/1/',
     _apiKey: null,
     _storage: Storage,
-    _request: function(method, url, args) {
+    _request: function(method, url, args, isRaw) {
         // Make sure configurations are made
         if(!method || !url)
             throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing url and/or HTTP method');
@@ -67,13 +67,20 @@ var Http = {
             client.setRequestHeader('X-Warp-API-Key', this._apiKey);
             client.setRequestHeader('X-Warp-Session-Token', this.getSessionToken());
             
-            if(method === 'POST' || method === 'PUT')
+            if(!isRaw)
             {
-                client.setRequestHeader('Content-Type', 'application/json');
-                params = args? JSON.stringify(args) : null;
+                if(method === 'POST' || method === 'PUT')
+                {
+                    client.setRequestHeader('Content-Type', 'application/json');
+                    params = args? JSON.stringify(args) : null;
+                }
+                else
+                    client.setRequestHeader('Content-Type', 'application/x-www-form-urlencode');
             }
             else
-                client.setRequestHeader('Content-Type', 'application/x-www-form-urlencode');
+            {
+                params = args;
+            }
             
             // Send the request
             client.send(params);
@@ -108,8 +115,11 @@ var Http = {
     destroy: function(endpoint, id) {
         return this._request('DELETE', endpoint + '/' + id);
     },
-    run: function(endpoint, id) {
+    run: function(endpoint, args) {
         return this._request('POST', endpoint, args);
+    },
+    upload: function(args) {
+        return this._request('POST', 'files', args, true);
     },
     logIn: function(args) {
         return this._request('POST', 'login', args);

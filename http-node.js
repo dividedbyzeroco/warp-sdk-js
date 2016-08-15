@@ -107,14 +107,17 @@ var Http = {
             this._api._getFunction(funcName).run(request, response);
         });
     },
+    upload: function(args) {
+        throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot upload files using the JS SDK for Node');
+    },
     logIn: function(args) {
-        throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot log in using JS SDK for Node');
+        throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot log in using the JS SDK for Node');
     },
     logOut: function() {
-        throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot log out using JS SDK for Node');
+        throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot log out using the JS SDK for Node');
     },
     current: function() {
-        throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot get current user using JS SDK for Node');
+        throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot get current user using the JS SDK for Node');
     }
 };
 
