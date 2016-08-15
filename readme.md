@@ -395,6 +395,7 @@ What's important is that for every subclass that you make, you must register the
 Warp.Object.registerSubclass(Alien);
 Warp.Object.registerSubclass(Dalek);
 Warp.Object.registerSubclass(Planet);
+Warp.initialize({ apiKey: '12345678abcdefg', baseURL: 'http://my-warp-server.com/api/1' });
 ```
 
 ## Queries
