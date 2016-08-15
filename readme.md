@@ -14,6 +14,7 @@ __The Warp JS SDK__ is a library for implementing the Warp Framework using JavaS
         - **[Deleting Objects](#deleting-objects)**
         - **[Pointers](#pointers)**
         - **[Files](#files)**
+        - **[Subclasses](#subclasses)**
     - **[Queries](#queries)**
         - **[Constraints](#constraints)**
         - **[Limit](#limit)**
@@ -182,7 +183,7 @@ alienQuery.first(function(alien) {
 
 Additionally, if the key you are trying to update is an `integer` and you want to atomically increase or decrease its value, you can opt to use the `.increment()` method instead.
 
-For example, if you want to increase the age by 1, you would use the following approach:
+For example, if you want to increase the age by 1, you would use the following code:
 
 ```javascript
 alien.increment('age', 1);
@@ -303,4 +304,75 @@ avatarPic.save().then(function() {
 .then(function() {
     // The alien has been successfully saved
 });
+```
+
+
+### Subclasses
+
+Using the `Warp Object` allows you to create objects on-the-fly without having to worry about additional configurations. If, however, you want to modularize your code into classes, you may opt to use the `.extend()` method in order to create customized subclasses.
+
+For example, if you want to create a subclass called `Alien` that extends from `Warp.Object`, you can do so using the following code:
+
+```javascript
+var Alien = Warp.Object.extend('alien');
+```
+
+What's useful about subclasses is you can set your own `instance methods` and `static methods` just like in basic Object-oriented Programming:
+
+```javascript
+var Alien = Warp.Object.extend('alien', {
+    // Instance methods
+    greet: function() {
+        return 'Hello! My name is ' + this.get('name');
+    },
+    heal: function(lifepoints) {
+        this.increment('life_points', lifepoints);
+    }
+}, {
+    // Static methods
+    respawn: function(lifepoints) {
+        var alien = new this;
+        alien.set('life_points', lifepoints);
+        return alien;
+    }
+})
+```
+
+Now that you've created your subclass, you can now use it in place of `Warp Object`:
+
+```javascript
+var alien = new Alien();
+alien.set('name', 'The Doctor');
+alien.set('life_points', 800);
+alien.save().then(function() {
+    // Heal the alien
+    alien.heal(200);
+    return alien.save();
+});
+
+var alien2 = Alien.respawn(1000);
+alien2.set('name', 'The Master');
+alien2.save().then(function() {
+    // Successfully saved the Master
+    var greeting = alien2.greet();
+});
+```
+
+Additionally, you can extend the subclass even further to create more specific subclasses:
+
+```javascript
+var Dalek = Alien.extend({
+    setTime: function(time) {
+        this.set('time_period', time);
+    }
+}, {
+    createWarrior: function() {
+        var warrior = new this;
+        warrior.set('role', 'Warrior');
+        return warrior;
+    }
+});
+
+var dalek = new Dalek({ name: 'Khan' });
+dalek.save();
 ```
