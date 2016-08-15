@@ -423,6 +423,14 @@ If you've created subclasses via the `.extend()` method of the `Warp Object`, yo
 
 ```javascript
 var alienQuery = new Warp.Query(Alien);
+
+alienQuery.find(function(aliens) {
+    aliens.each(function(alien) {
+        var greeting = alien.greet();
+        console.log(greeting);
+        return;
+    });
+});
 ```
 
 ### Constraints
@@ -655,12 +663,12 @@ alienQuery.find().then(function(aliens) {
 
 ## Users
 
-User accounts are often an essential part of an application. In Warp, these are represented by Warp Users. Warp Users are extended subclasses from the Warp Object, which means you can use the same methods available to the Warp Object; however, the power of Warp Users is their special methods specifically tailored for user account management.
+User accounts are often an essential part of an application. In Warp, these are represented by Warp Users. Warp Users are extended from the Warp Object, which means you can use the same methods found in Warp Objects; however, Warp Users have additional methods specifically tailored for user account management.
 
 
 ### Getting Special User Keys
 
-Aside from id, createdAt and updatedAt, Warp User has additional methods for returning special keys:
+Aside from id, createdAt and updatedAt, Warp User also has the following get methods:
 
 ```javascript
 var userQuery = new Warp.Query(Warp.User);
@@ -673,7 +681,7 @@ userQuery.equalTo('id', 5).first().then(user => {
 });
 ```
 
-Note that for Warp Query, instead of specifiying 'user' as the string, we simply placed Warp.User as the parameter.
+Note that for Warp Query, instead of specifiying 'user' as the string, we can simply place Warp.User as the parameter.
 
 
 ### Logging In
