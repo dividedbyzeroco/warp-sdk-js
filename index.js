@@ -8,7 +8,8 @@ var Warp = {
     Query: require('./query'),
     Error: require('./error'),
     User: require('./user'),
-    File: require('./file')
+    File: require('./file'),
+    Function: require('./function')
 };
 
 _.extend(Warp, {
@@ -17,6 +18,8 @@ _.extend(Warp, {
     _initializeClasses: function() {        
         // Prepare query and object
         this.Object.initialize(this._http);
+        this.File.initialize(this._http);
+        this.Function.initialize(this._http);
         this.Query.initialize(this._http, this.Object, this.File);
     },
     initialize: function(config) {        

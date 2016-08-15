@@ -142,15 +142,56 @@ Note that these fields cannot be retrieved via the `.get()` method.
 
 Whenever you use `.save()` or `Warp Queries` to save/retrieve objects, you can modify the keys of these objects directly using the same `.set()` method. Warp automatically knows that you've updated these fields and prepares the object for updating.
 
+For example, after the `.save()` method:
+
 ```javascript
-alien.set('name', 'New name');
-alien.set('type', '5');
+var alien = new Warp.Object('alien');
+alien.set('name', 'Madam Vestra');
+alien.set('type', 4);
+
+alien.save().then(function() {
+    // If this is the 200th alien, change its type, for example
+    if(alien.id > 200)
+        alien.set('type', 5);
+
+    // Update the alien
+    return alien.save();
+    
+})
+.then(function() {
+    // The alien has been successfully updated
+});
+
 ```
 
-After setting the new keys, you can simply call `.save()` again in order to save the changes to the database.
+For example, after retrieving from `Warp Queries`:
 
 ```javascript
-alien.save()
+var alienQuery = new Warp.Query('alien');
+alienQuery.equalTo('id', 5);
+
+alienQuery.first(function(alien) {
+    alien.set('age', 30);
+    return alien.save();
+})
+.then(function() {
+    // The alien has been successfully saved
+});
+
+```
+
+Additionally, if the key you are trying to update is an `integer` and you want to atomically increase or decrease its value, you can opt to use the `.increment()` method instead.
+
+For example, if you want to increase the age by 1, you would use the following approach:
+
+```javascript
+alien.increment('age', 1);
+```
+
+Conversely, if you want to decrease an `integer` key, you would use a negative value:
+
+```javascript
+alien.increment('life_points', -5);
 ```
 
 
@@ -209,6 +250,54 @@ planetQuery.first().then(function(planet) {
     var alien = new Warp.Object('alien');
     alien.set('name', 'Captain Jack Harkness');
     alien.set('planet', planet); // Set the object directly
+    return alien.save();
+})
+.then(function() {
+    // The alien has been successfully saved
+});
+```
+
+
+### Files
+
+If you need to upload [files](https://github.com/jakejosol/warp-server#files) to the server, you can do so via `Warp Files`.
+
+For example, if you are creating an `avatar_pic` for an `alien` object, you can use the following approach.
+
+On your web app, you would have an `input` DOM element to select files:
+
+```html
+<input type='file' name='avatar_pic' id='avatar-pic'>
+```
+
+Then, in your script, you would add the following code:
+
+```javascript
+// Select the input DOM element
+var fileInput = document.querySelector('#avatar-pic');
+
+// Check if a file is selected
+if(fileInput.files.length == 0) return 'No file selected';
+
+// Create a new Warp File using the following format: new Warp.File('{DESIRED_FILE_NAME}', '{FILE_DATA}');
+//
+// NOTE:
+// 1. The File name does not need to be unique
+// 2. File extension must be part of the file name
+// 3. You may use `/` slashes for the file name (ideal for blob storage)
+
+var avatarPic = new Warp.File('avatarPic001.jpg', fileInput.files[0]);
+```
+
+After preparing the file, you can now use `.save()` to upload it to the server, and then `.set()` to set the specified file for an object:
+
+```javascript
+avatarPic.save().then(function() {
+    var alien = new Warp.Object('alien');
+    alien.set('name', 'Sycorax');
+    alien.set('avatar_pic', avatarPic); // Set the file directly
+
+    // Save the new alien
     return alien.save();
 })
 .then(function() {
