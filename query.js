@@ -72,6 +72,8 @@ _.extend(WarpQuery.prototype, {
         return this._addWhere('end', key, value);
     },
     contains: function(key, value) {
+        if(typeof key === 'object' && key.join !== null)
+            key = key.join('|');
         return this._addWhere('has', key, value);
     },
     foundIn: function(key, value, query) {

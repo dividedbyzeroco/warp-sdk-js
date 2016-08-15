@@ -21,6 +21,9 @@ var WarpUser = WarpObject.extend('user', {
    getEmail: function() {
        return this.get('email');
    },
+   setPassword: function(value) {
+       return this.set('password', value);
+   },
    signUp: function(next, fail) {
         // Check configurations
         if(!WarpObject._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Query');

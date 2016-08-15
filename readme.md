@@ -17,15 +17,24 @@ __The Warp JS SDK__ is a library for implementing the Warp Framework using JavaS
         - **[Subclasses](#subclasses)**
     - **[Queries](#queries)**
         - **[Constraints](#constraints)**
+        - **[Subqueries](#subqueries)**
         - **[Limit](#limit)**
         - **[Sorting](#sorting)**
         - **[Including Pointer Keys](#including-pointer-keys)**
+    - **[Collections](#collections)**
+        - **[Counting Collections](#counting-collections)
+        - **[Filtering Collections](#filtering-collections)
+        - **[Sorting Collections](#sorting-collections)
+        - **[Manipulating Collections](#manipulating-collections)
+        - **[Converting Collections](#converting-collections)
+        - **[Chaining Methods](#chaining-methods)
     - **[Users](#users)**
+        - **[Getting Special User Keys](#getting-special-user-keys)**
         - **[Logging In](#logging-in)**
-        - **[Validating Users/Fetching Current User](#validating-usersfetching-current-user)**
+        - **[Fetching Current User](#fetching-current-user)**
         - **[Signing Up](#signing-up)**
         - **[Logging Out](#logging-out)**
-    - **Functions - Coming Soon** 
+    - **[Functions](#functions)**
     
 ## Installation
 
@@ -322,6 +331,9 @@ What's useful about subclasses is you can set your own `instance methods` and `s
 ```javascript
 var Alien = Warp.Object.extend('alien', {
     // Instance methods
+    initialize: function() {
+        // NOTE: `.initialize()` is a special method, it is called whenever a new object is created
+    },
     greet: function() {
         return 'Hello! My name is ' + this.get('name');
     },
@@ -375,4 +387,403 @@ var Dalek = Alien.extend({
 
 var dalek = new Dalek({ name: 'Khan' });
 dalek.save();
+```
+
+What's important is that for every subclass that you make, you must register them before you initialize Warp:
+
+```javascript
+Warp.Object.registerSubclass(Alien);
+Warp.Object.registerSubclass(Dalek);
+Warp.Object.registerSubclass(Planet);
+```
+
+## Queries
+
+There are certain scenarios when you may need to find Objects from a model. In these instances, it would be convenient to use Queries. Queries allow you to find specific Objects based on a set of criteria.
+
+For example, if you want to query objects from the `alien` model, you would use the following code:
+
+```javascript
+// Prepare query
+var alienQuery = new Warp.Query('alien');
+
+// Use `.find()` to get all the objects in the `alien` table
+alienQuery.find().then(function(aliens) {
+    // You now have a collection of all the aliens
+});
+
+// Use `.first()` to get the first object in the `alien` table
+alienQuery.first().then(function(alien) {
+    // You now have the first alien object
+});
+```
+
+If you've created subclasses via the `.extend()` method of the `Warp Object`, you can set the subclass as the parameter in place of the model name. By using this approach, you get to use the instance methods that you initialized for the subclass:
+
+```javascript
+var alienQuery = new Warp.Query(Alien);
+```
+
+### Constraints
+
+Constraints help filter the results of a specific query. In order to pass constraints for a Query, use any of the following constraints you wish to apply:
+
+```javascript
+// Prepare query
+var alienQuery = new Warp.Query('alien');
+
+// Find an exact match for the specified key
+alienQuery.equalTo('name', 'The Doctor');
+alienQuery.notEqualTo('name', 'The Master');
+
+// If the key is ordinal (i.e. a string, a number or a date), you can use the following constraints
+alienQuery.lessThan('age', 21);
+alienQuery.lessThanOrEqualTo('name', 'Weeping Angels');
+alienQuery.greaterThanOrEqualTo('life_points', 500);
+alienQuery.greaterThan('created_at', '2016-08-15 17:30:00+00:00');
+
+// If you need to check if a field is null or not null
+alienQuery.exists('type');
+alienQuery.notExists('type');
+
+// If you need to find if a given key belongs in a list, you can use the following constraints
+alienQuery.containedIn('role', ['Doctor', 'Warrior']);
+alienQuery.notContainedIn('age', [18, 20]);
+
+// If you need to search a string for a substring
+alienQuery.startsWith('name', 'The');
+alienQuery.endsWith('name', 'Master');
+alienQuery.contains('name', 'M');
+
+// If you need to search multiple keys for a substring
+alienQuery.contains(['name', 'username', 'email'], 'M');
+```
+
+NOTE: Queries return a special kind of list called Warp Collections, which you can filter, sort or manipulate. For more info, see the section on [Collections](#collections).
+
+
+### Subqueries
+
+The constraints above are usually enough for filtering queries; however, if the request calls for a more complex approach, you may nest queries within other queries.
+
+For example, if you want to retrieve all the aliens who are residents of friendly planets, you may use the following code:
+
+```javascript
+var friendlyPlanetsQuery = new Warp.Query('planet');
+friendlyPlanetsQuery.equalTo('type', 'friendly');
+
+// Use the following format
+// .foundIn({KEY IN ALIEN}, {KEY IN PLANET}, {SUBQUERY});
+var alienQuery = new Warp.Query('alien');
+alienQuery.foundIn('planet_id', 'id', friendlyPlanetsQuery);
+
+alienQuery.find().then(function(friendlyAliens) {
+    // You now have a collection of friendly aliens
+});
+```
+
+Conversely, you can use `.notFoundIn()` to retrieve objects whose key is not found in the given subquery.
+
+
+### Limit
+
+By default, Warp limits results to the top 100 objects that satisfy the query criteria. In order to increase the limit, you can specify the desired value via the `.limit()` method. Also, in order to implement pagination for the results, you can combine the `.limit()` with the `.skip()` methods. The `.skip()` method indicates how many items are to be skipped when executing the query. In terms of scalability, it is advisable to limit results to 1000 and use skip to determine pagination.
+
+For example:
+
+```javascript
+alienQuery.limit(1000); // Top 1000 results
+alienQuery.skip(1000); // Skip the first 1000 results
+```
+
+NOTE: It is recommended that you use the sorting methods in order to retrieve more predictable results. For more info, see the section below.
+
+
+### Sorting
+
+Sorting determines the order by which the results are returned. They are also crucial when using the limit and skip parameters. To sort the query, use the following methods:
+
+```javascript
+alienQuery.sortBy('age'); // Sorts the query by age, in ascending order
+alienQuery.sortByDescending(['created_at', 'life_points']); // You can also use an array to sort by multiple keys
+```
+
+
+### Including Pointer Keys
+
+In order to include keys that belong to a pointer, we can use the `.include()` method.
+
+```javascript
+alienQuery.include('planet.name');
+alienQuery.include('planet.color');
+```
+
+The above query will return aliens with their respective planets as pointers:
+
+```javascript
+alienQuery.find().then(function(aliens) {
+    aliens.each(function(alien) {
+        // NOTE: alien.get('planet') returns a Warp Object, which means you can also use .get(), id, createdAt, and updatedAt
+        var greeting = 'I am ' + alien.get('name') + ' and I come from the Planet ' + alien.get('planet').get('name');
+
+        console.log(greeting);
+        return;
+    });
+});
+```
+
+## Collections
+
+When using queries, the results returned by `.find()` will be a collection of Warp Objects. Collections are a special list for Warp that allows you to filter, sort and manipulate list items by using a set of in-built methods.
+
+
+### Counting Collections
+
+To count the results, use the following methods:
+
+```javascript
+var alienQuery = new Warp.Query('alien');
+
+alienQuery.find().then(function(aliens) {
+    // In this case, `aliens` is a collection
+    var totalAliens = aliens.count();
+});
+```
+
+
+### Filtering Collections
+
+To filter the results and return a new collection based on these filters, use the following methods:
+
+```javascript
+var alienQuery = new Warp.Query('alien');
+
+alienQuery.find().then(function(aliens) {
+    // Returns the first Warp Object
+    var firstAlien = aliens.first();    
+    
+    // Returns a collection of Warp Objects that match the given object
+    var redDaleksOnly = aliens.match({ type: 'Daleks', color: 'red' });
+
+    // Returns a collection of Warp Objects that return true for the given function
+    var oldAliensOnly = aliens.where(function(alien) {
+        return alien.get('age') > 100;
+    });
+});
+```
+
+
+### Sorting Collections
+
+To sort the results and return a new collection, use the following methods:
+
+```javascript
+var alienQuery = new Warp.Query('alien');
+
+alienQuery.find().then(function(aliens) {
+    // Returns a new collection sorted in ascending order
+    var aliensSortedByLifePoints = aliens.sortBy('life_points');
+
+    // Returns a new collection sorted in descending order
+    var aliensSortedByCreatedAt = aliens.sortByDescending('created_at');
+    
+});
+```
+
+
+### Manipulating Collections
+
+To manipulate the results, use the following methods:
+
+```javascript
+var alienQuery = new Warp.Query('alien');
+
+alienQuery.find().then(function(aliens) {
+    // Looks through each Warp Object and applies the given function
+    // NOTE: You can return Promises inside the function and it will wait for each promise to finish before continuing to the next item
+    aliens.each(function(alien) {
+        return alien.destroy();
+    });
+
+    // Returns an array of whatever the given function returns
+    var names = aliens.map(function(alien) {
+        return alien.get('name');
+    });
+
+    // As an added bonus, you can use ES2015 lambda functions inside these methods
+    aliens.each(alien => alien.destroy());
+
+    var names = aliens.map(alien => alien.get('name'));
+    
+});
+```
+
+
+### Converting Collections
+
+Often times, you may opt to use regular array lists to handle Warp Objects. In these cases, you can convert Warp Collections using the following methods:
+
+```javascript
+var alienQuery = new Warp.Query('alien');
+
+alienQuery.find().then(function(aliens) {
+    // Returns a list of Warp Objects
+    var alienArray = aliens.toList();
+
+    // Returns a list of regular JavaScript Objects similar to the REST API
+    // For more info, visit http://github.com/jakejosol/warp-server/blob/master/rest.md
+    var alienJSON = aliens.toJSON();
+});
+```
+
+
+### Chaining Methods
+
+Since Warp Collections return new Collections after every method, you can chain several methods together, as needed:
+
+```javascript
+var alienQuery = new Warp.Query('alien');
+
+alienQuery.find().then(function(aliens) {
+    // Find red aliens, sort them by life points and then return their name
+    var redAliens = aliens.where({ color: 'red' })
+                    .sortBy('life_points')
+                    .map(alien => alien.get('name'));
+});
+```
+
+## Users
+
+User accounts are often an essential part of an application. In Warp, these are represented by Warp Users. Warp Users are extended subclasses from the Warp Object, which means you can use the same methods available to the Warp Object; however, the power of Warp Users is their special methods specifically tailored for user account management.
+
+
+### Getting Special User Keys
+
+Aside from id, createdAt and updatedAt, Warp User has additional methods for returning special keys:
+
+```javascript
+var userQuery = new Warp.Query(Warp.User);
+userQuery.equalTo('id', 5).first().then(user => {
+    var id = user.id;
+    var createdAt = user.createdAt;
+    var updatedAt = user.updatedAt;
+    var username = user.getUsername();
+    var email = user.getEmail();
+});
+```
+
+Note that for Warp Query, instead of specifiying 'user' as the string, we simply placed Warp.User as the parameter.
+
+
+### Logging In
+
+In order to log in to a user account, you would use the `.logIn()` method:
+
+```javascript
+Warp.User.logIn('username', 'password', function(user) {
+    // Successfully logged in
+}, function(error) {
+    // There was an error
+});
+
+// or
+
+Warp.User.logIn('username', 'password')
+.then(function(user) {
+    // Successfully logged in
+})
+.catch(function(error) {
+    // There was an error
+});
+```
+
+Note that you cannot use `.logIn()` when using the Warp JS SDK for server-side development.
+
+### Fetching Current User
+
+To get the currently logged in user, you would use the `.current()` method:
+
+```javascript
+var current = Warp.User.current();
+```
+
+
+### Signing Up
+
+To register a new user account, you would use the `.signUp()` method:
+
+```javascript
+var user = new Warp.User();
+user.setUsername('Luke Smith');
+user.setPassword('k9_and_sara');
+
+user.signUp(function() {
+    // Signed up; `.current()` returns the registered user
+    var current = Warp.User.current();
+}, function(error) {
+    // There was an error
+});
+
+// or
+
+user.signUp()
+.then(function() {
+    // Signed up; `.current()` returns the registered user
+    var current = Warp.User.current();
+})
+.catch(function() {
+    // There was an error
+});
+```
+
+Note that you cannot use `.save()` to create a user. You can only use `.save()` to update a user which has been registered or logged in.
+Also, note that you cannot use `.signUp()` when using the Warp JS SDK for server-side development.
+
+
+### Logging Out
+
+To log out of a user account, you would use the `.logOut()` method:
+
+```javascript
+user.logOut(function() {
+    // Logged out; `.current()` now returns null
+    var current = Warp.User.current();
+}, function(error) {
+    // There was an error
+});
+
+// or
+
+user.logOut()
+.then(function() {
+    // Logged out; `.current()` now returns null
+    var current = Warp.User.current();
+})
+.catch(function(error) {
+    // There was an error
+});
+```
+
+## Functions
+
+To run Warp [Functions](http://github.com/jakejosol/warp-server#functions) from the API, you may use Warp Functions:
+
+```javascript
+// Warp.Function.run({FUNCTION_NAME}, {PARAMETERS})
+
+Warp.Function.run('get-votes', { from: '2016-08-14', to: '2016-08-15' }, function(result) {
+    // `result` contains a JSON Object of the results from the API
+}, function(error) {
+    // There was an error
+});
+
+// or
+
+Warp.Function.run('get-votes', { from: '2016-08-14', to: '2016-08-15' })
+.then(function(result) {
+    // `result` contains a JSON Object of the results from the API
+})
+.catch(function(error) {
+    // There was an error
+});
 ```
