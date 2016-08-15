@@ -72,7 +72,7 @@ _.extend(WarpObject.prototype, {
     },
     save: function(next, fail) {
         // Check configurations
-        if(!WarpObject._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Query');
+        if(!WarpObject._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Object');
         if(!this._isDirty)
         {
             var request = new Promise(function(resolve, reject) {
@@ -138,7 +138,7 @@ _.extend(WarpObject.prototype, {
     },
     destroy: function(next, fail) {
         // Check configurations
-        if(!WarpObject._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Query');
+        if(!WarpObject._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Object');
         if(this._isNew) 
         {
             var request = new Promise(function(resolve, reject) {

@@ -4,6 +4,21 @@ var _ = require('underscore');
 var WarpError = require('./error');
 var Storage = require('./storage-node');
 
+// Utils classes
+var KeyMap = function(keys) {
+    this._keys = keys;
+    this.get = function(key) {
+        return this._keys[key];
+    };
+    this.each = function(iterator) {
+        for(var key in this._keys)
+            iterator(this._keys[key]);
+    };
+    this.copy = function() {
+        return _.extend({}, this._keys);
+    };
+};
+
 // Class constructor
 var Http = {
     _api: null,
@@ -69,6 +84,28 @@ var Http = {
             return this._api._getUserModel().destroy({ id: id });
         else
             return this._api._getModel(className).destroy({ id: id });
+    },
+    run: function(endpoint, args) {
+        var funcName = endpoint.replace('functions/', '');
+        
+        return new Promise(function(resolve, reject) {
+            var request = {
+                keys: new KeyMap(args)
+            };
+            var response = {
+                success: function(result) {
+                    resolve({ status: 200, message: 'Success', result: result });
+                },
+                error: function(message) {
+                    if(typeof message == 'object' && message.getMessage) message = message.getMessage();
+                    var error = new Error(message);
+                    error.code = 101;
+                    reject(error);
+                }
+            };
+
+            this._api._getFunction(funcName).run(request, response);
+        });
     },
     logIn: function(args) {
         throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot log in using JS SDK for Node');

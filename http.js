@@ -108,6 +108,9 @@ var Http = {
     destroy: function(endpoint, id) {
         return this._request('DELETE', endpoint + '/' + id);
     },
+    run: function(endpoint, id) {
+        return this._request('POST', endpoint, args);
+    },
     logIn: function(args) {
         return this._request('POST', 'login', args);
     },
