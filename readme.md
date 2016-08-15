@@ -22,12 +22,12 @@ __The Warp JS SDK__ is a library for implementing the Warp Framework using JavaS
         - **[Sorting](#sorting)**
         - **[Including Pointer Keys](#including-pointer-keys)**
     - **[Collections](#collections)**
-        - **[Counting Collections](#counting-collections)
-        - **[Filtering Collections](#filtering-collections)
-        - **[Sorting Collections](#sorting-collections)
-        - **[Manipulating Collections](#manipulating-collections)
-        - **[Converting Collections](#converting-collections)
-        - **[Chaining Methods](#chaining-methods)
+        - **[Counting Collections](#counting-collections)**
+        - **[Filtering Collections](#filtering-collections)**
+        - **[Sorting Collections](#sorting-collections)**
+        - **[Manipulating Collections](#manipulating-collections)**
+        - **[Converting Collections](#converting-collections)**
+        - **[Chaining Methods](#chaining-methods)**
     - **[Users](#users)**
         - **[Getting Special User Keys](#getting-special-user-keys)**
         - **[Logging In](#logging-in)**
