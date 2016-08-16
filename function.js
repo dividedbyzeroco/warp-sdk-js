@@ -29,4 +29,4 @@ _.extend(WarpFunction, {
     }
 });
 
-module.exports = WarpObject;
+module.exports = WarpFunction;

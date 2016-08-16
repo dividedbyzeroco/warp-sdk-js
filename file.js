@@ -11,7 +11,6 @@ var WarpFile = function(name, data) {
 
 // Instance methods
 _.extend(WarpFile.prototype, {
-    _http: null,
     _url: null,
     _isNew: true,
     fileKey: null,
@@ -30,7 +29,7 @@ _.extend(WarpFile.prototype, {
         args.append('file', this._data, this._name);
 
         // Create request
-        var request = WarpFunction._http.upload(name, args).then(function(response) {
+        var request = WarpFile._http.upload(name, args).then(function(response) {
             if(!response.result) throw new WarpError(WarpError.Code.InvalidObjectKey, 'File not saved');
             this._url = response.result.url;
             this.fileKey = response.result.key;
@@ -45,3 +44,13 @@ _.extend(WarpFile.prototype, {
         return request;
     }
 });
+
+// Static methods
+_.extend(WarpFile, {
+    _http: null,
+    initialize: function(http) {
+        this._http = http;
+    }
+});
+
+module.exports = WarpFile;
