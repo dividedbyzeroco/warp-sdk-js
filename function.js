@@ -17,7 +17,7 @@ _.extend(WarpFunction, {
         
         // Create request
         var request = WarpFunction._http.run(name, args).then(function(response) {
-            return response.result;
+            return response;
         });
 
         // Check args
