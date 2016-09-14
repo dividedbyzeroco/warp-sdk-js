@@ -16,7 +16,7 @@ _.extend(WarpFunction, {
         if(!WarpFunction._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Function');
         
         // Create request
-        var request = WarpFunction._http.run(name, args).then(function(response) {
+        var request = WarpFunction._http.run('functions/' + name, args).then(function(response) {
             return response;
         });
 
