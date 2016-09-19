@@ -2,6 +2,7 @@
 var Promise = require('promise');
 var _ = require('underscore');
 var WarpError = require('./error');
+var moment = require('moment-timezone');
 
 // Class constructor
 var WarpObject = function(className, attributes) {
@@ -41,6 +42,8 @@ _.extend(WarpObject.prototype, {
                 this._attributes[attr] = value;
             else if(value.type === 'Increment')
                     throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot directly set an increment object, please use the `increment` function instead');
+            else if(value instanceof Date)
+                this._attributes[attr] = moment(value).format();
         }
         else if(typeof attr !== 'undefined' && typeof value !== 'undefined')
             if(attr != 'className' && attr != 'id' && attr != 'created_at' && attr != 'updated_at')
