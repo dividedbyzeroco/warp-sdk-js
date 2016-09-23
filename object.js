@@ -178,7 +178,9 @@ _.extend(WarpObject.prototype, {
     toJSON: function() {
         var item = {
             className: this.className,
-            id: this.id
+            id: this.id,
+            created_at: this.createdAt,
+            updated_at: this.updatedAt
         };
 
         var attrs = this._attributes;
