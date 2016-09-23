@@ -2,7 +2,6 @@
 var Promise = require('promise');
 var _ = require('underscore');
 var WarpError = require('./error');
-var Storage = require('./storage-node');
 
 // Utils classes
 var KeyMap = function(keys) {
@@ -22,19 +21,18 @@ var KeyMap = function(keys) {
 // Class constructor
 var Http = {
     _api: null,
-    _storage: Storage,
     initialize: function(api) {
         if(!api) throw new WarpError(WarpError.Code.MissingConfiguration, 'API must be set');
         this._api = api;
     },
     setSessionToken: function(sessionToken) {
-        this._storage.setItem('x-warp-session-token', sessionToken);
+        return;
     },
     unsetSessionToken: function() {
-        this._storage.removeItem('x-warp-session-token');
+        return;
     },
     getSessionToken: function() {
-        return this._storage.getItem('x-warp-session-token');
+        return null;
     },
     find: function(endpoint, args) {
         var className = endpoint.replace('classes/', '');
