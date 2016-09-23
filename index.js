@@ -16,7 +16,7 @@ _.extend(Warp, {
     _apiKey: null,
     _baseURL: '',
     _initializeClasses: function() {        
-        // Prepare query and object
+        // Prepare classes
         this.Object.initialize(this._http);
         this.File.initialize(this._http);
         this.Function.initialize(this._http);
@@ -48,6 +48,7 @@ _.extend(Warp, {
         
         // Initialize classes
         WarpNode._initializeClasses();
+        WarpNode.User._persistentSessions = false;
         
         return WarpNode;  
     }

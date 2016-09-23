@@ -43,8 +43,10 @@ var WarpUser = WarpObject.extend('user', {
         // Check configurations
         if(!WarpObject._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Query');
         if(this._isNew) throw new WarpError(WarpError.Code.ForbiddenOperation, 'Users can only be created using `signUp`');
-        if(WarpUser.current() && WarpUser.current().id != this.id) throw new WarpError(WarpError.Code.ForbiddenOperation, 'Users can only edit their own data');
-        else if(!WarpUser.current()) throw new WarpError(WarpError.Code.ForbiddenOperation, 'Users can only edit their own data');
+        if(WarpUser._persistentSessions && WarpUser.current() && WarpUser.current().id != this.id) 
+            throw new WarpError(WarpError.Code.ForbiddenOperation, 'Users can only edit their own data');
+        else if(WarpUser._persistentSessions && !WarpUser.current()) 
+            throw new WarpError(WarpError.Code.ForbiddenOperation, 'Users can only edit their own data');
         
         if(!this._isDirty)
         {
@@ -125,6 +127,7 @@ var WarpUser = WarpObject.extend('user', {
     }
 }, {
     _storage: Storage,
+    _persistentSessions: true,
     _setSessionToken(sessionToken) {
         if(sessionToken)
             WarpObject._http.setSessionToken(sessionToken);
@@ -148,6 +151,7 @@ var WarpUser = WarpObject.extend('user', {
         return WarpObject._http.getSessionToken();
     },
     current: function() {
+        if(!this._persistentSessions) throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot get current user using the JS SDK for Node');
         var stored = this._storage.getItem('x-warp-user-current');
         if(!stored) return null;
         
