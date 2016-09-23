@@ -219,6 +219,16 @@ _.extend(WarpQuery.prototype, {
             query = query.catch(fail);
             
         return query;
+    },
+    get: function(id, next, fail) {
+        this.equalTo('id', id);
+        var query = this.first();        
+        if(typeof next === 'function')
+            query = query.then(next);
+        if(typeof fail === 'function')
+            query = query.catch(fail);
+            
+        return query;
     }
 });
 
