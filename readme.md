@@ -79,7 +79,7 @@ Each Object contains different keys which can be set or retrieved as needed. Amo
 
 - id: a unique identifier that distinguishes an object inside a table
 - created_at: a timestamp that records the date and time when a particular object was created (UTC)
-- uppdated_at: a timestamp that records the date and time when a particular object was last modified (UTC)
+- updated_at: a timestamp that records the date and time when a particular object was last modified (UTC)
 
 These keys are specifically set by the server and cannot be modified by the user.
 

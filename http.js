@@ -19,7 +19,7 @@ var Http = {
         method = method.toUpperCase();
         
         // Return request
-        return new Promise(function (resolve, reject) {            
+        return new Promise(function (resolve, reject) {
             // Instantiate the XMLHttpRequest
             var client = new XMLHttpRequest();
             var params = '';

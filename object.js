@@ -193,7 +193,8 @@ _.extend(WarpObject.prototype, {
             if(attr && typeof attr === 'object')
                 if(attr.className)
                 {
-                    var pointer = attr.toJSON();
+                    var pointer = attr;
+                    if(typeof attr.toJSON === 'function') pointer = attr.toJSON();
                     attr = {
                         type: 'Pointer',
                         className: pointer.className,
