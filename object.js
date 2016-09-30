@@ -41,7 +41,7 @@ _.extend(WarpObject.prototype, {
             else if(value.type === 'Pointer' || value.type === 'File')
                 this._attributes[attr] = value;
             else if(value.type === 'Increment')
-                    throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot directly set an increment object, please use the `increment` function instead');
+                throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot directly set an increment object, please use the `increment` function instead');
             else if(value instanceof Date)
                 this._attributes[attr] = moment(value).format();
         }
@@ -93,7 +93,7 @@ _.extend(WarpObject.prototype, {
         this._isDirty = false;
         
         // Prepare params and request
-        var params = this._attributes;
+        var params = _.extend({}, this._attributes);
         var request = null;
         
         // Modify `pointer` and `file` params
