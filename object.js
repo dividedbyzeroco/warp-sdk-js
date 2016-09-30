@@ -199,7 +199,8 @@ _.extend(WarpObject.prototype, {
                         type: 'Pointer',
                         className: pointer.className,
                         id: pointer.id
-                    }
+                    };
+                    delete pointer.type;
                     delete pointer.className;
                     delete pointer.id;
                     if(Object.keys(pointer).length > 0) attr.attributes = pointer;
