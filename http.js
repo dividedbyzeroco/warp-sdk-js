@@ -15,7 +15,7 @@ var Http = {
             throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing url and/or HTTP method');
             
         // Prepare url and method
-        url = this._baseURL + url;
+        url = this._baseURL.replace(/\/$/, "") + '/' + url;
         method = method.toUpperCase();
         
         // Return request
