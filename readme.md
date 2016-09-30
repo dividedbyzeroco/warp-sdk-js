@@ -6,35 +6,34 @@ __The Warp JS SDK__ is a library for implementing the Warp Framework using JavaS
 ## Table of Contents
 - **[Installation](#installation)**  
 - **[Configuration](#configuration)**
-- **Features**
-    - **[Objects](#objects)**
-        - **[Saving Objects](#saving-objects)**
-        - **[Retrieving Objects](#retrieving-objects)**
-        - **[Updating Objects](#updating-objects)**
-        - **[Deleting Objects](#deleting-objects)**
-        - **[Pointers](#pointers)**
-        - **[Files](#files)**
-        - **[Subclasses](#subclasses)**
-    - **[Queries](#queries)**
-        - **[Constraints](#constraints)**
-        - **[Subqueries](#subqueries)**
-        - **[Limit](#limit)**
-        - **[Sorting](#sorting)**
-        - **[Including Pointer Keys](#including-pointer-keys)**
-    - **[Collections](#collections)**
-        - **[Counting Collections](#counting-collections)**
-        - **[Filtering Collections](#filtering-collections)**
-        - **[Sorting Collections](#sorting-collections)**
-        - **[Manipulating Collections](#manipulating-collections)**
-        - **[Converting Collections](#converting-collections)**
-        - **[Chaining Methods](#chaining-methods)**
-    - **[Users](#users)**
-        - **[Getting Special User Keys](#getting-special-user-keys)**
-        - **[Logging In](#logging-in)**
-        - **[Fetching Current User](#fetching-current-user)**
-        - **[Signing Up](#signing-up)**
-        - **[Logging Out](#logging-out)**
-    - **[Functions](#functions)**
+- **[Objects](#objects)**
+    - **[Saving Objects](#saving-objects)**
+    - **[Retrieving Objects](#retrieving-objects)**
+    - **[Updating Objects](#updating-objects)**
+    - **[Deleting Objects](#deleting-objects)**
+    - **[Pointers](#pointers)**
+    - **[Files](#files)**
+    - **[Subclasses](#subclasses)**
+- **[Queries](#queries)**
+    - **[Constraints](#constraints)**
+    - **[Subqueries](#subqueries)**
+    - **[Limit](#limit)**
+    - **[Sorting](#sorting)**
+    - **[Including Pointer Keys](#including-pointer-keys)**
+- **[Collections](#collections)**
+    - **[Counting Collections](#counting-collections)**
+    - **[Filtering Collections](#filtering-collections)**
+    - **[Sorting Collections](#sorting-collections)**
+    - **[Manipulating Collections](#manipulating-collections)**
+    - **[Converting Collections](#converting-collections)**
+    - **[Chaining Methods](#chaining-methods)**
+- **[Users](#users)**
+    - **[Getting Special User Keys](#getting-special-user-keys)**
+    - **[Logging In](#logging-in)**
+    - **[Fetching Current User](#fetching-current-user)**
+    - **[Signing Up](#signing-up)**
+    - **[Logging Out](#logging-out)**
+- **[Functions](#functions)**
     
 ## Installation
 
@@ -46,7 +45,7 @@ npm install --save warp-sdk-js
 
 ## Configuration
 
-To initialize the SDK, simply add the following configruation to the main file of your project:
+To initialize the SDK for **client-side development**, simply add the following configruation to the main file of your project:
 
 ```javascript
 // Require Warp
@@ -56,14 +55,21 @@ var Warp = require('warp-sdk-js');
 Warp.initialize({ apiKey: '12345678abcdefg', baseURL: 'http://my-warp-server.com/api/1' });
 ```
 
-Or, if you are going to use the SDK on the same server as your `Warp Server`, simply use the `Warp` property of your `Warp Server` instance:
+Or, if you are going to use the SDK for **server-side development** on `Warp Server` (ex. `Warp Functions`, `Warp Queues`, or `Warp Models`), simply use the `Warp` property of your `Warp Server` instance:
 
 ```javascript
-var api = new WarpServer(config);
+// Instantiate Warp Server
+var api = new WarpServer(/* configuration */);
+
+// Set up the Warp Server router for express
+var app = express();
+app.use('/api/1', api.router());
+
+// Get the Warp SDK directly from the api instance
 var Warp = api.Warp;
 ```
 
-NOTE: If you use the `Warp` property of your `Warp Server` instance, you do not need to call the `.initialize()` method. This is the recommended approach especially for Warp Functions and Warp Models.
+COMING SOON: **server-side development** outside of `Warp Server`
 
 ## Objects
 
@@ -253,16 +259,14 @@ planet.save(function() {
 If, for example, you have an existing `planet` and you want to use it for an `alien` object, you can use the following approach:
 
 ```javascript
-var planetQuery = new Warp.Query('planet');
-planetQuery.equalTo('id', 2);
-planetQuery.first().then(function(planet) {
-    // You now have a copy of planet (id: 2)
-    var alien = new Warp.Object('alien');
-    alien.set('name', 'Captain Jack Harkness');
-    alien.set('planet', planet); // Set the object directly
-    return alien.save();
-})
-.then(function() {
+// Warp.Object.createWithoutData({ID}, '{CLASS_NAME}');
+// For users, Warp.User.createWithoutData({ID});
+var planet = Warp.Object.createWithoutData(2, 'planet');
+var alien = new Warp.Object('alien');
+alien.set('name', 'Captain Jack Harkness');
+alien.set('planet', planet); // Set the object directly
+
+alien.save(function() {
     // The alien has been successfully saved
 });
 ```
