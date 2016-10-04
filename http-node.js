@@ -103,7 +103,7 @@ var Http = {
             };
 
             this._api._getFunction(funcName).run(request, response);
-        });
+        }.bind(this));
     },
     upload: function(args) {
         throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot upload files using the JS SDK for Node');
