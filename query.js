@@ -9,7 +9,7 @@ var WarpQuery = function(className) {
     this._subclass = (typeof className === 'function') ? className : WarpQuery._object.getSubclass(className);
     this._include = [];
     this._where = {};
-    this._order = [];
+    this._sort = [];
     this._limit;
     this._skip;
 };
@@ -22,10 +22,10 @@ _.extend(WarpQuery.prototype, {
         this._where[key] = keyConstraints;
         return this;
     },
-    _addOrder: function(key, direction) {
+    _addSort: function(key, direction) {
         var order = {};
         order[key] = direction || 1;
-        this._order.push(order);
+        this._sort.push(order);
         return this;
     },
     initialize: function(http) {
@@ -100,23 +100,23 @@ _.extend(WarpQuery.prototype, {
         if(typeof key === 'object')
         {
             key.forEach(function(k) {
-                this._addOrder(k);
+                this._addSort(k);
             }.bind(this));
             return this;
         }
         else
-            return this._addOrder(key);
+            return this._addSort(key);
     },
     sortByDescending: function(key) {
         if(typeof key === 'object')
         {
             key.forEach(function(k) {
-                this._addOrder(k, -1);
+                this._addSort(k, -1);
             }.bind(this));
             return this;
         }
         else
-            return this._addOrder(key, -1);
+            return this._addSort(key, -1);
     },
     limit: function(limit) {
         this._limit = limit;
@@ -130,7 +130,7 @@ _.extend(WarpQuery.prototype, {
         var params = {
             include: this._include,
             where: this._where,
-            order: this._order,
+            sort: this._sort,
             limit: this._limit,
             skip: this._skip
         };
