@@ -39,7 +39,7 @@ var Http = {
         var options = {
             include: args.include || {},
             where: args.where || {},
-            sort: args.order || [],
+            sort: args.sort || [],
             limit: args.limit || 100,
             skip: args.skip || 0
         };
