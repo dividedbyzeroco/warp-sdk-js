@@ -83,9 +83,9 @@ _.extend(WarpObject.prototype, {
             }.bind(this));
             
             if(typeof next === 'function')
-                request.then(next);
+                request = request.then(next);
             if(typeof fail === 'function')
-                request.catch(fail);
+                request = request.catch(fail);
             return request;
         }
         
@@ -154,9 +154,9 @@ _.extend(WarpObject.prototype, {
             }.bind(this));
             
             if(typeof next === 'function')
-                request.then(next);
+                request = request.then(next);
             if(typeof fail === 'function')
-                request.catch(fail);
+                request = request.catch(fail);
             return request;
         }
         
@@ -170,9 +170,9 @@ _.extend(WarpObject.prototype, {
         }.bind(this));
         
         if(typeof next === 'function')
-            request.then(next);
+            request = request.then(next);
         if(typeof fail === 'function')
-            request.catch(fail);            
+            request = request.catch(fail);            
         return request;                
     },
     toJSON: function() {
