@@ -1,6 +1,6 @@
 {
   "name": "warp-sdk-js",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Warp JavaScript SDK",
   "main": "index.js",
   "scripts": {
