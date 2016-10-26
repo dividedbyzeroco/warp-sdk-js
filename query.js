@@ -170,6 +170,11 @@ _.extend(WarpQuery.prototype, {
                                 {
                                     // Set the pointer attr value
                                     pointer.set(attr, value.attributes[attr]);
+                                    // Added timestamps for the pointer, if requested
+                                    if(attr === 'created_at')
+                                        pointer.createdAt = value.attributes[attr];
+                                    if(attr === 'updated_at')
+                                        pointer.updatedAt = value.attributes[attr];
                                 }
                                 
                             // Set the pointer id
