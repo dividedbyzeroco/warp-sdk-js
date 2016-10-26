@@ -128,7 +128,7 @@ var WarpUser = WarpObject.extend('user', {
 }, {
     _storage: Storage,
     _persistentSessions: true,
-    _setSessionToken(sessionToken) {
+    _setSessionToken: function(sessionToken) {
         if(sessionToken)
             WarpObject._http.setSessionToken(sessionToken);
         else
