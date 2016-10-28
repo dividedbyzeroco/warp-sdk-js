@@ -1,7 +1,7 @@
 Warp JavaScript SDK
 ===================
 
-__The Warp JS SDK__ is a library for implementing the Warp Framework using JavaScript. It is designed to work with projects built on-top of the **[Warp Server](http://github.com/jakejosol/warp-server)**.
+__The Warp JS SDK__ is a library for implementing the Warp Framework using JavaScript. It is designed to work with projects built on-top of the **[Warp Server](http://github.com/dividedbyzeroco/warp-server)**.
 
 ## Table of Contents
 - **[Installation](#installation)**  
@@ -236,7 +236,7 @@ alien.destroy(function() {
 
 ### Pointers
 
-If your objects use [pointers](https://github.com/jakejosol/warp-server#pointers) for some of its keys, you can directly set them via the `.set()` method.
+If your objects use [pointers](https://github.com/dividedbyzeroco/warp-server#pointers) for some of its keys, you can directly set them via the `.set()` method.
 
 For example, if you are creating a `planet` for an `alien` object, you can use the following approach:
 
@@ -274,7 +274,7 @@ alien.save(function() {
 
 ### Files
 
-If you need to upload [files](https://github.com/jakejosol/warp-server#files) to the server, you can do so via `Warp Files`.
+If you need to upload [files](https://github.com/dividedbyzeroco/warp-server#files) to the server, you can do so via `Warp Files`.
 
 For example, if you are creating an `avatar_pic` for an `alien` object, you can use the following approach.
 
@@ -644,7 +644,7 @@ alienQuery.find().then(function(aliens) {
     var alienArray = aliens.toList();
 
     // Returns a list of regular JavaScript Objects similar to the REST API
-    // For more info, visit http://github.com/jakejosol/warp-server/blob/master/rest.md
+    // For more info, visit http://github.com/dividedbyzeroco/warp-server/blob/master/rest.md
     var alienJSON = aliens.toJSON();
 });
 ```
@@ -779,7 +779,7 @@ user.logOut()
 
 ## Functions
 
-To run Warp [Functions](http://github.com/jakejosol/warp-server#functions) from the API, you may use Warp Functions:
+To run Warp [Functions](http://github.com/dividedbyzeroco/warp-server#functions) from the API, you may use Warp Functions:
 
 ```javascript
 // Warp.Function.run({FUNCTION_NAME}, {PARAMETERS})
