@@ -457,7 +457,7 @@ alienQuery.greaterThan('created_at', '2016-08-15 17:30:00+00:00');
 
 // If you need to check if a field is null or not null
 alienQuery.exists('type');
-alienQuery.notExists('type');
+alienQuery.doesNotExist('type');
 
 // If you need to find if a given key belongs in a list, you can use the following constraints
 alienQuery.containedIn('role', ['Doctor', 'Warrior']);

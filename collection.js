@@ -27,24 +27,24 @@ _.extend(WarpCollection.prototype, {
     },
     sortBy: function(order) {
         if(typeof order === 'string')
-            order = function(item) {
+            sorting = function(item) {
                 if(order === 'id') return item.id;
                 if(order === 'created_at') return item.createdAt;
                 if(order === 'updated_at') return item.updatedAt;
                 return item.get(order);
             };
-        var list = _.sortBy(this._list, order);
+        var list = _.sortBy(this._list, sorting);
         return new WarpCollection(list);
     },
     sortByDescending: function(order) {
         if(typeof order === 'string')
-            order = function(item) {
+            sorting = function(item) {
                 if(order === 'id') return item.id;
                 if(order === 'created_at') return item.createdAt;
                 if(order === 'updated_at') return item.updatedAt;
                 return item.get(order);
             };
-        var list = _.sortBy(this._list, order);
+        var list = _.sortBy(this._list, sorting);
         list.reverse();
         return new WarpCollection(list);
     },
