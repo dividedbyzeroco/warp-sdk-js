@@ -63,7 +63,27 @@ var WarpUser = WarpObject.extend('user', {
         this._isDirty = false;
         
         // Prepare params and request
-        var params = this._attributes;
+        var params = _.extend({}, this._attributes);
+        var request = null;
+        
+        // Modify `pointer` and `file` params
+        for(var key in params)
+        {
+            var param = params[key];
+            if(param && typeof param === 'object')
+                if(param.className)
+                    params[key] = { type: 'Pointer', className: param.className, id: param.id };
+                else if(param.fileKey)
+                    params[key] = { type: 'File', key: param.fileKey };
+        }
+
+        // Modify `increment` params
+        for(var key in this._increments)
+        {
+            var increment = this._increments[key];
+            params[key] = { type: 'Increment', value: increment };
+        }
+        
         var request = WarpObject._http.update(this._getEndpoint(this.className), this.id, params).then(function(result) {
                 Object.keys(result).forEach(function(key) {
                     if(key !== 'id' && key !== 'created_at' && key !== 'updated_at')
