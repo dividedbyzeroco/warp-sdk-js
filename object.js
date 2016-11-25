@@ -44,6 +44,8 @@ _.extend(WarpObject.prototype, {
                 throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot directly set an increment object, please use the `increment` function instead');
             else if(value instanceof Date)
                 this._attributes[attr] = moment(value).format();
+            else
+                this._attributes[attr] = value;
         }
         else if(typeof attr !== 'undefined' && typeof value !== 'undefined')
             if(attr != 'className' && attr != 'id' && attr != 'created_at' && attr != 'updated_at')
