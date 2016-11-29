@@ -5,14 +5,9 @@ var _ = require('underscore');
 var Warp = {
     _apiKey: null,
     _baseURL: '',
-    _http: require('./http'),
-    Object: require('./object').extend(),
-    Query: require('./query').extend(),
-    User: require('./user').extend(),
-    Function: require('./function').extend(),
     File: require('./file'),
     Error: require('./error'),
-    _initializeClasses: function() {        
+    _initializeClasses: function() {
         // Prepare classes
         this.Object.initialize(this._http);
         this.File.initialize(this._http);
@@ -24,6 +19,13 @@ var Warp = {
         if(!config.apiKey) throw new Warp.Error(Warp.Error.Code.MissingConfiguration, 'API Key must be set');
         this._apiKey = config.apiKey;
         this._baseURL = config.baseURL || this._baseURL;
+
+        // Prepare classes
+        this._http = require('./http');
+        this.Object = require('./object').extend();
+        this.Query = require('./query').extend();
+        this.User = require('./user').extend(this.Object);
+        this.Function = require('./function').extend();
         
         // Prepare http
         this._http.initialize({ 
