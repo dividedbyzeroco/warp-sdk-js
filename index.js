@@ -42,7 +42,7 @@ var Warp = {
         WarpNode._http = require('./http-node');
         WarpNode.Object = require('./object').extend();
         WarpNode.Query = require('./query').extend();
-        WarpNode.User = require('./user').extend();
+        WarpNode.User = require('./user').extend(WarpNode.Object);
         WarpNode.Function = require('./function').extend();
         
         // Prepare HTTP for Node

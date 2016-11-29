@@ -1,11 +1,10 @@
 // References
 var _ = require('underscore');
-var WarpObject = require('./object');
 var WarpError = require('./error');
 var Storage = require('./storage');
 
 module.exports = {
-    extend: function() {
+    extend: function(WarpObject) {
         // Prepare class
         var WarpUser = WarpObject.extend('user', {        
         _getEndpoint: function() {
