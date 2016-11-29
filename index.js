@@ -3,18 +3,15 @@ var _ = require('underscore');
 
 // Define Warp Client
 var Warp = {
-    _http: require('./http'),
-    Object: require('./object'),
-    Query: require('./query'),
-    Error: require('./error'),
-    User: require('./user'),
-    File: require('./file'),
-    Function: require('./function')
-};
-
-_.extend(Warp, {
     _apiKey: null,
     _baseURL: '',
+    _http: require('./http'),
+    Object: require('./object').extend(),
+    Query: require('./query').extend(),
+    User: require('./user').extend(),
+    Function: require('./function').extend(),
+    File: require('./file'),
+    Error: require('./error'),
     _initializeClasses: function() {        
         // Prepare classes
         this.Object.initialize(this._http);
@@ -39,19 +36,22 @@ _.extend(Warp, {
     },
     bind: function(api) {
         // Create Warp for Node
-        var WarpNode = _.extend({}, this, {
-            _http: require('./http-node')
-        });
-        
-        // Prepare HTTP for Node
-        WarpNode._http.initialize(api)
+        var WarpNode = _.extend({}, this);
         
         // Initialize classes
+        WarpNode._http = require('./http-node');
+        WarpNode.Object = require('./object').extend();
+        WarpNode.Query = require('./query').extend();
+        WarpNode.User = require('./user').extend();
+        WarpNode.Function = require('./function').extend();
+        
+        // Prepare HTTP for Node
+        WarpNode._http.initialize(api);
         WarpNode._initializeClasses();
         WarpNode.User._persistentSessions = false;
         
-        return WarpNode;  
+        return WarpNode;
     }
-});
+};
 
 module.exports = Warp;
