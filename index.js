@@ -41,7 +41,7 @@ var Warp = {
         var WarpNode = _.extend({}, this);
         
         // Initialize classes
-        WarpNode._http = require('./http-node');
+        WarpNode._http = require('./http-node').extend();
         WarpNode.Object = require('./object').extend();
         WarpNode.Query = require('./query').extend();
         WarpNode.User = require('./user').extend(WarpNode.Object);
