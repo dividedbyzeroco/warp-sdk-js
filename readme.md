@@ -497,6 +497,24 @@ alienQuery.find().then(function(friendlyAliens) {
 
 Conversely, you can use `.notFoundIn()` to retrieve objects whose key is not found in the given subquery.
 
+If you want to see if a value exists in either of multiple queries, you can use `.foundInEither()`:
+
+```javascript
+var friendlyPlanetsQuery = new Warp.Query('planet');
+var goodPlanetsQuery = new Warp.Query('planet');
+friendlyPlanetsQuery.equalTo('type', 'friendly');
+goodPlanetsQuery.equalTo('type', 'good');
+
+// Use the following format
+// .foundInEither({KEY IN ALIEN}, [ {KEY IN PLANET : SUBQUERY}, ... ]);
+var alienQuery = new Warp.Query('alien');
+alienQuery.foundInEither('planet_id', [{ 'id': friendlyPlanetsQuery }, { 'id': goodPlanetsQuery }]);
+
+alienQuery.find().then(function(friendlyAliens) {
+    // You now have a collection of friendly and good aliens
+});
+```
+
 
 ### Limit
 
