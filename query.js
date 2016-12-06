@@ -64,6 +64,9 @@ module.exports = {
             containedIn: function(key, value) {
                 return this._addWhere('in', key, value);
             },
+            containedInOrNotExists: function(key, value) {
+                return this._addWhere('inx', key, value);
+            },
             notContainedIn: function(key, value) {
                 return this._addWhere('nin', key, value);
             },

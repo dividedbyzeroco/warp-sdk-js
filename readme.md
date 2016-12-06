@@ -461,6 +461,7 @@ alienQuery.doesNotExist('type');
 
 // If you need to find if a given key belongs in a list, you can use the following constraints
 alienQuery.containedIn('role', ['Doctor', 'Warrior']);
+alienQuery.containedInOrNotExists('role', ['Doctor', 'Warrior']);
 alienQuery.notContainedIn('age', [18, 20]);
 
 // If you need to search a string for a substring
