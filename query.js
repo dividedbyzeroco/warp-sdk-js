@@ -88,6 +88,22 @@ module.exports = {
                 };
                 return this._addWhere('fi', key, subQuery);
             },
+            foundInEither: function(key, queryList) {
+                var subQueries = [];
+                for(var index in queryList)
+                {
+                    var value = Object.keys(queryList[index])[0];
+                    var query = queryList[index][value];
+                    subQueries.push({
+                        className: query.className,
+                        select: value,
+                        where: query._where,
+                        limit: query._limit,
+                        skip: query._skip
+                    });
+                }
+                return this._addWhere('fie', key, subQueries);
+            },
             notFoundIn: function(key, value, query) {
                 var subQuery = {
                     className: query.className,
