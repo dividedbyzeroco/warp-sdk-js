@@ -117,6 +117,22 @@ module.exports = {
                 };
                 return this._addWhere('nfi', key, subQuery);
             },
+            notFoundInEither: function(key, value, query) {
+                var subQueries = [];
+                for(var index in queryList)
+                {
+                    var value = Object.keys(queryList[index])[0];
+                    var query = queryList[index][value];
+                    subQueries.push({
+                        className: query.className,
+                        select: value,
+                        where: query._where,
+                        limit: query._limit,
+                        skip: query._skip
+                    });
+                }
+                return this._addWhere('nfe', key, subQueries);
+            },
             sortBy: function(key) {
                 if(typeof key === 'object')
                 {
