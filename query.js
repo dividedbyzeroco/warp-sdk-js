@@ -117,7 +117,7 @@ module.exports = {
                 };
                 return this._addWhere('nfi', key, subQuery);
             },
-            notFoundInEither: function(key, value, query) {
+            notFoundInEither: function(key, queryList) {
                 var subQueries = [];
                 for(var index in queryList)
                 {
