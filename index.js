@@ -20,8 +20,13 @@ var Warp = {
         this._apiKey = config.apiKey;
         this._baseURL = config.baseURL || this._baseURL;
 
+        // Check if http is client-side or server-side
+        if(config.environment == 'server')
+            this._http = require('./http-server');
+        else
+            this._http = require('./http');
+
         // Prepare classes
-        this._http = require('./http');
         this.Object = require('./object').extend();
         this.Query = require('./query').extend();
         this.User = require('./user').extend(this.Object);
