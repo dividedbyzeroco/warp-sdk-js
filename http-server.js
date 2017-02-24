@@ -24,11 +24,17 @@ var Http = {
                 
             // Set onload method
             var onreadystatechange = function(err, res, body) {
-                if(res.statusCode >= 200 && res.statusCode < 300)
+                if(err)
+                {
+                    var error = new WarpError(501, err);
+                    return reject(error);
+                }
+                else if(res.statusCode >= 200 && res.statusCode < 300)
+                {
                     return resolve(JSON.parse(body).result);
+                }
                 else
                 {
-                    var response = JSON.parse(body);
                     var error = new WarpError(res.statusCode, res.message);
                     return reject(error);
                 }
