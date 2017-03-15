@@ -26,7 +26,7 @@ var Http = {
             var onreadystatechange = function(err, res, body) {
                 if(err)
                 {
-                    var error = new WarpError(501, err);
+                    var error = new WarpError(501, err.message);
                     return reject(error);
                 }
                 else if(res.statusCode >= 200 && res.statusCode < 300)
