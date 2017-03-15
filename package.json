@@ -23,6 +23,7 @@
   "dependencies": {
     "moment-timezone": "^0.5.4",
     "promise": "^7.1.1",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "xhr": "^2.4.0"
   }
 }

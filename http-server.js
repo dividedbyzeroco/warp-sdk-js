@@ -2,16 +2,13 @@
 var Promise = require('promise');
 var _ = require('underscore');
 var WarpError = require('./error');
+var request = require('xhr');
 
 // Class constructor
 var Http = {
     _baseURL: 'api/1/',
     _apiKey: null,
     _request: function(method, url, args, isRaw) {
-        // Get the request library in real-time
-        // Due to browserify issues
-        var request = require('request');
-
         // Make sure configurations are made
         if(!method || !url)
             throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing url and/or HTTP method');
