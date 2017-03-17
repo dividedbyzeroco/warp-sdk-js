@@ -217,6 +217,28 @@ module.exports = {
                     request.catch(fail);
                 return request;
             },
+            become: function(sessionToken, next, fail) {
+                // Set session token
+                this._setSessionToken(sessionToken);
+
+                // Prepare request chain
+                var request = WarpObject._http.current('users/me')
+                .then(function(result) {
+                    var user = new this(result);
+                    user.id = result.id;
+                    user.createdAt = result.created_at;
+                    user.updatedAt = result.updated_at;
+                    this._setCurrent(user);
+                    return this.current();
+                }.bind(this));
+                
+                // Check params
+                if(typeof next === 'function')
+                    request.then(next);
+                if(typeof fail === 'function')
+                    request.catch(fail);
+                return request;
+            },
             logOut: function(next, fail) {
                 // Check configurations
                 if(!WarpObject._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Query');
