@@ -24,12 +24,25 @@ var Http = {
             var client = new XMLHttpRequest();
             var params = '';
             var handled = false;
+            var timedOut = false;
+
+            // Add timeout checker
+            var timeoutChecker = setTimeout(function() {
+                // Return with a network timeout error
+                reject(new WarpError(800, 'Network timeout'));
+
+                // Change timed out status
+                timedOut = true;
+            }, 10 * 1000); // 10-second timeout
                 
             // Set onload method
             client.onreadystatechange = function() {
                 // Check readyState
-                if (client.readyState !== 4 || handled) return;
+                if (client.readyState !== 4 || handled || timedOut) return;
                 handled = true;
+
+                // Stop the timeout
+                clearTimeout(timeoutChecker);
                                 
                 if(this.status >= 200 && this.status < 300)
                     return resolve(JSON.parse(this.responseText).result);
