@@ -33,7 +33,7 @@ var Http = {
 
                 // Change timed out status
                 timedOut = true;
-            }, 10 * 1000); // 10-second timeout
+            }, 7 * 1000); // 7-second timeout
                 
             // Set onload method
             client.onreadystatechange = function() {
