@@ -35,9 +35,17 @@ var Http = {
                     return resolve(JSON.parse(this.responseText).result);
                 else
                 {
-                    var response = JSON.parse(this.responseText);
-                    var error = new WarpError(response.status, response.message);
-                    return reject(error);
+                    try
+                    {
+                        var response = JSON.parse(this.responseText);
+                        var error = new WarpError(response.status, response.message);
+                        return reject(error);
+                    }
+                    catch(err)
+                    {
+                        var error = new WarpError(700, 'Network not found');
+                        return reject(error);
+                    }
                 }
             };
                         
