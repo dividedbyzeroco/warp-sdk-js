@@ -81,6 +81,9 @@ module.exports = {
                     key = key.join('|');
                 return this._addWhere('has', key, value);
             },
+            containsEither: function(key, value) {
+                return this._addWhere('hasi', key, value);
+            },
             foundIn: function(key, value, query) {
                 var subQuery = {
                     className: query.className,

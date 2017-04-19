@@ -471,6 +471,9 @@ alienQuery.contains('name', 'M');
 
 // If you need to search multiple keys for a substring
 alienQuery.contains(['name', 'username', 'email'], 'M');
+
+// If you need to search if a value matches several substrings
+alienQuery.containsEither('name', ['M','The','Master']);
 ```
 
 NOTE: Queries return a special kind of list called Warp Collections, which you can filter, sort or manipulate. For more info, see the section on [Collections](#collections).
