@@ -8,6 +8,7 @@ var Storage = require('./storage');
 var Http = {
     _baseURL: 'api/1/',
     _apiKey: null,
+    _timeout: 10,
     _storage: Storage,
     _request: function(method, url, args, isRaw) {
         // Make sure configurations are made
@@ -33,7 +34,7 @@ var Http = {
 
                 // Change timed out status
                 timedOut = true;
-            }, 10 * 1000); // 10-second timeout
+            }, this._timeout * 1000); // timeout (in seconds)
                 
             // Set onload method
             client.onreadystatechange = function() {
@@ -111,6 +112,7 @@ var Http = {
         if(!config.apiKey) throw new WarpError(WarpError.Code.MissingConfiguration, 'API Key must be set');
         this._apiKey = config.apiKey;
         this._baseURL = config.baseURL || this._baseURL;
+        this._timeout = config.timeout || this._timeout;
     },
     setSessionToken: function(sessionToken) {
         this._storage.setItem('x-warp-session-token', sessionToken);

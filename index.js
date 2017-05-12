@@ -35,7 +35,8 @@ var Warp = {
         // Prepare http
         this._http.initialize({ 
             apiKey: this._apiKey, 
-            baseURL: this._baseURL
+            baseURL: this._baseURL,
+            timeout: config.timeout
         });
         
         // Initialize classes
