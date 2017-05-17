@@ -2,7 +2,7 @@
 var Promise = require('promise');
 var _ = require('underscore');
 var WarpError = require('./error');
-var request = require('xhr');
+var request = require('request-promise');
 
 // Class constructor
 var Http = {
