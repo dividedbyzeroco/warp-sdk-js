@@ -22,9 +22,9 @@ var Warp = {
 
         // Check if http is client-side or server-side
         if(config.environment == 'server')
-            this._http = require('./http-server');
+            this._http = require('./http-server').extend();
         else
-            this._http = require('./http');
+            this._http = require('./http').extend();
 
         // Prepare classes
         this.Object = require('./object').extend();
@@ -59,6 +59,39 @@ var Warp = {
         WarpNode.User._persistentSessions = false;
         
         return WarpNode;
+    },
+    extend: function(config) {
+        // Create Warp subclass
+        var WarpSubclass = _.extend({}, this);
+
+        // Check if the API Key has been set
+        if(!config.apiKey) throw new Warp.Error(Warp.Error.Code.MissingConfiguration, 'API Key must be set');
+        WarpSubclass._apiKey = config.apiKey;
+        WarpSubclass._baseURL = config.baseURL || this._baseURL;
+
+        // Check if http is client-side or server-side
+        if(config.environment == 'server')
+            WarpSubclass._http = require('./http-server').extend();
+        else
+            WarpSubclass._http = require('./http').extend();
+
+        // Prepare classes
+        WarpSubclass.Object = require('./object').extend();
+        WarpSubclass.Query = require('./query').extend();
+        WarpSubclass.User = require('./user').extend(WarpSubclass.Object);
+        WarpSubclass.Function = require('./function').extend();
+        
+        // Prepare http
+        WarpSubclass._http.initialize({ 
+            apiKey: this._apiKey, 
+            baseURL: this._baseURL,
+            timeout: config.timeout
+        });
+        
+        // Initialize classes
+        WarpSubclass._initializeClasses();
+
+        return WarpSubclass;
     }
 };
 
