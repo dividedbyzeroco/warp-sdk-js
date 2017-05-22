@@ -84,6 +84,9 @@ module.exports = {
             containsEither: function(key, value) {
                 return this._addWhere('hasi', key, value);
             },
+            containsAll: function(key, value) {
+                return this._addWhere('hasa', key, value);
+            },
             foundIn: function(key, value, query) {
                 var subQuery = {
                     className: query.className,
@@ -109,6 +112,22 @@ module.exports = {
                     });
                 }
                 return this._addWhere('fie', key, subQueries);
+            },
+            foundInAll: function(key, queryList) {
+                var subQueries = [];
+                for(var index in queryList)
+                {
+                    var value = Object.keys(queryList[index])[0];
+                    var query = queryList[index][value];
+                    subQueries.push({
+                        className: query.className,
+                        select: value,
+                        where: query._where,
+                        limit: query._limit,
+                        skip: query._skip
+                    });
+                }
+                return this._addWhere('fia', key, subQueries);
             },
             notFoundIn: function(key, value, query) {
                 var subQuery = {
