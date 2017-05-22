@@ -83,8 +83,8 @@ var Warp = {
         
         // Prepare http
         WarpSubclass._http.initialize({ 
-            apiKey: this._apiKey, 
-            baseURL: this._baseURL,
+            apiKey: config._apiKey, 
+            baseURL: config._baseURL,
             timeout: config.timeout
         });
         
