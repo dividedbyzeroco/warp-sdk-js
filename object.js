@@ -80,7 +80,7 @@ module.exports = {
             save: function(next, fail) {
                 // Check configurations
                 if(!WarpObject._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Object');
-                if(!this._isDirty)
+                if(!this._isNew && !this._isDirty)
                 {
                     var request = new Promise(function(resolve, reject) {
                         resolve(this);
