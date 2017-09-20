@@ -11,7 +11,7 @@ module.exports = {
             _baseURL: 'api/1/',
             _apiKey: null,
             _timeout: 10,
-            _storage: Storage,
+            _storage: null,
             _request: function(method, url, args, isRaw) {
                 // Make sure configurations are made
                 if(!method || !url)
@@ -115,7 +115,9 @@ module.exports = {
                 this._apiKey = config.apiKey;
                 this._baseURL = config.baseURL || this._baseURL;
                 this._timeout = config.timeout || this._timeout;
-                this._storage.initialize(this._baseURL);
+                this._storage = Storage.extend({ 
+                    baseURL: this._baseURL
+                });
             },
             setSessionToken: function(sessionToken) {
                 this._storage.setItem('x-warp-session-token', sessionToken);
