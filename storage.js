@@ -5,10 +5,10 @@ var Storage = {
         this._url = url;
     },
     getItem: function(name) {
-        return localStorage.getItem(url + ':' + name);
+        return localStorage.getItem(this._url + ':' + name);
     },
     setItem: function(name, value) {
-        localStorage.setItem(url + ':' + name, value);
+        localStorage.setItem(this._url + ':' + name, value);
     },
     removeItem: function(name) {
         localStorage.removeItem(name);
