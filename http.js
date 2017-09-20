@@ -115,6 +115,7 @@ module.exports = {
                 this._apiKey = config.apiKey;
                 this._baseURL = config.baseURL || this._baseURL;
                 this._timeout = config.timeout || this._timeout;
+                this._storage.initialize(this._baseURL);
             },
             setSessionToken: function(sessionToken) {
                 this._storage.setItem('x-warp-session-token', sessionToken);

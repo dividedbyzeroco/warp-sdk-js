@@ -7,25 +7,25 @@ module.exports = {
     extend: function(WarpObject) {
         // Prepare class
         var WarpUser = WarpObject.extend('user', {        
-        _getEndpoint: function() {
-            return 'users';
-        },
-        setUsername: function(value) {
-            return this.set('username', value);
-        },
-        getUsername: function() {
-            return this.get('username');
-        },
-        setEmail: function(value) {
-            return this.set('email', value);
-        },
-        getEmail: function() {
-            return this.get('email');
-        },
-        setPassword: function(value) {
-            return this.set('password', value);
-        },
-        signUp: function(next, fail) {
+            _getEndpoint: function() {
+                return 'users';
+            },
+            setUsername: function(value) {
+                return this.set('username', value);
+            },
+            getUsername: function() {
+                return this.get('username');
+            },
+            setEmail: function(value) {
+                return this.set('email', value);
+            },
+            getEmail: function() {
+                return this.get('email');
+            },
+            setPassword: function(value) {
+                return this.set('password', value);
+            },
+            signUp: function(next, fail) {
                 // Check configurations
                 if(!WarpObject._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Query');
                 
