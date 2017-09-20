@@ -38,6 +38,9 @@ var Warp = {
             baseURL: this._baseURL,
             timeout: config.timeout
         });
+
+        // Copy storage library
+        this.User._storage = this._http._storage;
         
         // Initialize classes
         this._initializeClasses();
@@ -87,6 +90,9 @@ var Warp = {
             baseURL: WarpSubclass._baseURL,
             timeout: WarpSubclass.timeout
         });
+
+        // Copy storage library
+        WarpSubclass.User._storage = WarpSubclass._http._storage;
         
         // Initialize classes
         WarpSubclass._initializeClasses();

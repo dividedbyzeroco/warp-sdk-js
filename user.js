@@ -1,7 +1,6 @@
 // References
 var _ = require('underscore');
 var WarpError = require('./error');
-var Storage = require('./storage');
 
 module.exports = {
     extend: function(WarpObject) {
@@ -147,7 +146,7 @@ module.exports = {
                 return request;
             }
         }, {
-            _storage: Storage,
+            _storage: null,
             _persistentSessions: true,
             _setSessionToken: function(sessionToken) {
                 if(sessionToken)
