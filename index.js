@@ -71,6 +71,7 @@ var Warp = {
         if(!config.apiKey) throw new Warp.Error(Warp.Error.Code.MissingConfiguration, 'API Key must be set');
         WarpSubclass._apiKey = config.apiKey;
         WarpSubclass._baseURL = config.baseURL || this._baseURL;
+        WarpSubclass._timeout = config.timeout;
 
         // Check if http is client-side or server-side
         if(config.environment == 'server')
