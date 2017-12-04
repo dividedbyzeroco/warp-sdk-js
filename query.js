@@ -155,6 +155,30 @@ module.exports = {
                 }
                 return this._addWhere('nfe', key, subQueries);
             },
+            jsonEqualTo: function(key, path, value) {
+                return this._addWhere('jeq', key, { path: path, value: value });
+            },
+            jsonNotEqualTo: function(key, path, value) {
+                return this._addWhere('jneq', key, { path: path, value: value });
+            },
+            jsonGreaterThan: function(key, path, value) {
+                return this._addWhere('jgt', key, { path: path, value: value });
+            },
+            jsonGreaterThanOrEqualTo: function(key, path, { path: path, value: value }) {
+                return this._addWhere('jgte', key, { path: path, value: value });
+            },
+            jsonLessThan: function(key, path, value) {
+                return this._addWhere('jlt', key, { path: path, value: value });
+            },
+            jsonLessThanOrEqualTo: function(key, path, value) {
+                return this._addWhere('jlte', key, { path: path, value: value });
+            },
+            jsonExists: function(key, path) {
+                return this._addWhere('jex', key, { path: path, value: true });
+            },
+            jsonDoesNotExist: function(key, path) {
+                return this._addWhere('jex', key, { path: path, value: false });
+            },
             sortBy: function(key) {
                 if(typeof key === 'object')
                 {
