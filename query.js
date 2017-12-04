@@ -164,7 +164,7 @@ module.exports = {
             jsonGreaterThan: function(key, path, value) {
                 return this._addWhere('jgt', key, { path: path, value: value });
             },
-            jsonGreaterThanOrEqualTo: function(key, path, { path: path, value: value }) {
+            jsonGreaterThanOrEqualTo: function(key, path, value) {
                 return this._addWhere('jgte', key, { path: path, value: value });
             },
             jsonLessThan: function(key, path, value) {
