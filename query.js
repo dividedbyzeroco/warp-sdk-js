@@ -173,11 +173,26 @@ module.exports = {
             jsonLessThanOrEqualTo: function(key, path, value) {
                 return this._addWhere('jlte', key, { path: path, value: value });
             },
-            jsonExists: function(key, path) {
-                return this._addWhere('jex', key, { path: path, value: true });
+            jsonMatches: function(key, path, value) {
+                return this._addWhere('jmt', key, { path: path, value: value });
             },
-            jsonDoesNotExist: function(key, path) {
+            jsonDoesNotMatch: function(key, path, value) {
                 return this._addWhere('jex', key, { path: path, value: false });
+            },
+            jsonContainedIn: function(key, path, value) {
+                return this._addWhere('jin', key, { path: path, value: false });
+            },
+            jsonNotContainedIn: function(key, path, value) {
+                return this._addWhere('jin', key, { path: path, value: false });
+            },
+            jsonStartsWith: function(key, path, value) {
+                return this._addWhere('jstr', key, { path: path, value: false });
+            },
+            jsonEndsWith: function(key, path, value) {
+                return this._addWhere('jend', key, { path: path, value: false });
+            },
+            jsonContains: function(key, path, value) {
+                return this._addWhere('jhas', key, { path: path, value: false });
             },
             sortBy: function(key) {
                 if(typeof key === 'object')
