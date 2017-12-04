@@ -177,22 +177,22 @@ module.exports = {
                 return this._addWhere('jmt', key, { path: path, value: value });
             },
             jsonDoesNotMatch: function(key, path, value) {
-                return this._addWhere('jnmt', key, { path: path, value: false });
+                return this._addWhere('jnmt', key, { path: path, value: value });
             },
             jsonContainedIn: function(key, path, value) {
-                return this._addWhere('jin', key, { path: path, value: false });
+                return this._addWhere('jin', key, { path: path, value: value });
             },
             jsonNotContainedIn: function(key, path, value) {
-                return this._addWhere('jin', key, { path: path, value: false });
+                return this._addWhere('jin', key, { path: path, value: value });
             },
             jsonStartsWith: function(key, path, value) {
-                return this._addWhere('jstr', key, { path: path, value: false });
+                return this._addWhere('jstr', key, { path: path, value: value });
             },
             jsonEndsWith: function(key, path, value) {
-                return this._addWhere('jend', key, { path: path, value: false });
+                return this._addWhere('jend', key, { path: path, value: value });
             },
             jsonContains: function(key, path, value) {
-                return this._addWhere('jhas', key, { path: path, value: false });
+                return this._addWhere('jhas', key, { path: path, value: value });
             },
             sortBy: function(key) {
                 if(typeof key === 'object')
