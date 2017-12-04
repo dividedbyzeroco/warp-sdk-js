@@ -177,7 +177,7 @@ module.exports = {
                 return this._addWhere('jmt', key, { path: path, value: value });
             },
             jsonDoesNotMatch: function(key, path, value) {
-                return this._addWhere('jex', key, { path: path, value: false });
+                return this._addWhere('jnmt', key, { path: path, value: false });
             },
             jsonContainedIn: function(key, path, value) {
                 return this._addWhere('jin', key, { path: path, value: false });
