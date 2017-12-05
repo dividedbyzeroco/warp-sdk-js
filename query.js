@@ -22,7 +22,7 @@ module.exports = {
 
             if(firstPoint < 0 && firstBracket < 0)
                 return { key: key, path: '$' };
-            else if(firstPoint < firstBracket)
+            else if(firstBracket < 0 || firstPoint < firstBracket)
                 return {
                     key: key.substring(0, firstPoint),
                     path: '$' + key.substr(firstPoint)
