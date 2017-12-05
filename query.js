@@ -256,6 +256,9 @@ module.exports = {
                         if(typeof object.className === 'undefined')
                             object.className = this.className;
                         
+                        // Set object id    
+                        object.id = item.id;
+
                         return WarpQuery._object._fillObject(item, object);
                     }.bind(this));
                     return new WarpCollection(list);
