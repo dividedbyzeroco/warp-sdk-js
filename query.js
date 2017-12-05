@@ -16,6 +16,24 @@ module.exports = {
             this._skip;
         };
 
+        function getJsonParts(key) {
+            var firstPoint = key.indexOf('.');
+            var firstBracket = key.indexOf('[');
+
+            if(firstPoint < 0 && firstBracket < 0)
+                return { key: key, path: '$' };
+            else if(firstPoint < firstBracket)
+                return {
+                    key: key.substring(0, firstPoint),
+                    path: '$' + key.substr(firstPoint)
+                };
+            else
+                return {
+                    key: key.substring(0, firstBracket),
+                    path: '$' + key.substr(firstBracket)
+                };
+        }
+
         // Instance methods
         _.extend(WarpQuery.prototype, {
             _addWhere: function(type, key, value) {
@@ -155,44 +173,57 @@ module.exports = {
                 }
                 return this._addWhere('nfe', key, subQueries);
             },
-            jsonEqualTo: function(key, path, value) {
-                return this._addWhere('jeq', key, { path: path, value: value });
+            jsonEqualTo: function(key, value) {
+                var jsonParts = getJsonParts(key);
+                return this._addWhere('jeq', jsonParts.key, { path: jsonParts.path, value: value });
             },
-            jsonNotEqualTo: function(key, path, value) {
-                return this._addWhere('jneq', key, { path: path, value: value });
+            jsonNotEqualTo: function(key, value) {
+                var jsonParts = getJsonParts(key);
+                return this._addWhere('jneq', jsonParts.key, { path: jsonParts.path, value: value });
             },
-            jsonGreaterThan: function(key, path, value) {
-                return this._addWhere('jgt', key, { path: path, value: value });
+            jsonGreaterThan: function(key, value) {
+                var jsonParts = getJsonParts(key);
+                return this._addWhere('jgt', jsonParts.key, { path: jsonParts.path, value: value });
             },
-            jsonGreaterThanOrEqualTo: function(key, path, value) {
-                return this._addWhere('jgte', key, { path: path, value: value });
+            jsonGreaterThanOrEqualTo: function(key, value) {
+                var jsonParts = getJsonParts(key);
+                return this._addWhere('jgte', jsonParts.key, { path: jsonParts.path, value: value });
             },
-            jsonLessThan: function(key, path, value) {
-                return this._addWhere('jlt', key, { path: path, value: value });
+            jsonLessThan: function(key, value) {
+                var jsonParts = getJsonParts(key);
+                return this._addWhere('jlt', jsonParts.key, { path: jsonParts.path, value: value });
             },
-            jsonLessThanOrEqualTo: function(key, path, value) {
-                return this._addWhere('jlte', key, { path: path, value: value });
+            jsonLessThanOrEqualTo: function(key, value) {
+                var jsonParts = getJsonParts(key);
+                return this._addWhere('jlte', jsonParts.key, { path: jsonParts.path, value: value });
             },
-            jsonMatches: function(key, path, value) {
-                return this._addWhere('jmt', key, { path: path, value: value });
+            jsonMatches: function(key, value) {
+                var jsonParts = getJsonParts(key);
+                return this._addWhere('jmt', jsonParts.key, { path: jsonParts.path, value: value });
             },
-            jsonDoesNotMatch: function(key, path, value) {
-                return this._addWhere('jnmt', key, { path: path, value: value });
+            jsonDoesNotMatch: function(key, value) {
+                var jsonParts = getJsonParts(key);
+                return this._addWhere('jnmt', jsonParts.key, { path: jsonParts.path, value: value });
             },
-            jsonContainedIn: function(key, path, value) {
-                return this._addWhere('jin', key, { path: path, value: value });
+            jsonContainedIn: function(key, value) {
+                var jsonParts = getJsonParts(key);
+                return this._addWhere('jin', jsonParts.key, { path: jsonParts.path, value: value });
             },
-            jsonNotContainedIn: function(key, path, value) {
-                return this._addWhere('jin', key, { path: path, value: value });
+            jsonNotContainedIn: function(key, value) {
+                var jsonParts = getJsonParts(key);
+                return this._addWhere('jin', jsonParts.key, { path: jsonParts.path, value: value });
             },
-            jsonStartsWith: function(key, path, value) {
-                return this._addWhere('jstr', key, { path: path, value: value });
+            jsonStartsWith: function(key, value) {
+                var jsonParts = getJsonParts(key);
+                return this._addWhere('jstr', jsonParts.key, { path: jsonParts.path, value: value });
             },
-            jsonEndsWith: function(key, path, value) {
-                return this._addWhere('jend', key, { path: path, value: value });
+            jsonEndsWith: function(key, value) {
+                var jsonParts = getJsonParts(key);
+                return this._addWhere('jend', jsonParts.key, { path: jsonParts.path, value: value });
             },
-            jsonContains: function(key, path, value) {
-                return this._addWhere('jhas', key, { path: path, value: value });
+            jsonContains: function(key, value) {
+                var jsonParts = getJsonParts(key);
+                return this._addWhere('jhas', jsonParts.key, { path: jsonParts.path, value: value });
             },
             sortBy: function(key) {
                 if(typeof key === 'object')

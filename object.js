@@ -21,6 +21,24 @@ module.exports = {
             if(attributes) this.set(attributes);
             this.initialize();
         };
+        
+        function getJsonParts(key) {
+            var firstPoint = key.indexOf('.');
+            var firstBracket = key.indexOf('[');
+
+            if(firstPoint < 0 && firstBracket < 0)
+                return { key: key, path: '$' };
+            else if(firstPoint < firstBracket)
+                return {
+                    key: key.substring(0, firstPoint),
+                    path: '$' + key.substr(firstPoint)
+                };
+            else
+                return {
+                    key: key.substring(0, firstBracket),
+                    path: '$' + key.substr(firstBracket)
+                };
+        }
 
         // Instance methods
         _.extend(WarpObject.prototype, {    
@@ -79,15 +97,15 @@ module.exports = {
                 this._isDirty = true;
                 return this;
             },
-            jsonAppend: function(attr, path, value) {
-                if(!path) path = '$';
-                this._jsonAppends[attr] = { path: path, value: value };
+            jsonAppend: function(attr, value) {
+                var jsonParts = getJsonParts(attr);
+                this._jsonAppends[jsonParts.key] = { path: jsonParts.path, value: value };
                 this._isDirty = true;
                 return this;
             },
-            jsonSet: function(attr, path, value) {
-                if(!path) path = '$';
-                this._jsonSets[attr] = { path: path, value: value };
+            jsonSet: function(attr, value) {
+                var jsonParts = getJsonParts(attr);
+                this._jsonSets[jsonParts.key] = { path: jsonParts.path, value: value };
                 this._isDirty = true;
                 return this;
             },
@@ -238,7 +256,7 @@ module.exports = {
                             if(key !== 'id' && key !== 'created_at' && key !== 'updated_at')
                                 this.set(key, result[key]);
                         }.bind(this));
-                        this.updatedAt = moment(result.updated_at).tz('UTC').format();
+                        this.updatedAt = moment(result.updated_at).format();
                         return this;
                     }.bind(this));
                     
