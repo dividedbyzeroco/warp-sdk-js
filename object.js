@@ -145,6 +145,11 @@ module.exports = {
                     var jsonSet = this._jsonSets[key];
                     params[key] = { type: 'JsonSet', path: jsonSet.path, value: jsonSet.value };
                 }
+
+                // Reset all params
+                this._increments = {};
+                this._jsonAppends = {};
+                this._jsonSets = {};
                 
                 if(this._isNew)
                     request = WarpObject._http.create(this._getEndpoint(this.className), params).then(function(result) {
