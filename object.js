@@ -227,8 +227,8 @@ module.exports = {
                 if(this._isNew)
                     request = WarpObject._http.create(this._getEndpoint(this.className), params).then(function(result) {
                         this.id = result.id;
-                        this.createdAt = moment(result.created_at).format();
-                        this.updatedAt = moment(result.updated_at).format();
+                        this.createdAt = moment(result.created_at).tz('UTC').format();
+                        this.updatedAt = moment(result.updated_at).tz('UTC').format();
                         this._isNew = false;
                         return this;
                     }.bind(this));
@@ -238,7 +238,7 @@ module.exports = {
                             if(key !== 'id' && key !== 'created_at' && key !== 'updated_at')
                                 this.set(key, result[key]);
                         }.bind(this));
-                        this.updatedAt = moment(result.updated_at).format();
+                        this.updatedAt = moment(result.updated_at).tz('UTC').format();
                         return this;
                     }.bind(this));
                     
