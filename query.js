@@ -16,24 +16,6 @@ module.exports = {
             this._skip;
         };
 
-        function getJsonParts(key) {
-            var firstPoint = key.indexOf('.');
-            var firstBracket = key.indexOf('[');
-
-            if(firstPoint < 0 && firstBracket < 0)
-                return { key: key, path: '$' };
-            else if(firstBracket < 0 || firstPoint < firstBracket)
-                return {
-                    key: key.substring(0, firstPoint),
-                    path: '$' + key.substr(firstPoint)
-                };
-            else
-                return {
-                    key: key.substring(0, firstBracket),
-                    path: '$' + key.substr(firstBracket)
-                };
-        }
-
         // Instance methods
         _.extend(WarpQuery.prototype, {
             _addWhere: function(type, key, value) {
@@ -174,55 +156,55 @@ module.exports = {
                 return this._addWhere('nfe', key, subQueries);
             },
             jsonEqualTo: function(key, value) {
-                var jsonParts = getJsonParts(key);
+                var jsonParts = WarpQuery._object._getJsonParts(key);
                 return this._addWhere('jeq', jsonParts.key, { path: jsonParts.path, value: value });
             },
             jsonNotEqualTo: function(key, value) {
-                var jsonParts = getJsonParts(key);
+                var jsonParts = WarpQuery._object._getJsonParts(key);
                 return this._addWhere('jneq', jsonParts.key, { path: jsonParts.path, value: value });
             },
             jsonGreaterThan: function(key, value) {
-                var jsonParts = getJsonParts(key);
+                var jsonParts = WarpQuery._object._getJsonParts(key);
                 return this._addWhere('jgt', jsonParts.key, { path: jsonParts.path, value: value });
             },
             jsonGreaterThanOrEqualTo: function(key, value) {
-                var jsonParts = getJsonParts(key);
+                var jsonParts = WarpQuery._object._getJsonParts(key);
                 return this._addWhere('jgte', jsonParts.key, { path: jsonParts.path, value: value });
             },
             jsonLessThan: function(key, value) {
-                var jsonParts = getJsonParts(key);
+                var jsonParts = WarpQuery._object._getJsonParts(key);
                 return this._addWhere('jlt', jsonParts.key, { path: jsonParts.path, value: value });
             },
             jsonLessThanOrEqualTo: function(key, value) {
-                var jsonParts = getJsonParts(key);
+                var jsonParts = WarpQuery._object._getJsonParts(key);
                 return this._addWhere('jlte', jsonParts.key, { path: jsonParts.path, value: value });
             },
             jsonMatches: function(key, value) {
-                var jsonParts = getJsonParts(key);
+                var jsonParts = WarpQuery._object._getJsonParts(key);
                 return this._addWhere('jmt', jsonParts.key, { path: jsonParts.path, value: value });
             },
             jsonDoesNotMatch: function(key, value) {
-                var jsonParts = getJsonParts(key);
+                var jsonParts = WarpQuery._object._getJsonParts(key);
                 return this._addWhere('jnmt', jsonParts.key, { path: jsonParts.path, value: value });
             },
             jsonContainedIn: function(key, value) {
-                var jsonParts = getJsonParts(key);
+                var jsonParts = WarpQuery._object._getJsonParts(key);
                 return this._addWhere('jin', jsonParts.key, { path: jsonParts.path, value: value });
             },
             jsonNotContainedIn: function(key, value) {
-                var jsonParts = getJsonParts(key);
+                var jsonParts = WarpQuery._object._getJsonParts(key);
                 return this._addWhere('jin', jsonParts.key, { path: jsonParts.path, value: value });
             },
             jsonStartsWith: function(key, value) {
-                var jsonParts = getJsonParts(key);
+                var jsonParts = WarpQuery._object._getJsonParts(key);
                 return this._addWhere('jstr', jsonParts.key, { path: jsonParts.path, value: value });
             },
             jsonEndsWith: function(key, value) {
-                var jsonParts = getJsonParts(key);
+                var jsonParts = WarpQuery._object._getJsonParts(key);
                 return this._addWhere('jend', jsonParts.key, { path: jsonParts.path, value: value });
             },
             jsonContains: function(key, value) {
-                var jsonParts = getJsonParts(key);
+                var jsonParts = WarpQuery._object._getJsonParts(key);
                 return this._addWhere('jhas', jsonParts.key, { path: jsonParts.path, value: value });
             },
             sortBy: function(key) {
@@ -274,63 +256,7 @@ module.exports = {
                         if(typeof object.className === 'undefined')
                             object.className = this.className;
                         
-                        for(var key in item)
-                        {
-                            // Get value
-                            var value = item[key];
-                            
-                            // Check if value is an object
-                            if(value && typeof value === 'object')
-                            {
-                                // If value is a `pointer`
-                                if(value.type === 'Pointer')
-                                {
-                                    // Create pointer
-                                    var pointerSubclass = WarpQuery._object.getSubclass(value.className);
-                                    var pointer = new pointerSubclass();
-                                    
-                                    // Set default className
-                                    if(typeof pointer.className === 'undefined')
-                                        pointer.className = value.className;
-                                    
-                                    // Iterate through each attribute, if they exist
-                                    if(value.attributes)
-                                        for(var attr in value.attributes)
-                                        {
-                                            // Set the pointer attr value
-                                            pointer.set(attr, value.attributes[attr]);
-                                            // Added timestamps for the pointer, if requested
-                                            if(attr === 'created_at')
-                                                pointer.createdAt = value.attributes[attr];
-                                            if(attr === 'updated_at')
-                                                pointer.updatedAt = value.attributes[attr];
-                                        }
-                                        
-                                    // Set the pointer id
-                                    pointer.id = value.id;
-                                    pointer._isNew = false;
-                                    pointer._isDirty = false;
-                                    value = pointer;
-                                }
-                                
-                                // If value is a `File`
-                                if(value.type === 'File')
-                                {
-                                    // Create file
-                                    // To-Do
-                                }
-                            }
-                            
-                            // Set the key value
-                            object.set(key, value);
-                        }
-                        object.id = item.id;
-                        object.createdAt = item.created_at;
-                        object.updatedAt = item.updated_at;
-                        object._isNew = false;
-                        object._isDirty = false;
-                        
-                        return object;
+                        return WarpQuery._object._fillObject(item, object);
                     }.bind(this));
                     return new WarpCollection(list);
                 }.bind(this));
@@ -370,7 +296,7 @@ module.exports = {
             _http: null,
             initialize: function(http, object, file) {
                 this._http = http;
-                this._object = object;
+                WarpQuery._object = object;
                 this._file = file;
             }
         });

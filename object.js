@@ -21,24 +21,6 @@ module.exports = {
             if(attributes) this.set(attributes);
             this.initialize();
         };
-        
-        function getJsonParts(key) {
-            var firstPoint = key.indexOf('.');
-            var firstBracket = key.indexOf('[');
-
-            if(firstPoint < 0 && firstBracket < 0)
-                return { key: key, path: '$' };
-            else if(firstBracket < 0 || firstPoint < firstBracket)
-                return {
-                    key: key.substring(0, firstPoint),
-                    path: '$' + key.substr(firstPoint)
-                };
-            else
-                return {
-                    key: key.substring(0, firstBracket),
-                    path: '$' + key.substr(firstBracket)
-                };
-        }
 
         // Instance methods
         _.extend(WarpObject.prototype, {    
@@ -98,13 +80,13 @@ module.exports = {
                 return this;
             },
             jsonAppend: function(attr, value) {
-                var jsonParts = getJsonParts(attr);
+                var jsonParts = WarpObject._getJsonParts(attr);
                 this._jsonAppends[jsonParts.key] = { path: jsonParts.path, value: value };
                 this._isDirty = true;
                 return this;
             },
             jsonSet: function(attr, value) {
-                var jsonParts = getJsonParts(attr);
+                var jsonParts = WarpObject._getJsonParts(attr);
                 this._jsonSets[jsonParts.key] = { path: jsonParts.path, value: value };
                 this._isDirty = true;
                 return this;
@@ -114,63 +96,7 @@ module.exports = {
                 var classRoute = this.className === 'user' ? 'users' : 'classes/' + this.className;
                 var request = WarpObject._http.first(classRoute, this.id).then(function(item) {
                     var object = this;
-
-                    for(var key in item)
-                    {
-                        // Get value
-                        var value = item[key];
-                        
-                        // Check if value is an object
-                        if(value && typeof value === 'object')
-                        {
-                            // If value is a `pointer`
-                            if(value.type === 'Pointer')
-                            {
-                                // Create pointer
-                                var pointerSubclass = WarpObject.getSubclass(value.className);
-                                var pointer = new pointerSubclass();
-                                
-                                // Set default className
-                                if(typeof pointer.className === 'undefined')
-                                    pointer.className = value.className;
-                                
-                                // Iterate through each attribute, if they exist
-                                if(value.attributes)
-                                    for(var attr in value.attributes)
-                                    {
-                                        // Set the pointer attr value
-                                        pointer.set(attr, value.attributes[attr]);
-                                        // Added timestamps for the pointer, if requested
-                                        if(attr === 'created_at')
-                                            pointer.createdAt = value.attributes[attr];
-                                        if(attr === 'updated_at')
-                                            pointer.updatedAt = value.attributes[attr];
-                                    }
-                                    
-                                // Set the pointer id
-                                pointer.id = value.id;
-                                pointer._isNew = false;
-                                pointer._isDirty = false;
-                                value = pointer;
-                            }
-                            
-                            // If value is a `File`
-                            if(value.type === 'File')
-                            {
-                                // Create file
-                                // To-Do
-                            }
-                        }
-                        
-                        // Set the key value
-                        object.set(key, value);
-                    }
-                    object.createdAt = item.created_at;
-                    object.updatedAt = item.updated_at;
-                    object._isNew = false;
-                    object._isDirty = false;
-                    
-                    return object;
+                    return WarpObject._fillObject(item, object);
                 }.bind(this));
                 
                 if(typeof next === 'function')
@@ -348,6 +274,81 @@ module.exports = {
         _.extend(WarpObject, {
             _http: null,
             _subclasses: {},
+            _getJsonParts: function(key) {
+                var firstPoint = key.indexOf('.');
+                var firstBracket = key.indexOf('[');
+    
+                if(firstPoint < 0 && firstBracket < 0)
+                    return { key: key, path: '$' };
+                else if(firstBracket < 0 || firstPoint < firstBracket)
+                    return {
+                        key: key.substring(0, firstPoint),
+                        path: '$' + key.substr(firstPoint)
+                    };
+                else
+                    return {
+                        key: key.substring(0, firstBracket),
+                        path: '$' + key.substr(firstBracket)
+                    };
+            },
+            _fillObject: function(item, object) {
+                for(var key in item)
+                {
+                    // Get value
+                    var value = item[key];
+                    
+                    // Check if value is an object
+                    if(value && typeof value === 'object')
+                    {
+                        // If value is a `pointer`
+                        if(value.type === 'Pointer')
+                        {
+                            // Create pointer
+                            var pointerSubclass = WarpObject.getSubclass(value.className);
+                            var pointer = new pointerSubclass();
+                            
+                            // Set default className
+                            if(typeof pointer.className === 'undefined')
+                                pointer.className = value.className;
+                            
+                            // Iterate through each attribute, if they exist
+                            if(value.attributes)
+                                for(var attr in value.attributes)
+                                {
+                                    // Set the pointer attr value
+                                    pointer.set(attr, value.attributes[attr]);
+                                    // Added timestamps for the pointer, if requested
+                                    if(attr === 'created_at')
+                                        pointer.createdAt = value.attributes[attr];
+                                    if(attr === 'updated_at')
+                                        pointer.updatedAt = value.attributes[attr];
+                                }
+                                
+                            // Set the pointer id
+                            pointer.id = value.id;
+                            pointer._isNew = false;
+                            pointer._isDirty = false;
+                            value = pointer;
+                        }
+                        
+                        // If value is a `File`
+                        if(value.type === 'File')
+                        {
+                            // Create file
+                            // To-Do
+                        }
+                    }
+                    
+                    // Set the key value
+                    object.set(key, value);
+                }
+                object.createdAt = item.created_at;
+                object.updatedAt = item.updated_at;
+                object._isNew = false;
+                object._isDirty = false;
+                
+                return object;
+            },
             initialize: function(http) {
                 this._http = http;
             },
