@@ -91,6 +91,76 @@ module.exports = {
                 this._isDirty = true;
                 return this;
             },
+            fetch: function(next, fail) {
+                if(!WarpQuery._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Query');
+                var classRoute = this.className === 'user' ? 'users' : 'classes/' + this.className;
+                var request = WarpQuery._http.first(classRoute, this.id).then(function(item) {
+                    var object = this;
+                    
+                    for(var key in item)
+                    {
+                        // Get value
+                        var value = item[key];
+                        
+                        // Check if value is an object
+                        if(value && typeof value === 'object')
+                        {
+                            // If value is a `pointer`
+                            if(value.type === 'Pointer')
+                            {
+                                // Create pointer
+                                var pointerSubclass = WarpQuery._object.getSubclass(value.className);
+                                var pointer = new pointerSubclass();
+                                
+                                // Set default className
+                                if(typeof pointer.className === 'undefined')
+                                    pointer.className = value.className;
+                                
+                                // Iterate through each attribute, if they exist
+                                if(value.attributes)
+                                    for(var attr in value.attributes)
+                                    {
+                                        // Set the pointer attr value
+                                        pointer.set(attr, value.attributes[attr]);
+                                        // Added timestamps for the pointer, if requested
+                                        if(attr === 'created_at')
+                                            pointer.createdAt = value.attributes[attr];
+                                        if(attr === 'updated_at')
+                                            pointer.updatedAt = value.attributes[attr];
+                                    }
+                                    
+                                // Set the pointer id
+                                pointer.id = value.id;
+                                pointer._isNew = false;
+                                pointer._isDirty = false;
+                                value = pointer;
+                            }
+                            
+                            // If value is a `File`
+                            if(value.type === 'File')
+                            {
+                                // Create file
+                                // To-Do
+                            }
+                        }
+                        
+                        // Set the key value
+                        object.set(key, value);
+                    }
+                    object.createdAt = item.created_at;
+                    object.updatedAt = item.updated_at;
+                    object._isNew = false;
+                    object._isDirty = false;
+                    
+                    return object;
+                }.bind(this));
+                
+                if(typeof next === 'function')
+                    request = request.then(next);
+                if(typeof fail === 'function')
+                    request = request.catch(fail);
+                return request;
+            },
             save: function(next, fail) {
                 // Check configurations
                 if(!WarpObject._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Object');
