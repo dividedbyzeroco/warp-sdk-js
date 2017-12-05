@@ -16,6 +16,8 @@ module.exports = {
             this._isDirty = false;
             this._attributes = {};
             this._increments = {};
+            this._jsonAppends = {};
+            this._jsonSets = {};
             if(attributes) this.set(attributes);
             this.initialize();
         };
@@ -77,6 +79,18 @@ module.exports = {
                 this._isDirty = true;
                 return this;
             },
+            jsonAppend: function(attr, path, value) {
+                if(!path) path = '$';
+                this._jsonAppends[attr] = { path: path, value: value };
+                this._isDirty = true;
+                return this;
+            },
+            jsonSet: function(attr, path, value) {
+                if(!path) path = '$';
+                this._jsonSets[attr] = { path: path, value: value };
+                this._isDirty = true;
+                return this;
+            },
             save: function(next, fail) {
                 // Check configurations
                 if(!WarpObject._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Object');
@@ -116,6 +130,20 @@ module.exports = {
                 {
                     var increment = this._increments[key];
                     params[key] = { type: 'Increment', value: increment };
+                }
+
+                // Modify `jsonAppend` params
+                for(var key in this._jsonAppends)
+                {
+                    var jsonAppend = this._jsonAppends[key];
+                    params[key] = { type: 'JsonAppend', path: jsonAppend.path, value: jsonAppend.value };
+                }
+            
+                // Modify `jsonSet` params
+                for(var key in this._jsonSets)
+                {
+                    var jsonSet = this._jsonSets[key];
+                    params[key] = { type: 'JsonSet', path: jsonSet.path, value: jsonSet.value };
                 }
                 
                 if(this._isNew)
