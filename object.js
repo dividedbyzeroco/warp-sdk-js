@@ -130,6 +130,7 @@ module.exports = {
                 {
                     var increment = this._increments[key];
                     params[key] = { type: 'Increment', value: increment };
+                    delete this._attributes[key];
                 }
 
                 // Modify `jsonAppend` params
@@ -137,6 +138,7 @@ module.exports = {
                 {
                     var jsonAppend = this._jsonAppends[key];
                     params[key] = { type: 'JsonAppend', path: jsonAppend.path, value: jsonAppend.value };
+                    delete this._attributes[key];
                 }
             
                 // Modify `jsonSet` params
@@ -144,6 +146,7 @@ module.exports = {
                 {
                     var jsonSet = this._jsonSets[key];
                     params[key] = { type: 'JsonSet', path: jsonSet.path, value: jsonSet.value };
+                    delete this._attributes[key];
                 }
 
                 // Reset all params
