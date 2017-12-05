@@ -92,11 +92,11 @@ module.exports = {
                 return this;
             },
             fetch: function(next, fail) {
-                if(!WarpQuery._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Query');
+                if(!WarpObject._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Query');
                 var classRoute = this.className === 'user' ? 'users' : 'classes/' + this.className;
-                var request = WarpQuery._http.first(classRoute, this.id).then(function(item) {
+                var request = WarpObject._http.first(classRoute, this.id).then(function(item) {
                     var object = this;
-                    
+
                     for(var key in item)
                     {
                         // Get value
@@ -109,7 +109,7 @@ module.exports = {
                             if(value.type === 'Pointer')
                             {
                                 // Create pointer
-                                var pointerSubclass = WarpQuery._object.getSubclass(value.className);
+                                var pointerSubclass = WarpObject.getSubclass(value.className);
                                 var pointer = new pointerSubclass();
                                 
                                 // Set default className
