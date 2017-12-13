@@ -43,10 +43,6 @@ module.exports = {
                 // Check configurations
                 if(!WarpObject._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Query');
                 if(this._isNew) throw new WarpError(WarpError.Code.ForbiddenOperation, 'Users can only be created using `signUp`');
-                if(WarpUser._persistentSessions && WarpUser.current() && WarpUser.current().id != this.id) 
-                    throw new WarpError(WarpError.Code.ForbiddenOperation, 'Users can only edit their own data');
-                else if(WarpUser._persistentSessions && !WarpUser.current()) 
-                    throw new WarpError(WarpError.Code.ForbiddenOperation, 'Users can only edit their own data');
                 
                 if(!this._isDirty)
                 {
@@ -155,6 +151,9 @@ module.exports = {
                     WarpObject._http.unsetSessionToken();
             },
             _setCurrent: function(user) {
+                // Do not save locally if there is no storage API available
+                if(!this._persistentSessions) return;
+
                 // Check if user exists
                 if(!user)
                     return this._storage.removeItem('x-warp-user-current');
@@ -171,7 +170,7 @@ module.exports = {
                 return WarpObject._http.getSessionToken();
             },
             current: function() {
-                if(!this._persistentSessions) throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot get current user using the JS SDK for Node');
+                if(!this._persistentSessions) return null;
                 var stored = this._storage.getItem('x-warp-user-current');
                 if(!stored) return null;
                 

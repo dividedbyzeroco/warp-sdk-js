@@ -111,13 +111,13 @@ module.exports = {
                 throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot upload files using the JS SDK for Node');
             },
             logIn: function(args) {
-                throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot log in using the JS SDK for Node');
+                // TODO
             },
             logOut: function() {
-                throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot log out using the JS SDK for Node');
+                // TODO
             },
             current: function() {
-                throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot get current user using the JS SDK for Node');
+                // TODO
             }
         };
 

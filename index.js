@@ -20,17 +20,19 @@ var Warp = {
         this._apiKey = config.apiKey;
         this._baseURL = config.baseURL || this._baseURL;
 
-        // Check if http is client-side or server-side
-        if(config.environment == 'server')
-            this._http = require('./http-server').extend();
-        else
-            this._http = require('./http').extend();
-
         // Prepare classes
         this.Object = require('./object').extend();
         this.Query = require('./query').extend();
         this.User = require('./user').extend(this.Object);
         this.Function = require('./function').extend();
+        
+        // Check if http is client-side or server-side
+        if(config.environment == 'server') {
+            this._http = require('./http-server').extend();
+            this.User._persistentSessions = false;
+        }
+        else
+            this._http = require('./http').extend();
         
         // Prepare http
         this._http.initialize({ 
@@ -60,6 +62,7 @@ var Warp = {
         WarpNode._http.initialize(api);
         WarpNode._initializeClasses();
         WarpNode.User._persistentSessions = false;
+        WarpNode.User._hasSuperAccess = true;
         
         return WarpNode;
     },
@@ -73,23 +76,25 @@ var Warp = {
         WarpSubclass._baseURL = config.baseURL || this._baseURL;
         WarpSubclass._timeout = config.timeout;
 
-        // Check if http is client-side or server-side
-        if(config.environment == 'server')
-            WarpSubclass._http = require('./http-server').extend();
-        else
-            WarpSubclass._http = require('./http').extend();
-
         // Prepare classes
         WarpSubclass.Object = require('./object').extend();
         WarpSubclass.Query = require('./query').extend();
         WarpSubclass.User = require('./user').extend(WarpSubclass.Object);
         WarpSubclass.Function = require('./function').extend();
         
+        // Check if http is client-side or server-side
+        if(config.environment == 'server') {
+            WarpSubclass._http = require('./http-server').extend();
+            WarpSubclass.User._persistentSessions = false;
+        }
+        else
+            WarpSubclass._http = require('./http').extend();
+        
         // Prepare http
         WarpSubclass._http.initialize({ 
             apiKey: WarpSubclass._apiKey, 
             baseURL: WarpSubclass._baseURL,
-            timeout: WarpSubclass.timeout
+            timeout: WarpSubclass._timeout
         });
 
         // Copy storage library
