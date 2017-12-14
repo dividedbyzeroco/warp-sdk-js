@@ -192,7 +192,7 @@ module.exports = {
                     if(!result)
                         throw new WarpError(WarpError.Code.InvalidSessionToken, 'Session does not exist');
                     
-                    var first = this._api._getUserModel().first(result.user_id, include);
+                    var first = this._api._getUserModel().first(result.user_id);
                     return first;
                 }.bind(this));
             }
