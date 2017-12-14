@@ -2,6 +2,8 @@
 var Promise = require('promise');
 var _ = require('underscore');
 var WarpError = require('./error');
+var WarpSecurity = require('./security');
+var Storage = require('./storage-node');
 
 // Utils classes
 var KeyMap = function(keys) {
@@ -23,18 +25,20 @@ module.exports = {
         // Class constructor
         var Http = {
             _api: null,
+            _storage: null,
             initialize: function(api) {
                 if(!api) throw new WarpError(WarpError.Code.MissingConfiguration, 'API must be set');
                 this._api = api;
+                this._storage = Storage.extend();
             },
             setSessionToken: function(sessionToken) {
-                return;
+                this._storage.setItem('x-warp-session-token', sessionToken);
             },
             unsetSessionToken: function() {
-                return;
+                this._storage.removeItem('x-warp-session-token');
             },
             getSessionToken: function() {
-                return null;
+                return this._storage.getItem('x-warp-session-token');
             },
             find: function(endpoint, args) {
                 var className = endpoint.replace('classes/', '');
@@ -111,13 +115,85 @@ module.exports = {
                 throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot upload files using the JS SDK for Node');
             },
             logIn: function(args) {
-                // TODO
+                var username = args.username;
+                var email = args.email;
+                var password = args.password.toString();
+                var origin = 'Warp-SDK-JS';
+                
+                var query = new this._api.Query.View(this._api._getUserModel().className);
+                
+                query.select({
+                    'id': 'id', 
+                    'password': 'password'
+                });
+        
+                if(username)
+                {
+                    query.where({
+                        'username': { 'eq' : username }
+                    });
+                }
+                else
+                {
+                    query.where({
+                        'email': { 'eq': email }
+                    });
+                }
+        
+                return query.first(function(user) 
+                {
+                    if(user && WarpSecurity.validate(password, user.password))
+                    {
+                        var fields = {
+                            'user': {
+                                type: 'Pointer',
+                                className: this._api._getUserModel().className,
+                                id: user.id
+                            },
+                            'origin': origin
+                        };
+                        
+                        return this._api._getSessionModel().create({ fields: fields });
+                    }
+                    else
+                    {
+                        throw new WarpError(WarpError.Code.InvalidCredentials, 'Invalid username/password');
+                    }
+                }.bind(this))
+                .then(function(result) {
+                    return this._api._getSessionModel().first(result.id);
+                }.bind(this));
             },
             logOut: function() {
-                // TODO
+                var sessionToken = this.getSessionToken();
+                var query = new this._api.Query.View(this._api._getSessionModel().className);
+                
+                return query.where({ 'session_token': { 'eq' : sessionToken }, 'revoked_at': { 'gt': moment().tz('UTC').format('YYYY-MM-DD HH:mm:ss') } })
+                .first(function(session) 
+                {
+                    if(!session)
+                    {
+                        throw new WarpError(WarpError.Code.InvalidSessionToken, 'Session does not exist');
+                    }
+                    
+                    var action = new this._api.Query.Action(this._api._getSessionModel().className, session.id);
+                    
+                    return action.fields({ 'revoked_at': moment().tz('UTC').format('YYYY-MM-DD HH:mm:ss') }).update();
+                }.bind(this));
             },
             current: function() {
-                // TODO
+                var sessionToken = this.getSessionToken();
+                var query = new this._api.Query.View(this._api._getSessionModel().className);
+                
+                return query.where({ 'session_token': { 'eq' : sessionToken }, 'revoked_at': { 'gt': moment().tz('UTC').format('YYYY-MM-DD HH:mm:ss') } })
+                .first(function(result) 
+                {
+                    if(!result)
+                        throw new WarpError(WarpError.Code.InvalidSessionToken, 'Session does not exist');
+                    
+                    var first = this._api._getUserModel().first(result.user_id, include);
+                    return first;
+                }.bind(this));
             }
         };
 

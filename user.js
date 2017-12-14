@@ -151,9 +151,6 @@ module.exports = {
                     WarpObject._http.unsetSessionToken();
             },
             _setCurrent: function(user) {
-                // Do not save locally if there is no storage API available
-                if(!this._persistentSessions) return;
-
                 // Check if user exists
                 if(!user)
                     return this._storage.removeItem('x-warp-user-current');
@@ -170,7 +167,6 @@ module.exports = {
                 return WarpObject._http.getSessionToken();
             },
             current: function() {
-                if(!this._persistentSessions) return null;
                 var stored = this._storage.getItem('x-warp-user-current');
                 if(!stored) return null;
                 

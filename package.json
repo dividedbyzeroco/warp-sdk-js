@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/dividedbyzeroco/warp-sdk-js#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "moment-timezone": "^0.5.4",
     "promise": "^7.1.1",
     "request": "^2.34.0",

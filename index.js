@@ -62,7 +62,6 @@ var Warp = {
         WarpNode._http.initialize(api);
         WarpNode._initializeClasses();
         WarpNode.User._persistentSessions = false;
-        WarpNode.User._hasSuperAccess = true;
         
         return WarpNode;
     },

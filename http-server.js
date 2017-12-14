@@ -2,6 +2,7 @@
 var Promise = require('promise');
 var _ = require('underscore');
 var WarpError = require('./error');
+var Storage = require('./storage-node');
 var request = require('request-promise');
 
 module.exports = {
@@ -101,13 +102,13 @@ module.exports = {
                 this._baseURL = config.baseURL || this._baseURL;
             },    
             setSessionToken: function(sessionToken) {
-                return;
+                this._storage.setItem('x-warp-session-token', sessionToken);
             },
             unsetSessionToken: function() {
-                return;
+                this._storage.removeItem('x-warp-session-token');
             },
             getSessionToken: function() {
-                return null;
+                return this._storage.getItem('x-warp-session-token');
             },
             find: function(endpoint, args) {
                 return this._request('GET', endpoint, args);
