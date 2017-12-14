@@ -62,6 +62,9 @@ var Warp = {
         WarpNode._http.initialize(api);
         WarpNode._initializeClasses();
         WarpNode.User._persistentSessions = false;
+
+        // Copy storage library
+        WarpNode.User._storage = WarpNode._http._storage;
         
         return WarpNode;
     },

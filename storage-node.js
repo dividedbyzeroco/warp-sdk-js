@@ -1,6 +1,6 @@
 // Prepare class
 var Storage = {
-    extend: function(options) {
+    extend: function() {
         var _store = {};
         return {
             getItem: function(name) {
