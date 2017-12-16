@@ -11,6 +11,7 @@ module.exports = {
         var Http = {
             _baseURL: 'api/1/',
             _apiKey: null,
+            _storage: null,
             _request: function(method, url, args, isRaw) {
                 // Make sure configurations are made
                 if(!method || !url)
@@ -100,6 +101,7 @@ module.exports = {
                 if(!config.apiKey) throw new WarpError(WarpError.Code.MissingConfiguration, 'API Key must be set');
                 this._apiKey = config.apiKey;
                 this._baseURL = config.baseURL || this._baseURL;
+                this._storage = Storage.extend();
             },    
             setSessionToken: function(sessionToken) {
                 this._storage.setItem('x-warp-session-token', sessionToken);
