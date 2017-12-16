@@ -188,9 +188,7 @@ module.exports = {
                 };
                 
                 // Prepare request chain
-                var request = this.logOut().then(function() {
-                    return WarpObject._http.logIn(credentials);
-                })
+                var request = WarpObject._http.logIn(credentials)
                 .then(function(result) {
                     this._setSessionToken(result.session_token);
                     return WarpObject._http.current('users/me');
