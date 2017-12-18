@@ -87,7 +87,6 @@ var Warp = {
         // Check if http is client-side or server-side
         if(config.environment == 'server') {
             WarpSubclass._http = require('./http-server').extend();
-            WarpSubclass.User._persistentSessions = false;
         }
         else
             WarpSubclass._http = require('./http').extend();

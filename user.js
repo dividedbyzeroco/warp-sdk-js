@@ -6,6 +6,7 @@ module.exports = {
     extend: function(WarpObject) {
         // Prepare class
         var WarpUser = WarpObject.extend('user', {        
+            _sessionToken: null,
             _getEndpoint: function() {
                 return 'users';
             },
@@ -23,6 +24,9 @@ module.exports = {
             },
             setPassword: function(value) {
                 return this.set('password', value);
+            },
+            getSessionToken: function() {
+                return this._sessionToken;
             },
             signUp: function(next, fail) {
                 // Check configurations
@@ -164,9 +168,13 @@ module.exports = {
                 this._storage.setItem('x-warp-user-current', stored);
             },
             getSessionToken: function() {
+                if(!this._persistentSessions) 
+                    throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot use `Warp.User.getSessionToken()` for stateless sessions. Use `.getSessionToken()` directly from the `user` instance instead.');
                 return WarpObject._http.getSessionToken();
             },
             current: function() {
+                if(!this._persistentSessions) 
+                    throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot use `current` for stateless sessions');
                 var stored = this._storage.getItem('x-warp-user-current');
                 if(!stored) return null;
                 
@@ -188,9 +196,11 @@ module.exports = {
                 };
                 
                 // Prepare request chain
+                var sessionToken = null;
                 var request = WarpObject._http.logIn(credentials)
                 .then(function(result) {
-                    this._setSessionToken(result.session_token);
+                    sessionToken = result.session_token;
+                    this._setSessionToken(sessionToken);
                     return WarpObject._http.current('users/me');
                 }.bind(this))
                 .then(function(result) {
@@ -198,8 +208,9 @@ module.exports = {
                     user.id = result.id;
                     user.createdAt = result.created_at;
                     user.updatedAt = result.updated_at;
+                    user._sessionToken = sessionToken;
                     this._setCurrent(user);
-                    return this.current();
+                    return user;
                 }.bind(this));
                 
                 // Check params
@@ -220,8 +231,9 @@ module.exports = {
                     user.id = result.id;
                     user.createdAt = result.created_at;
                     user.updatedAt = result.updated_at;
+                    user._sessionToken = sessionToken;
                     this._setCurrent(user);
-                    return this.current();
+                    return user;
                 }.bind(this));
                 
                 // Check params
