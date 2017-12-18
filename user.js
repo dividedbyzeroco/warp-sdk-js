@@ -148,6 +148,7 @@ module.exports = {
         }, {
             _storage: null,
             _persistentSessions: true,
+            _currentUser: null,
             _setSessionToken: function(sessionToken) {
                 if(sessionToken)
                     WarpObject._http.setSessionToken(sessionToken);
@@ -175,6 +176,9 @@ module.exports = {
             current: function() {
                 if(!this._persistentSessions) 
                     throw new WarpError(WarpError.Code.ForbiddenOperation, 'Cannot use `current` for stateless sessions');
+
+                if(this._currentUser) return this._currentUser;
+
                 var stored = this._storage.getItem('x-warp-user-current');
                 if(!stored) return null;
                 
@@ -185,7 +189,8 @@ module.exports = {
                 current.updatedAt = keys.updated_at;
                 current._isNew = false;
                 current._isDirty = false;
-                return current;
+                this._currentUser = current;
+                return this._currentUser;
             },
             logIn: function(username, password, next, fail) {
                 // Check configurations
@@ -209,6 +214,8 @@ module.exports = {
                     user.createdAt = result.created_at;
                     user.updatedAt = result.updated_at;
                     user._sessionToken = sessionToken;
+                    user._isNew = false;
+                    user._isDirty = false;
                     this._setCurrent(user);
                     return user;
                 }.bind(this));
@@ -232,6 +239,8 @@ module.exports = {
                     user.createdAt = result.created_at;
                     user.updatedAt = result.updated_at;
                     user._sessionToken = sessionToken;
+                    user._isNew = false;
+                    user._isDirty = false;
                     this._setCurrent(user);
                     return user;
                 }.bind(this));
