@@ -38,7 +38,7 @@ module.exports = {
                     var username = this._attributes.username;
                     var password = this._attributes.password;
                     this.set('password', undefined);
-                    return WarpUser.logIn(username, password, next, fail);
+                    return WarpUser.logIn(username, password, next, fail, this);
                 }.bind(this));
                 
                 return request;
@@ -192,7 +192,7 @@ module.exports = {
                 this._currentUser = current;
                 return this._currentUser;
             },
-            logIn: function(username, password, next, fail) {
+            logIn: function(username, password, next, fail, _userInstance) {
                 // Check configurations
                 if(!WarpObject._http) throw new WarpError(WarpError.Code.MissingConfiguration, 'Missing HTTP for Query');
                 var credentials = {
@@ -210,6 +210,7 @@ module.exports = {
                 }.bind(this))
                 .then(function(result) {
                     var user = new this(result);
+                    if(_userInstance) user = _userInstance;
                     user.id = result.id;
                     user.createdAt = result.created_at;
                     user.updatedAt = result.updated_at;
