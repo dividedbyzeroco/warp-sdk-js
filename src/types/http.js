@@ -16,6 +16,8 @@ export type HttpConfigType = {
     masterKey?: string,
     serverURL?: string,
     api?: Object,
+    sessionToken?: string,
+    currentUser?: Object,
     timeout?: number,
     maxRequests?: number
 };

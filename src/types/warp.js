@@ -8,6 +8,7 @@ export type WarpOptionsType = {
     serverURL?: string,
     api?: Object,
     sessionToken?: string,
+    currentUser?: Object,
     platform?: string,
     timeout?: number,
     maxRequests?: number,

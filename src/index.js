@@ -30,7 +30,12 @@ class Warp {
     _user: typeof User;
     _function: typeof _Function;
 
-    constructor({ platform = 'browser', apiKey, masterKey, serverURL, api, sessionToken, timeout = 10, maxRequests = 6, supportLegacy = false }: WarpOptionsType) {
+    constructor({ 
+        platform = 'browser', 
+        apiKey, masterKey, serverURL, 
+        api, sessionToken, currentUser,
+        timeout = 10, maxRequests = 6, supportLegacy = false 
+    }: WarpOptionsType) {
         
         // If platform is 'browser'
         if(platform === 'browser') {
@@ -60,13 +65,14 @@ class Warp {
                 throw new Error(Error.Code.MissingConfiguration, '`api` must be provided when using the api platform');
 
             // Set http
-            this._http = Http.use('api', { api });
+            this._http = Http.use('api', { api, sessionToken, currentUser });
 
             // Set storage
             this._storage = Storage.use('api', { prefix: api.apiKey });
 
-            // Set session token
-            this._storage.set(InternalKeys.Auth.SessionToken, sessionToken);
+            // Set session token and currentUser
+            if(typeof sessionToken !== 'undefined') this._storage.set(InternalKeys.Auth.SessionToken, sessionToken);
+            if(typeof currentUser !== 'undefined') this._storage.set(InternalKeys.Auth.User, JSON.stringify(currentUser.toJSON()));
         }
 
         // Set legacy support

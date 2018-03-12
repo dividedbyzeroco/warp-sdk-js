@@ -20,23 +20,25 @@ import type {
  export default class APIHttpAdapter implements IHttpAdapter {
 
     _api: Object;
-    _sessionToken: string;
-    _currentUser: Object;
+    _sessionToken: string | void;
+    _currentUser: Object | void;
 
     constructor(config: HttpConfigType): void {
         // Get params
-        const { api }  = config;
+        const { api, sessionToken, currentUser }  = config;
 
         if(typeof api === 'undefined')
             throw new Error(Error.Code.MissingConfiguration, '`api` must be provided for the api platform');
 
-        // Set controller
+        // Set api, sessionToken and currentUser
         this._api = api;
+        this._sessionToken = sessionToken;
+        this._currentUser = currentUser;
     }
 
     async logIn({ username, email, password }: LogInOptionsType): Promise<Object> {
         // Log in
-        let result: Object = (await this._api.userController.logIn({ username, email, password })).toJSON();
+        let result: Object = (await this._api._userController.logIn({ username, email, password })).toJSON();
         
         // Return result
         return result;
@@ -47,7 +49,7 @@ import type {
         const currentUser = this._getCurrentUser(sessionToken);
 
         // Fetch current user
-        let result: Object = (await this._api.userController.me({ currentUser })).toJSON();
+        let result: Object = (await this._api._userController.me({ currentUser })).toJSON();
         
         // Return result
         return result;
@@ -58,7 +60,7 @@ import type {
         const currentUser = this._getCurrentUser(sessionToken);
         
         // Log out
-        let result: Object = (await this._api.userController.logOut({ currentUser })).toJSON();
+        let result: Object = (await this._api._userController.logOut({ currentUser })).toJSON();
         
         // Return result
         return result;
@@ -76,11 +78,11 @@ import type {
         // Fetch objects
         let result: Array<Object>;
         if(className === InternalKeys.Auth.User) 
-            result = (await this._api.userController.find({ select, include, where, sort, skip, limit })).toJSON();
+            result = (await this._api._userController.find({ select, include, where, sort, skip, limit })).toJSON();
         else if(className === InternalKeys.Auth.Session) 
-            result = (await this._api.sessionController.find({ select, include, where, sort, skip, limit })).toJSON();
+            result = (await this._api._sessionController.find({ select, include, where, sort, skip, limit })).toJSON();
         else
-            result = (await this._api.classController.find({ className, select, include, where, sort, skip, limit })).toJSON();
+            result = (await this._api._classController.find({ className, select, include, where, sort, skip, limit })).toJSON();
         
         // Return result
         return result;
@@ -90,11 +92,11 @@ import type {
         // Get object
         let result: Array<Object>;
         if(className === InternalKeys.Auth.User) 
-            result = (await this._api.userController.get({ select, include, id })).toJSON();
+            result = (await this._api._userController.get({ select, include, id })).toJSON();
         else if(className === InternalKeys.Auth.Session) 
-            result = (await this._api.sessionController.get({ select, include, id })).toJSON();
+            result = (await this._api._sessionController.get({ select, include, id })).toJSON();
         else
-            result = (await this._api.classController.get({ className, select, include, id })).toJSON();
+            result = (await this._api._classController.get({ className, select, include, id })).toJSON();
         
         // Return result
         return result;
@@ -109,15 +111,15 @@ import type {
 
         if(typeof id === 'undefined') {
             if(className === InternalKeys.Auth.User) 
-                result = (await this._api.userController.create({ currentUser, keys })).toJSON();
+                result = (await this._api._userController.create({ currentUser, keys })).toJSON();
             else
-                result = (await this._api.classController.create({ currentUser, className, keys })).toJSON();
+                result = (await this._api._classController.create({ currentUser, className, keys })).toJSON();
         }
         else {
             if(className === InternalKeys.Auth.User) 
-                result = (await this._api.userController.update({ currentUser, keys, id })).toJSON();
+                result = (await this._api._userController.update({ currentUser, keys, id })).toJSON();
             else
-                result = (await this._api.classController.update({ currentUser, className, keys, id })).toJSON();
+                result = (await this._api._classController.update({ currentUser, className, keys, id })).toJSON();
         }
         // Return result
         return result;
@@ -130,9 +132,9 @@ import type {
         // Destroy object
         let result: Array<Object>;
         if(className === InternalKeys.Auth.User) 
-            result = (await this._api.userController.destroy({ currentUser, id })).toJSON();
+            result = (await this._api._userController.destroy({ currentUser, id })).toJSON();
         else
-            result = (await this._api.classController.destroy({ currentUser, className, id })).toJSON();
+            result = (await this._api._classController.destroy({ currentUser, className, id })).toJSON();
         
         // Return result
         return result;
