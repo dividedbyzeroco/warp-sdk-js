@@ -2,7 +2,6 @@
 /**
  * References
  */
-import 'babel-polyfill';
 import enforce from 'enforce-js';
 import _Object from './classes/object';
 import Query from './classes/query';
