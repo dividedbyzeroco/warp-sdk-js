@@ -1,0 +1,16 @@
+{
+    "presets": [
+      "es2015",
+      "flow",
+      [
+        "env", {
+          "targets": {
+            "browsers": ["last 2 versions", "safari >= 7"]
+          }
+        }
+      ]
+    ],
+    "retainLines": true,  
+    "plugins": ["transform-class-properties", "transform-object-rest-spread"]
+  }
+  
