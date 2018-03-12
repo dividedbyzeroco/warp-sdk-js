@@ -20,6 +20,8 @@ import type {
  export default class APIHttpAdapter implements IHttpAdapter {
 
     _api: Object;
+    _sessionToken: string;
+    _currentUser: Object;
 
     constructor(config: HttpConfigType): void {
         // Get params
@@ -148,7 +150,17 @@ import type {
     }    
 
     async _getCurrentUser(sessionToken: string | void) {
-        const user = await this._api.authenticate({ sessionToken });
-        return user;
+        // Check if session token changed
+        if(this._sessionToken === sessionToken)
+            return this._currentUser;
+         
+        // Otherwise, set the new session token
+        if(typeof sessionToken !== 'undefined') {
+            this._sessionToken = sessionToken;
+            this._currentUser = await this._api.authenticate({ sessionToken });
+        }
+
+        // Return the current user
+        return this._currentUser;
     }
  }
