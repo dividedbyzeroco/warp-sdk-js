@@ -133,29 +133,28 @@ export default class Query {
         return this;
     }
 
-    // TODO
-    foundIn(key: string, value: Object): this {
+    foundIn(key: string, select: string, value: Object): this {
         this._set(key, Constraints.FoundIn, value);
         return this;
     }
 
-    foundInEither(key: string, value: Object): this {
-        this._set(key, Constraints.FoundInEither, value);
+    foundInEither(key: string, select: string, value: Object): this {
+        this._set(key, Constraints.FoundInEither, value.toSubquery(select));
         return this;
     }
 
-    foundInAll(key: string, value: Object): this {
-        this._set(key, Constraints.FoundInAll, value);
+    foundInAll(key: string, select: string, value: Object): this {
+        this._set(key, Constraints.FoundInAll, value.toSubquery(select));
         return this;
     }
 
-    notFoundIn(key: string, value: Object): this {
-        this._set(key, Constraints.NotFoundIn, value);
+    notFoundIn(key: string, select: string, value: Object): this {
+        this._set(key, Constraints.NotFoundIn, value.toSubquery(select));
         return this;
     }
 
-    notFoundInEither(key: string, value: Object): this {
-        this._set(key, Constraints.NotFoundInEither, value);
+    notFoundInEither(key: string, select: string, value: Object): this {
+        this._set(key, Constraints.NotFoundInEither, value.toSubquery(select));
         return this;
     }
 
@@ -321,5 +320,12 @@ export default class Query {
 
         // Return the object
         return object;
+    }
+
+    toSubquery(select: string) {
+        const className = this._class.prototype.className;
+        const where = this._where.toJSON();
+
+        return { className, where, select };
     }
 }
