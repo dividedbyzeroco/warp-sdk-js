@@ -6,12 +6,14 @@ import Error from '../../utils/error';
 import type { IStorageAdapter, StorageConfigType } from '../../types/storage';
 import BrowserStorageAdapter from './browser';
 import APIStorageAdapter from './api';
+import NodeStorageAdapter from './node';
 
 export default class Storage {
 
     static Platform = Object.freeze({
         'browser': BrowserStorageAdapter,
-        'api': APIStorageAdapter
+        'api': APIStorageAdapter,
+        'node': NodeStorageAdapter
     });
 
     /**

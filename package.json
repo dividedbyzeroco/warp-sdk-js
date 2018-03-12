@@ -30,6 +30,7 @@
   "homepage": "https://github.com/dividedbyzeroco/warp-sdk-js#readme",
   "dependencies": {
     "enforce-js": "^1.2.6",
+    "node-fetch": "^2.1.1",
     "rimraf": "^2.6.2"
   },
   "devDependencies": {

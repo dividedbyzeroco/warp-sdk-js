@@ -6,12 +6,14 @@ import Error from '../../utils/error';
 import type { IHttpAdapter, HttpConfigType } from '../../types/http';
 import BrowserHttpAdapter from './browser';
 import APIHttpAdapter from './api';
+import NodeHTTPAdapter from './node';
 
 export default class Http {
 
     static Platform = Object.freeze({
         'browser': BrowserHttpAdapter,
-        'api': APIHttpAdapter
+        'api': APIHttpAdapter,
+        'node': NodeHTTPAdapter
     });
 
     /**
