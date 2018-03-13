@@ -8,6 +8,8 @@ import Error from '../utils/error';
 import { InternalKeys } from '../utils/constants';
 import ConstraintMap, { Constraints } from '../utils/constraint-map';
 import Collection from '../utils/collection';
+import KeyMap from '../utils/key-map';
+import { toDatabaseDate } from '../utils/format';
 import type { IHttpAdapter } from '../types/http';
 import type { IStorageAdapter } from '../types/storage';
 
@@ -41,123 +43,263 @@ export default class Query {
             throw new Error(Error.Code.ForbiddenOperation, `\`className\` must be a string or a \`Warp.Object\``);
     }
 
+    /**
+     * Initialize the query
+     * @param {IHttpAdapter} http 
+     * @param {IStorageAdapter} storage 
+     */
     static initialize(http: IHttpAdapter, storage: IStorageAdapter) {
         this._http = http;
         this._storage = storage;
         return this;
     }
 
+    /**
+     * Set a key constraint
+     * @param {String} key 
+     * @param {String} constraint 
+     * @param {*} value 
+     */
     _set(key: string, constraint: string, value: any) {
+        // Enforce
         enforce`${{ key }} as a string`;
+
+        // Convert to string if value is a date
+        if(value instanceof Date) value = toDatabaseDate(value);
+
+        // Set the constraint
         this._where.set(key, constraint, value);
         return this;
     }
 
+    /**
+     * Assert that the key is an exact match to the given value
+     * @param {String} key 
+     * @param {*} value 
+     */
     equalTo(key: string, value: any): this {
         this._set(key, Constraints.EqualTo, value);
         return this;
     }
 
+    /**
+     * Assert that the key is not an exact match to the given value
+     * @param {String} key 
+     * @param {*} value 
+     */
     notEqualTo(key: string, value: any): this {
         this._set(key, Constraints.NotEqualTo, value);
         return this;
     }
 
+    /**
+     * Assert that the key is greater than the given value
+     * @param {String} key 
+     * @param {*} value 
+     */
     greaterThan(key: string, value: any): this {
         this._set(key, Constraints.GreaterThan, value);
         return this;
     }
 
+    /**
+     * Assert that the key is greater than or equal to the given value
+     * @param {String} key 
+     * @param {*} value 
+     */
     greaterThanOrEqualTo(key: string, value: any): this {
         this._set(key, Constraints.GreaterThanOrEqualTo, value);
         return this;
     }
 
+    /**
+     * Assert that the key is less than the given value
+     * @param {String} key 
+     * @param {*} value 
+     */
     lessThan(key: string, value: any): this {
         this._set(key, Constraints.LessThan, value);
         return this;
     }
 
+    /**
+     * Assert that the key is less than or equal to the given value
+     * @param {String} key 
+     * @param {*} value 
+     */
     lessThanOrEqualTo(key: string, value: any): this {
         this._set(key, Constraints.LessThanOrEqualTo, value);
         return this;
     }
 
+    /**
+     * Assert that the key is not null
+     * @param {String} key 
+     * @param {*} value 
+     */
     exists(key: string): this {
         this._set(key, Constraints.Exists, true);
         return this;
     }
 
+    /**
+     * Assert that the key is null
+     * @param {String} key 
+     * @param {*} value 
+     */
     doesNotExist(key: string): this {
         this._set(key, Constraints.Exists, false);
         return this;
     }
 
+    /**
+     * Assert that the key is one of the given values
+     * @param {String} key 
+     * @param {*} value 
+     */
     containedIn(key: string, value: Array<any>): this {
         this._set(key, Constraints.ContainedIn, value);
         return this;
     }
 
+    /**
+     * Assert that the key is not any of the given values
+     * @param {String} key 
+     * @param {*} value 
+     */
     notContainedIn(key: string, value: Array<any>): this {
         this._set(key, Constraints.NotContainedIn, value);
         return this;
     }
 
+    /**
+     * Assert that the key is either one of the values or is null
+     * @param {String} key 
+     * @param {*} value 
+     */
     containedInOrDoesNotExist(key: string, value: Array<any>): this {
         this._set(key, Constraints.ContainedInOrDoesNotExist, value);
         return this;
     }
 
+    /**
+     * Assert that the key starts with the given string
+     * @param {String} key 
+     * @param {*} value 
+     */
     startsWith(key: string, value: string): this {
         this._set(key, Constraints.StartsWith, value);
         return this;
     }
 
+    /**
+     * Assert that the key ends with the given string
+     * @param {String} key 
+     * @param {*} value 
+     */
     endsWith(key: string, value: string): this {
         this._set(key, Constraints.EndsWith, value);
         return this;
     }
 
+    /**
+     * Assert that the key contains the given string
+     * @param {String} key 
+     * @param {String} value 
+     */
     contains(key: string, value: string): this {
         this._set(key, Constraints.Contains, value);
         return this;
     }
 
+    /**
+     * Assert that the key contains either of the given strings
+     * @param {String} key 
+     * @param {*} value 
+     */
     containsEither(key: string, value: Array<string>): this {
         this._set(key, Constraints.ContainsEither, value);
         return this;
     }
 
+    /**
+     * Assert that the key contains all of the given strings
+     * @param {String} key 
+     * @param {*} value 
+     */
     containsAll(key: string, value: Array<string>): this {
         this._set(key, Constraints.ContainsAll, value);
         return this;
     }
 
+    /**
+     * Assert that the key matches a key in a subquery
+     * @param {String} key 
+     * @param {String} select 
+     * @param {Object} value 
+     */
     foundIn(key: string, select: string, value: Object): this {
-        this._set(key, Constraints.FoundIn, value);
+        this._set(key, Constraints.FoundIn, value.toSubquery(select));
         return this;
     }
 
-    foundInEither(key: string, select: string, value: Object): this {
-        this._set(key, Constraints.FoundInEither, value.toSubquery(select));
+    /**
+     * Assert that the key matches a key in any of the given subqueries
+     * @param {String} key
+     * @param {Array} value 
+     */
+    foundInEither(key: string, value: Array<Object>): this {
+        this._set(key, Constraints.FoundInEither, value.map(item => {
+            const select = Object.keys(item)[0];
+            const query = item[select];
+            return query.toSubquery(select);
+        }));
         return this;
     }
 
-    foundInAll(key: string, select: string, value: Object): this {
-        this._set(key, Constraints.FoundInAll, value.toSubquery(select));
+    /**
+     * Assert that the key matches a key in all of the given subqueries
+     * @param {String} key
+     * @param {Array} value 
+     */
+    foundInAll(key: string, value: Array<Object>): this {
+        this._set(key, Constraints.FoundInAll, value.map(item => {
+            const select = Object.keys(item)[0];
+            const query = item[select];
+            return query.toSubquery(select);
+        }));
         return this;
     }
 
+    /**
+     * Assert that the key does not match a key in the given subquery
+     * @param {String} key 
+     * @param {String} select 
+     * @param {Object} value 
+     */
     notFoundIn(key: string, select: string, value: Object): this {
         this._set(key, Constraints.NotFoundIn, value.toSubquery(select));
         return this;
     }
 
-    notFoundInEither(key: string, select: string, value: Object): this {
-        this._set(key, Constraints.NotFoundInEither, value.toSubquery(select));
+    /**
+     * Assert that the key does not match a key in all of the given subqueries
+     * @param {String} key
+     * @param {Array} value 
+     */
+    notFoundInEither(key: string, value: Object): this {
+        this._set(key, Constraints.NotFoundInEither, value.map(item => {
+            const select = Object.keys(item)[0];
+            const query = item[select];
+            return query.toSubquery(select);
+        }));
         return this;
     }
 
+    /**
+     * Select specific columns to query
+     * @param {String} keys
+     */
     select(...keys: Array<string>): this {
         // Check if first key is an array
         if(!keys) throw new Error(Error.Code.MissingConfiguration, 'Select key must be a string or an array of strings');
@@ -172,6 +314,10 @@ export default class Query {
         return this;
     }
 
+    /**
+     * Include pointer keys for the query
+     * @param {String} keys
+     */
     include(...keys: Array<string>): this {
         // Check if first key is an array
         if(!keys) throw new Error(Error.Code.MissingConfiguration, 'Include key must be a string or an array of strings');
@@ -185,6 +331,10 @@ export default class Query {
         return this;
     }
 
+    /**
+     * Sort the query by the provided keys in ascending order
+     * @param {String} keys
+     */
     sortBy(...keys: Array<string>) {
         // Check if first key is an array
         if(!keys) throw new Error(Error.Code.MissingConfiguration, 'SortBy key must be a string or an array of strings');
@@ -198,6 +348,10 @@ export default class Query {
         return this;
     }
 
+    /**
+     * Sort the query by the provided keys in descending order
+     * @param {String} keys
+     */
     sortByDescending(...keys: Array<string>) {
         // Check if first key is an array
         if(!keys) throw new Error(Error.Code.MissingConfiguration, 'SortByDescending key must be a string or an array of strings');
@@ -211,18 +365,30 @@ export default class Query {
         return this;
     }
 
+    /**
+     * Number of items to skip for the query
+     * @param {String} keys
+     */
     skip(value: number) {
         enforce`${{ skip: value }} as a number`;
         this._skip = value;
         return this;
     }
 
+    /**
+     * Number of items to fetch, at maximum
+     * @param {String} keys
+     */
     limit(value: number) {
         enforce`${{ limit: value }} as a number`;
         this._limit = value;
         return this;
     }
 
+    /**
+     * Find the Objects
+     * @param {Function} callback 
+     */
     async find(callback?: (result: Collection) => Promise<any>): Promise<Collection> {
         // Prepare params
         const sessionToken = this.constructor._storage.get(InternalKeys.Auth.SessionToken);
@@ -255,10 +421,11 @@ export default class Query {
 
             // Create a new object
             let objectClass = this._class;
-            let object = new objectClass(data);
+            let object = new objectClass();
 
-            // Automatically set the id and isDirty flag
+            // Automatically set the id, keys, and isDirty flag
             object._id = id;
+            object._keyMap = new KeyMap(data);
             object._isDirty = false;
 
             // Push the object
@@ -278,6 +445,10 @@ export default class Query {
         return collection;
     }
 
+    /**
+     * Get the first Object from the query
+     * @param {Function} callback 
+     */
     async first(callback?: (result: _Object | null) => Promise<any>): Promise<_Object | null> {
         // Prepare params
         this._skip = 0;
@@ -302,6 +473,10 @@ export default class Query {
         return object;
     }
 
+    /**
+     * Get an Object by its Id
+     * @param {Function} callback 
+     */
     async get(id: number): Promise<_Object> {
         // Prepare params
         const sessionToken = this.constructor._storage.get(InternalKeys.Auth.SessionToken);
@@ -322,6 +497,10 @@ export default class Query {
         return object;
     }
 
+    /**
+     * Convert the query into a subquery
+     * @param {String} select 
+     */
     toSubquery(select: string) {
         const className = this._class.prototype.className;
         const where = this._where.toJSON();

@@ -253,7 +253,7 @@ await shitzu.save();
 
 ## Queries
 
-Now that you have a collection of Objects inside your database, you would need a way to retrieve them. For Warp, you do this via the `Queries`.
+Now that you have a collection of Objects inside your database, you would need a way to retrieve them. For Warp, you do this via `Queries`.
 
 For example, if you want to query `dog` Objects, you would use the following code.
 
@@ -261,8 +261,11 @@ For example, if you want to query `dog` Objects, you would use the following cod
 // Prepare query
 const dogQuery = new Warp.Query('dog');
 
-// Use `.find()` to get all the objects in the `alien` table
+// Use `.find()` to get all the objects in the `dog` table
 const dogs = await dogQuery.find();
+
+// If you want to fetch a `dog` based on its id, use `get`
+const dog = await dogQuery.get(1);
 ```
 
 You now have a collection of `dogs` that you can play around with.
@@ -283,7 +286,7 @@ dogQuery.notEqualTo('name', 'Ringo');
 dogQuery.lessThan('age', 21);
 dogQuery.lessThanOrEqualTo('name', 'Zack');
 dogQuery.greaterThanOrEqualTo('weight', 30);
-dogQuery.greaterThan('created_at', '2018-03-12 17:30:00+00:00');
+dogQuery.greaterThan('created_at', '2018-03-12 17:30:00');
 
 // If you need to check if a field is null or not null
 dogQuery.exists('breed');

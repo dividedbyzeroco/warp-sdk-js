@@ -6,7 +6,7 @@ import enforce from 'enforce-js';
 import Error from '../utils/error';
 import { InternalKeys } from '../utils/constants';
 import KeyMap from '../utils/key-map';
-import { toCamelCase } from '../utils/format';
+import { toCamelCase, toDatabaseDate } from '../utils/format';
 import type { IHttpAdapter } from '../types/http';
 import type { IStorageAdapter } from '../types/storage';
 import type { JsonFunctionsType } from '../types/object';
@@ -25,8 +25,11 @@ export default class _Object {
     _isPointer: boolean;
 
     constructor(...args: Array<any>) {
+        // If there are arguments
         if(args.length > 0) {
+            // If the first argument is a string
             if(typeof args[0] === 'string') {
+                // If the className has already been defined
                 if(typeof this.className !== 'undefined')
                     throw new Error(Error.Code.ForbiddenOperation, `A className has already been defined for the Warp Object`);
 
@@ -36,10 +39,11 @@ export default class _Object {
                 // Set keys
                 if(args.length > 1 && typeof args[1] === 'object' && args[1] !== null) {
                     const keys: {[name: string]: any} = args[1];
-                    this._keyMap = new KeyMap(keys);
+                    this._setKeys(keys);
                     this._isDirty = true;
                 }
             }
+            // If the first argument is an object
             else if(typeof args[0] === 'object' && args[1] !== null) {
                 // Check if the class is a subclass
                 if(typeof this.className === 'undefined')
@@ -47,14 +51,21 @@ export default class _Object {
     
                 // Set keys
                 const keys: {[name: string]: any} = args[0];
-                this._keyMap = new KeyMap(keys);
+                this._setKeys(keys);
                 this._isDirty = true;
             }
         }
+        // If there are arguments and the className has not been defined
         else if(typeof this.className === 'undefined')
             throw new Error(Error.Code.MissingConfiguration, `The parameters for Warp Object are invalid`);
     }
 
+    /**
+     * Initialize the object
+     * @param {IHttpAdapter} http 
+     * @param {IStorageAdapter} storage 
+     * @param {Boolean} supportLegacy 
+     */
     static initialize(http: IHttpAdapter, storage: IStorageAdapter, supportLegacy: boolean): any {
         this._http = http;
         this._storage = storage;
@@ -62,12 +73,21 @@ export default class _Object {
         return this;
     }
 
+    /**
+     * Create a new Obejct with only the Id
+     * @param {Number} id 
+     * @param {String} className 
+     */
     static createWithoutData(id: number, className?: string) {
         const object = new this(className);
         object._id = id;
         return object;
     }
 
+    /**
+     * Convert an API Pointer to an Object
+     * @param {Object} value 
+     */
     static toObject(value: Object): this {
         const { id, attributes } = value;
         const object = this.createWithoutData(id);
@@ -80,6 +100,10 @@ export default class _Object {
         return object;
     }
 
+    /**
+     * Check if the provided value implements proper pointer definition
+     * @param {Object} value
+     */
     static pointerIsImplementedBy(value: Object) {
         if(value === null) return false;
         if(typeof value !== 'object') return false;
@@ -88,6 +112,10 @@ export default class _Object {
         return true;
     }
 
+    /**
+     * Check if the value implements proper specials definition
+     * @param {Object} value 
+     */
     static specialsIsImplementedBy(value: Object) {
         if(value === null) return false;
         if(typeof value !== 'object') return false;
@@ -95,8 +123,23 @@ export default class _Object {
         return true;
     }
 
+    /**
+     * Get the className
+     */
     get className(): string {
         return this._className;
+    }
+
+    /**
+     * Sets all the keys provided
+     * @param {Object} keys 
+     */
+    _setKeys(keys: {[name: string]: any}) {
+        // Loop through the keys
+        for(let key in keys) {
+            // Set the value using the set method
+            this.set(key, keys[key]);
+        }
     }
 
     /**
@@ -121,6 +164,9 @@ export default class _Object {
 
             // Set to pointer
             this._keyMap.set(key, value.toPointer().toJSON());
+        }
+        else if(value instanceof Date) {
+            this._keyMap.set(key, toDatabaseDate(value));
         }
         else this._keyMap.set(key, value);
 
@@ -157,6 +203,11 @@ export default class _Object {
         else return value;
     }
 
+    /**
+     * Atomically increase a key
+     * @param {String} key
+     * @param {Number} value
+     */
     increment(key: string, value: number) {
         // Enforce 
         enforce`${{value}} as a number`;
@@ -166,6 +217,11 @@ export default class _Object {
         this._keyMap.set(key, increment);
     }
 
+    /**
+     * Perform JSON operations on the key
+     * > NOTE: This is only applicable for MySQL 5.7 and up
+     * @param {String} key 
+     */
     json(key: string): JsonFunctionsType {
         const keyMap = this._keyMap;
 
@@ -189,22 +245,37 @@ export default class _Object {
         };
     }
 
+    /**
+     * Get Id
+     */
     get id(): number {
         return this._id;
     }
 
+    /**
+     * Get CreatedAt
+     */
     get createdAt(): string {
         return this._keyMap.get(InternalKeys.Timestamps.CreatedAt);
     }
 
+    /**
+     * Get UpdatedAt
+     */
     get updatedAt(): string {
         return this._keyMap.get(InternalKeys.Timestamps.UpdatedAt);
     }
 
+    /**
+     * Get DeletedAt
+     */
     get deletedAt(): string {
         return this._keyMap.get(InternalKeys.Timestamps.DeletedAt);
     }
 
+    /**
+     * Save the Object
+     */
     async save(): Promise<this> {
         // Check if data is dirty/unsaved
         if(!this._isDirty) return this;
@@ -227,6 +298,9 @@ export default class _Object {
         return this;
     }
 
+    /**
+     * Destroy the Object
+     */
     async destroy(): Promise<this> {
         // Prepare params
         const sessionToken = this.constructor._storage.get(InternalKeys.Auth.SessionToken);
@@ -249,6 +323,9 @@ export default class _Object {
         return this;
     }
 
+    /**
+     * Fetch the latest copy of the Object
+     */
     async fetch() {
         // Prepare params
         const sessionToken = this.constructor._storage.get('sessionToken');
@@ -264,11 +341,17 @@ export default class _Object {
         return this;
     }
 
+    /**
+     * Set the Pointer flag
+     */
     toPointer(): this {
         this._isPointer = true;
         return this;
     }
 
+    /**
+     * Convert Object into an object literal
+     */
     toJSON(): Object {
         // Get keys
         const { id, createdAt, updatedAt } = this;

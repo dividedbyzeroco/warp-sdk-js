@@ -105,21 +105,24 @@ import type {
     async save({ sessionToken, className, keys, id }: SaveOptionsType): Promise<Object> {
         // Get current user
         const currentUser = this._getCurrentUser(sessionToken);
+        
+        // Prepare metadata
+        const metadata = { isMaster: true };
 
         // Save objects
         let result: Array<Object>;
 
         if(typeof id === 'undefined') {
             if(className === InternalKeys.Auth.User) 
-                result = (await this._api._userController.create({ currentUser, keys })).toJSON();
+                result = (await this._api._userController.create({ metadata, currentUser, keys })).toJSON();
             else
-                result = (await this._api._classController.create({ currentUser, className, keys })).toJSON();
+                result = (await this._api._classController.create({ metadata, currentUser, className, keys })).toJSON();
         }
         else {
             if(className === InternalKeys.Auth.User) 
-                result = (await this._api._userController.update({ currentUser, keys, id })).toJSON();
+                result = (await this._api._userController.update({ metadata, currentUser, keys, id })).toJSON();
             else
-                result = (await this._api._classController.update({ currentUser, className, keys, id })).toJSON();
+                result = (await this._api._classController.update({ metadata, currentUser, className, keys, id })).toJSON();
         }
         // Return result
         return result;
@@ -129,12 +132,15 @@ import type {
         // Get current user
         const currentUser = this._getCurrentUser(sessionToken);
         
+        // Prepare metadata
+        const metadata = { isMaster: true };
+        
         // Destroy object
         let result: Array<Object>;
         if(className === InternalKeys.Auth.User) 
-            result = (await this._api._userController.destroy({ currentUser, id })).toJSON();
+            result = (await this._api._userController.destroy({ metadata, currentUser, id })).toJSON();
         else
-            result = (await this._api._classController.destroy({ currentUser, className, id })).toJSON();
+            result = (await this._api._classController.destroy({ metadata, currentUser, className, id })).toJSON();
         
         // Return result
         return result;
