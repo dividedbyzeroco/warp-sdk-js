@@ -3,17 +3,14 @@
   "version": "5.0.6",
   "description": "Warp JavaScript SDK",
   "main": "./dist/index.js",
+  "typings": "./dist/index.d.js",
   "scripts": {
-    "build": "node ./node_modules/babel-cli/bin/babel.js src -d dist",
-    "copy-flow": "node ./node_modules/flow-copy-source/bin/flow-copy-source.js src dist",
+    "build": "tsc",
     "package": "webpack dist/index.js --output pack/index.js",
     "clean": "node ./node_modules/rimraf/bin dist",
-    "test": "npm run clean && npm run build && mocha --require babel-core/register",
-    "quicktest": "mocha --require babel-core/register",
-    "flow": "flow check",
+    "test": "mocha --require babel-core/register",
     "lint": "eslint src/**",
-    "lint:auto": "nodemon -w src/ --exec eslint src/**",
-    "prepublish": "npm run clean && npm run build && npm run copy-flow && npm run package"
+    "prepublish": "npm run clean && npm run build && npm run package"
   },
   "repository": {
     "type": "git",
@@ -30,26 +27,14 @@
   },
   "homepage": "https://github.com/dividedbyzeroco/warp-sdk-js#readme",
   "dependencies": {
-    "babel-runtime": "^6.26.0",
     "enforce-js": "^1.2.6",
     "node-fetch": "^2.1.1",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "warp-server": "^5.1.15"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.2.1",
-    "babel-plugin-shebang": "0.0.0",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-flow": "^6.23.0",
-    "babel-preset-stage-0": "^6.24.1",
     "chai": "^4.1.2",
     "eslint": "^4.16.0",
-    "eslint-plugin-flowtype": "^2.42.0",
-    "flow-copy-source": "^1.3.0",
     "mocha": "^5.0.1",
     "nodemon": "^1.10.0",
     "webpack": "^4.1.0",

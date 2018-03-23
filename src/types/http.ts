@@ -1,23 +1,29 @@
+import WarpServer from 'warp-server/typings';
+import { UserClass } from 'warp-server/typings/classes/user';
+
 // @flow
 export interface IHttpAdapter {
-    constructor(config: HttpConfigType): void;
-    logIn(options: LogInOptionsType): Promise<Object>;
-    become(options: BecomeOptionsType): Promise<Object>;
-    logOut(options: LogOutOptionsType): Promise<Object>;
-    find(options: FindOptionsType): Promise<Array<Object>>;
-    get(options: GetOptionsType): Promise<Object>;
-    save(options: SaveOptionsType): Promise<Object>;
-    destroy(options: DestroyOptionsType): Promise<Object>;
+    logIn(options: LogInOptionsType): Promise<object>;
+    become(options: BecomeOptionsType): Promise<object>;
+    logOut(options: LogOutOptionsType): Promise<object>;
+    find(options: FindOptionsType): Promise<Array<object>>;
+    get(options: GetOptionsType): Promise<object>;
+    save(options: SaveOptionsType): Promise<object>;
+    destroy(options: DestroyOptionsType): Promise<object>;
     run(options: RunOptionsType): Promise<any>;
+}
+
+export declare const IHttpAdapter: {
+    new(conig: HttpConfigType): IHttpAdapter;
 }
 
 export type HttpConfigType = {
     apiKey?: string,
     masterKey?: string,
     serverURL?: string,
-    api?: Object,
+    api?: WarpServer,
     sessionToken?: string,
-    currentUser?: Object,
+    currentUser?: UserClass,
     timeout?: number,
     maxRequests?: number
 };

@@ -1,9 +1,5 @@
-// @flow
-/**
- * Reference
- */
 import Error from '../../utils/error';
-import type { IHttpAdapter, HttpConfigType } from '../../types/http';
+import { IHttpAdapter, HttpConfigType } from '../../types/http';
 import BrowserHttpAdapter from './browser';
 import APIHttpAdapter from './api';
 import NodeHTTPAdapter from './node';

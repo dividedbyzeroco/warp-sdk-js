@@ -1,23 +1,19 @@
-// @flow
-/**
- * References
- */
 import enforce from 'enforce-js';
 import _Object from './object';
 import Error from '../utils/error';
-import { InternalKeys } from '../utils/constants';
-import ConstraintMap, { Constraints } from '../utils/constraint-map';
-import Collection from '../utils/collection';
 import KeyMap from '../utils/key-map';
+import Collection from '../utils/collection';
+import { InternalKeys } from '../utils/constants';
 import { toDatabaseDate } from '../utils/format';
-import type { IHttpAdapter } from '../types/http';
-import type { IStorageAdapter } from '../types/storage';
+import ConstraintMap, { Constraints } from '../utils/constraint-map';
+import { IHttpAdapter } from '../types/http';
+import { IStorageAdapter } from '../types/storage';
 
-export default class Query {
+export default class Query<T extends _Object> {
 
     static _http: IHttpAdapter;
     static _storage: IStorageAdapter;
-    _class: typeof _Object;
+    _class: { new(): _Object };
     _select: Array<string> = [];
     _include: Array<string> = [];
     _where: ConstraintMap = new ConstraintMap();
@@ -25,7 +21,7 @@ export default class Query {
     _skip: number;
     _limit: number;
 
-    constructor(className: typeof _Object | string) {
+    constructor(className: { new(): T } | string) {
         // Check if className is a string
         if(typeof className === 'string') {
             // Get the name as a string
@@ -48,10 +44,14 @@ export default class Query {
      * @param {IHttpAdapter} http 
      * @param {IStorageAdapter} storage 
      */
-    static initialize(http: IHttpAdapter, storage: IStorageAdapter) {
+    static initialize<Q extends typeof Query>(http: IHttpAdapter, storage: IStorageAdapter): Q {
         this._http = http;
         this._storage = storage;
-        return this;
+        return this as Q;
+    }
+
+    statics<Q extends typeof Query>(): Q {
+        return this.constructor as Q;
     }
 
     /**
@@ -65,7 +65,7 @@ export default class Query {
         enforce`${{ key }} as a string`;
 
         // Convert to string if value is a date
-        if(value instanceof Date) value = toDatabaseDate(value);
+        if(value instanceof Date) value = toDatabaseDate(value.toISOString());
 
         // Set the constraint
         this._where.set(key, constraint, value);
@@ -238,7 +238,7 @@ export default class Query {
      * @param {String} select 
      * @param {Object} value 
      */
-    foundIn(key: string, select: string, value: Object): this {
+    foundIn(key: string, select: string, value: Query<_Object>): this {
         this._set(key, Constraints.FoundIn, value.toSubquery(select));
         return this;
     }
@@ -248,7 +248,7 @@ export default class Query {
      * @param {String} key
      * @param {Array} value 
      */
-    foundInEither(key: string, value: Array<Object>): this {
+    foundInEither(key: string, value: Array<Query<_Object>>): this {
         this._set(key, Constraints.FoundInEither, value.map(item => {
             const select = Object.keys(item)[0];
             const query = item[select];
@@ -262,7 +262,7 @@ export default class Query {
      * @param {String} key
      * @param {Array} value 
      */
-    foundInAll(key: string, value: Array<Object>): this {
+    foundInAll(key: string, value: Array<Query<_Object>>): this {
         this._set(key, Constraints.FoundInAll, value.map(item => {
             const select = Object.keys(item)[0];
             const query = item[select];
@@ -277,7 +277,7 @@ export default class Query {
      * @param {String} select 
      * @param {Object} value 
      */
-    notFoundIn(key: string, select: string, value: Object): this {
+    notFoundIn(key: string, select: string, value: Query<_Object>): this {
         this._set(key, Constraints.NotFoundIn, value.toSubquery(select));
         return this;
     }
@@ -287,7 +287,7 @@ export default class Query {
      * @param {String} key
      * @param {Array} value 
      */
-    notFoundInEither(key: string, value: Object): this {
+    notFoundInEither(key: string, value: Array<Object>): this {
         this._set(key, Constraints.NotFoundInEither, value.map(item => {
             const select = Object.keys(item)[0];
             const query = item[select];
@@ -300,10 +300,10 @@ export default class Query {
      * Select specific columns to query
      * @param {String} keys
      */
-    select(...keys: Array<string>): this {
+    select(...keys: Array<any>): this {
         // Check if first key is an array
         if(!keys) throw new Error(Error.Code.MissingConfiguration, 'Select key must be a string or an array of strings');
-        const keyList = keys[0] instanceof Array? keys[0] : keys;
+        const keyList: Array<string> = keys[0] instanceof Array? keys[0] : keys;
 
         // Loop through the keys
         for(let key of keyList) {
@@ -318,10 +318,10 @@ export default class Query {
      * Include pointer keys for the query
      * @param {String} keys
      */
-    include(...keys: Array<string>): this {
+    include(...keys: Array<any>): this {
         // Check if first key is an array
         if(!keys) throw new Error(Error.Code.MissingConfiguration, 'Include key must be a string or an array of strings');
-        const keyList = keys[0] instanceof Array? keys[0] : keys;
+        const keyList: Array<string> = keys[0] instanceof Array? keys[0] : keys;
 
         // Loop through the keys
         for(let key of keyList) {
@@ -335,10 +335,10 @@ export default class Query {
      * Sort the query by the provided keys in ascending order
      * @param {String} keys
      */
-    sortBy(...keys: Array<string>) {
+    sortBy(...keys: Array<any>) {
         // Check if first key is an array
         if(!keys) throw new Error(Error.Code.MissingConfiguration, 'SortBy key must be a string or an array of strings');
-        const keyList = keys[0] instanceof Array? keys[0] : keys;
+        const keyList: Array<string> = keys[0] instanceof Array? keys[0] : keys;
 
         // Loop through the keys
         for(let key of keyList) {
@@ -352,10 +352,10 @@ export default class Query {
      * Sort the query by the provided keys in descending order
      * @param {String} keys
      */
-    sortByDescending(...keys: Array<string>) {
+    sortByDescending(...keys: Array<any>) {
         // Check if first key is an array
         if(!keys) throw new Error(Error.Code.MissingConfiguration, 'SortByDescending key must be a string or an array of strings');
-        const keyList = keys[0] instanceof Array? keys[0] : keys;
+        const keyList: Array<string> = keys[0] instanceof Array? keys[0] : keys;
 
         // Loop through the keys
         for(let key of keyList) {
@@ -389,9 +389,9 @@ export default class Query {
      * Find the Objects
      * @param {Function} callback 
      */
-    async find(callback?: (result: Collection) => Promise<any>): Promise<Collection> {
+    async find<T extends _Object>(callback?: (result: Collection<T>) => Promise<any>): Promise<Collection<T>> {
         // Prepare params
-        const sessionToken = this.constructor._storage.get(InternalKeys.Auth.SessionToken);
+        const sessionToken = this.statics()._storage.get(InternalKeys.Auth.SessionToken);
         const className = this._class.prototype.className;
         const select = this._select.length > 0? this._select : undefined;
         const include = this._include.length > 0? this._include : undefined;
@@ -401,7 +401,7 @@ export default class Query {
         const limit = this._limit;
 
         // Find objects
-        const result = await this.constructor._http.find({ 
+        const result = await this.statics()._http.find({ 
             sessionToken, 
             className, 
             select, 
@@ -413,7 +413,7 @@ export default class Query {
         });
 
         // Iterate through the result
-        const objects = [];
+        const objects: Array<T> = [];
         for(let data of result) {
             // Get the object id
             let id = data[InternalKeys.Id];
@@ -421,7 +421,7 @@ export default class Query {
 
             // Create a new object
             let objectClass = this._class;
-            let object = new objectClass();
+            let object = new objectClass() as T;
 
             // Automatically set the id, keys, and isDirty flag
             object._id = id;
@@ -433,7 +433,7 @@ export default class Query {
         }
 
         // Get collection
-        const collection = new Collection(objects);
+        const collection = new Collection<T>(objects);
 
         // If callback is provided, use callback
         if(typeof callback === 'function') {
@@ -449,13 +449,13 @@ export default class Query {
      * Get the first Object from the query
      * @param {Function} callback 
      */
-    async first(callback?: (result: _Object | null) => Promise<any>): Promise<_Object | null> {
+    async first(callback?: (result: T | null) => Promise<any>): Promise<T | null> {
         // Prepare params
         this._skip = 0;
         this._limit = 1;
 
         // Find objects
-        const result: Collection = await this.find();
+        const result: Collection<T> = await this.find<T>();
 
         // If result length is 0, return null
         if(result.length === 0) return null;
@@ -477,21 +477,30 @@ export default class Query {
      * Get an Object by its Id
      * @param {Function} callback 
      */
-    async get(id: number): Promise<_Object> {
+    async get(id: number): Promise<T> {
         // Prepare params
-        const sessionToken = this.constructor._storage.get(InternalKeys.Auth.SessionToken);
+        const sessionToken = this.statics()._storage.get(InternalKeys.Auth.SessionToken);
         const className = this._class.prototype.className;
         const select = this._select.length > 0? this._select : undefined;
         const include = this._include.length > 0? this._include : undefined;
 
         // Find object
-        const object = await this.constructor._http.get({ 
+        const data = await this.statics()._http.get({ 
             sessionToken, 
             className, 
             select, 
             include,
             id
         });
+        
+        // Create a new object
+        let objectClass = this._class;
+        let object = new objectClass() as T;
+
+        // Automatically set the id, keys, and isDirty flag
+        object._id = id;
+        object._keyMap = new KeyMap(data);
+        object._isDirty = false;
 
         // Return the object
         return object;

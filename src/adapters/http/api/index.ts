@@ -1,10 +1,9 @@
-// @flow
-/**
- * References
- */
+import WarpServer from 'warp-server/typings';
+import { UserClass } from 'warp-server/typings/classes/user';
+import { Warp as _Warp } from '../../../index';
 import Error from '../../../utils/error';
 import { InternalKeys } from '../../../utils/constants';
-import type { 
+import { 
     IHttpAdapter, 
     HttpConfigType,
     LogInOptionsType,
@@ -19,11 +18,11 @@ import type {
 
  export default class APIHttpAdapter implements IHttpAdapter {
 
-    _api: Object;
-    _sessionToken: string | void;
-    _currentUser: Object | void;
+    _api: WarpServer;
+    _sessionToken: string | undefined;
+    _currentUser: UserClass | undefined;
 
-    constructor(config: HttpConfigType): void {
+    constructor(config: HttpConfigType) {
         // Get params
         const { api, sessionToken, currentUser }  = config;
 
@@ -36,31 +35,54 @@ import type {
         this._currentUser = currentUser;
     }
 
-    async logIn({ username, email, password }: LogInOptionsType): Promise<Object> {
+    get metadata() {
+        // Prepare metadata
+        const metadata = {
+            client: 'JavaScript',
+            sdkVersion: require('../../../../package.json').version,
+            isMaster: true
+        };
+
+        return metadata;
+    }
+
+    getWarp(sessionToken?: string, currentUser?: UserClass) {
+        const apiKey = this._api.apiKey;
+        const api = this._api
+        return new _Warp({ platform: 'api', apiKey, api, sessionToken, currentUser });
+    }
+
+    async logIn({ username, email, password }: LogInOptionsType): Promise<object> {
+        // Get metadata
+        const metadata = this.metadata;
+
         // Log in
-        let result: Object = (await this._api._userController.logIn({ username, email, password })).toJSON();
+        let result: Object = (await this._api._userController.logIn({ metadata, username, email, password })).toJSON();
         
         // Return result
         return result;
     }
 
-    async become({ sessionToken }: BecomeOptionsType): Promise<Object> {
+    async become({ sessionToken }: BecomeOptionsType): Promise<object> {
         // Get current user
-        const currentUser = this._getCurrentUser(sessionToken);
+        const currentUser = await this._getCurrentUser(sessionToken);
 
         // Fetch current user
-        let result: Object = (await this._api._userController.me({ currentUser })).toJSON();
+        let result: object = (await this._api._userController.me({ currentUser })).toJSON();
         
         // Return result
         return result;
     }
 
-    async logOut({ sessionToken }: LogOutOptionsType): Promise<Object> {
+    async logOut({ sessionToken }: LogOutOptionsType): Promise<object> {
         // Get current user
-        const currentUser = this._getCurrentUser(sessionToken);
+        const currentUser = await this._getCurrentUser(sessionToken);
+
+        // Get Warp
+        const Warp = this.getWarp(sessionToken, currentUser);
         
         // Log out
-        let result: Object = (await this._api._userController.logOut({ currentUser })).toJSON();
+        let result: Object = (await this._api._userController.logOut({ Warp, sessionToken })).toJSON();
         
         // Return result
         return result;
@@ -68,15 +90,15 @@ import type {
 
     async find({
         className, 
-        select, 
-        include, 
-        where, 
+        select = [], 
+        include = [], 
+        where = {}, 
         sort, 
-        skip, 
-        limit 
-    }: FindOptionsType): Promise<Array<Object>> {
+        skip = 0, 
+        limit = 100 
+    }: FindOptionsType): Promise<Array<object>> {
         // Fetch objects
-        let result: Array<Object>;
+        let result: Array<object>;
         if(className === InternalKeys.Auth.User) 
             result = (await this._api._userController.find({ select, include, where, sort, skip, limit })).toJSON();
         else if(className === InternalKeys.Auth.Session) 
@@ -88,9 +110,9 @@ import type {
         return result;
     }
 
-    async get({ className, id, select, include }: GetOptionsType): Promise<Object> {
+    async get({ className, id, select, include }: GetOptionsType): Promise<object> {
         // Get object
-        let result: Array<Object>;
+        let result: object;
         if(className === InternalKeys.Auth.User) 
             result = (await this._api._userController.get({ select, include, id })).toJSON();
         else if(className === InternalKeys.Auth.Session) 
@@ -102,15 +124,15 @@ import type {
         return result;
     }
 
-    async save({ sessionToken, className, keys, id }: SaveOptionsType): Promise<Object> {
+    async save({ sessionToken, className, keys, id }: SaveOptionsType): Promise<object> {
         // Get current user
-        const currentUser = this._getCurrentUser(sessionToken);
+        const currentUser = await this._getCurrentUser(sessionToken);
         
         // Prepare metadata
-        const metadata = { isMaster: true };
+        const metadata = this.metadata;
 
         // Save objects
-        let result: Array<Object>;
+        let result: object;
 
         if(typeof id === 'undefined') {
             if(className === InternalKeys.Auth.User) 
@@ -128,15 +150,15 @@ import type {
         return result;
     }
 
-    async destroy({ sessionToken, className, id }: DestroyOptionsType): Promise<Object> {
+    async destroy({ sessionToken, className, id }: DestroyOptionsType): Promise<object> {
         // Get current user
-        const currentUser = this._getCurrentUser(sessionToken);
+        const currentUser = await this._getCurrentUser(sessionToken);
         
         // Prepare metadata
-        const metadata = { isMaster: true };
+        const metadata = this.metadata;
         
         // Destroy object
-        let result: Array<Object>;
+        let result: object;
         if(className === InternalKeys.Auth.User) 
             result = (await this._api._userController.destroy({ metadata, currentUser, id })).toJSON();
         else
@@ -148,16 +170,22 @@ import type {
 
     async run({ sessionToken, functionName, keys }: RunOptionsType): Promise<any> {
         // Get current user
-        const currentUser = this._getCurrentUser(sessionToken);
+        const currentUser = await this._getCurrentUser(sessionToken);
+
+        // Prepare metadata
+        const metadata = this.metadata;
+
+        // Get Warp
+        const Warp = this.getWarp(sessionToken, currentUser);
 
         // Destroy object
-        let result: Array<Object> = (await this._api.functionController.run({ currentUser, functionName, keys })).toJSON();
+        let result: Array<object> = (await this._api._functionController.run({ Warp, metadata, currentUser, functionName, keys })).toJSON();
         
         // Return result
         return result;
     }    
 
-    async _getCurrentUser(sessionToken: string | void) {
+    async _getCurrentUser(sessionToken: string | undefined) {
         // Check if session token changed
         if(this._sessionToken === sessionToken)
             return this._currentUser;

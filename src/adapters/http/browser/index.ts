@@ -1,11 +1,7 @@
-// @flow
-/**
- * References
- */
 import Error from '../../../utils/error';
 import Queue from '../../../utils/queue';
 import { InternalKeys } from '../../../utils/constants';
-import type { 
+import { 
     IHttpAdapter, 
     HttpConfigType,
     LogInOptionsType,
@@ -21,12 +17,12 @@ import type {
  export default class BrowserHttpAdapter implements IHttpAdapter {
 
     _apiKey: string;
-    _masterKey: ?string;
+    _masterKey?: string;
     _serverURL: string;
     _requestInterval: number = 200;
     _queue: Queue;
 
-    constructor(config: HttpConfigType): void {
+    constructor(config: HttpConfigType) {
         // Get params
         const { apiKey, masterKey, serverURL, timeout, maxRequests }  = config;
 
@@ -37,7 +33,7 @@ import type {
         this._queue = new Queue(maxRequests || 6, this._requestInterval, timeout || 10);
     }
 
-    async logIn({ username, email, password }: LogInOptionsType): Promise<Object> {
+    async logIn({ username, email, password }: LogInOptionsType): Promise<object> {
         // Prepare url
         let url: string = `${this._serverURL}/login`;
 
@@ -50,27 +46,27 @@ import type {
 
         // Log in
         const request = this._send(url, 'POST', undefined, keys);
-        const result: Object = await this._queue.push(request);
+        const result: object = await this._queue.push(request);
         return result;
     }
 
-    async become({ sessionToken }: BecomeOptionsType): Promise<Object> {
+    async become({ sessionToken }: BecomeOptionsType): Promise<object> {
         // Prepare url
         let url: string = `${this._serverURL}/users/me`;
 
         // Become session
         const request = this._send(url, 'GET', sessionToken);
-        const result: Object = await this._queue.push(request);
+        const result: object = await this._queue.push(request);
         return result;
     }
 
-    async logOut({ sessionToken }: LogOutOptionsType): Promise<Object> {
+    async logOut({ sessionToken }: LogOutOptionsType): Promise<object> {
         // Prepare url
         let url: string = `${this._serverURL}/logout`;
 
         // Log out
         const request = this._send(url, 'POST', sessionToken);
-        const result: Object = await this._queue.push(request);
+        const result: object = await this._queue.push(request);
         return result;
     }
 
@@ -82,10 +78,10 @@ import type {
         sort, 
         skip, 
         limit 
-    }: FindOptionsType): Promise<Array<Object>> {
+    }: FindOptionsType): Promise<Array<object>> {
         // Prepare url
         let url: string = `${this._serverURL}/classes/${className}?`; 
-        const urlParams = [];
+        const urlParams: Array<string> = [];
         
         // Check if className is for the user or session class
         if(className === InternalKeys.Auth.User)
@@ -112,14 +108,14 @@ import type {
 
         // Fetch objects
         const request = this._send(url, 'GET');
-        const result: Array<Object> = await this._queue.push(request);
+        const result: Array<object> = await this._queue.push(request);
         return result;
     }
 
-    async get({ className, id, select, include }: GetOptionsType): Promise<Object> {
+    async get({ className, id, select, include }: GetOptionsType): Promise<object> {
         // Prepare url
         let url: string = `${this._serverURL}/classes/${className}/${id}?`; 
-        const urlParams = [];
+        const urlParams: Array<string> = [];
         
         // Check if className is for the user or session class
         if(className === InternalKeys.Auth.User)
@@ -138,11 +134,11 @@ import type {
 
         // Fetch object
         const request = this._send(url, 'GET');
-        const result: Object = await this._queue.push(request);
+        const result: object = await this._queue.push(request);
         return result;
     }
 
-    async save({ sessionToken, className, keys, id }: SaveOptionsType): Promise<Object> {
+    async save({ sessionToken, className, keys, id }: SaveOptionsType): Promise<object> {
         // Prepare url
         let url: string = `${this._serverURL}/classes/${className}`;
 
@@ -158,11 +154,11 @@ import type {
 
         // Save object
         const request = this._send(url, method, sessionToken, keys);
-        const result: Object = await this._queue.push(request);
+        const result: object = await this._queue.push(request);
         return result;
     }
 
-    async destroy({ sessionToken, className, id }: DestroyOptionsType): Promise<Object> {
+    async destroy({ sessionToken, className, id }: DestroyOptionsType): Promise<object> {
         // Prepare url
         let url: string = `${this._serverURL}/classes/${className}/${id}`;
 
@@ -172,7 +168,7 @@ import type {
 
         // Destroy object
         const request = this._send(url, 'DELETE', sessionToken);
-        const result: Object = await this._queue.push(request);
+        const result: object = await this._queue.push(request);
         return result;
     }
 
@@ -186,7 +182,7 @@ import type {
         return result;
     }
 
-    async _send(url: string, method: string, sessionToken?: string, body?: {[name: string]: any}): Promise<Array<Object> | Object | void> {
+    async _send(url: string, method: string, sessionToken?: string, body?: {[name: string]: any}): Promise<Array<object> | object | void> {
         // Prepare headers
         const headers = new Headers();
         headers.append('X-Warp-API-Key', this._apiKey);

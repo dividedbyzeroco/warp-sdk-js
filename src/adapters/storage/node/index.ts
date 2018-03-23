@@ -1,8 +1,4 @@
-// @flow
-/**
- * References
- */
-import type { 
+import { 
     IStorageAdapter, 
     StorageConfigType
 } from '../../../types/storage';
@@ -10,9 +6,9 @@ import type {
  export default class NodeStorageAdapter implements IStorageAdapter {
 
     _prefix: string;
-    _client: {[name: string]: string | void} = {};
+    _client: {[name: string]: string | undefined} = {};
 
-    constructor(config: StorageConfigType): void {
+    constructor(config: StorageConfigType) {
         // Get params
         const { prefix }  = config;
 
@@ -24,11 +20,11 @@ import type {
         return `${this._prefix}:${key}`;
     }
 
-    set(key: string, value: string | void): void {
+    set(key: string, value: string | undefined): void {
         this._client[this._getKey(key)] = value;
     }
 
-    get(key: string): string | void {
+    get(key: string): string | undefined {
         const item = this._client[this._getKey(key)];
 
         if(item === null) return undefined;

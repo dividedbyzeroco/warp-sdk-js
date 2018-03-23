@@ -1,15 +1,12 @@
-// @flow
-/**
- * References
- */
 import enforce from 'enforce-js';
 import Error from '../utils/error';
 import { InternalKeys } from '../utils/constants';
 import KeyMap from '../utils/key-map';
 import { toCamelCase, toDatabaseDate } from '../utils/format';
-import type { IHttpAdapter } from '../types/http';
-import type { IStorageAdapter } from '../types/storage';
-import type { JsonFunctionsType } from '../types/object';
+import { IHttpAdapter } from '../types/http';
+import { IStorageAdapter } from '../types/storage';
+import { JsonFunctionsType } from '../types/object';
+import { getPropertyDescriptor } from '../utils/props';
 
 export default class _Object {
 
@@ -66,13 +63,13 @@ export default class _Object {
      * @param {IStorageAdapter} storage 
      * @param {Boolean} supportLegacy 
      */
-    static initialize(http: IHttpAdapter, storage: IStorageAdapter, supportLegacy: boolean): any {
+    static initialize<T extends typeof _Object>(http: IHttpAdapter, storage: IStorageAdapter, supportLegacy: boolean): T {
         this._http = http;
         this._storage = storage;
         this._supportLegacy = supportLegacy;
-        return this;
+        return this as T;
     }
-
+    
     /**
      * Create a new Obejct with only the Id
      * @param {Number} id 
@@ -88,7 +85,7 @@ export default class _Object {
      * Convert an API Pointer to an Object
      * @param {Object} value 
      */
-    static toObject(value: Object): this {
+    static toObject(value: { id: number, attributes: object }) {
         const { id, attributes } = value;
         const object = this.createWithoutData(id);
 
@@ -104,11 +101,11 @@ export default class _Object {
      * Check if the provided value implements proper pointer definition
      * @param {Object} value
      */
-    static pointerIsImplementedBy(value: Object) {
+    static pointerIsImplementedBy(value: object) {
         if(value === null) return false;
         if(typeof value !== 'object') return false;
-        if(value.type !== 'Pointer') return false;
-        if(value.id <= 0) return false;
+        if(value['type'] !== 'Pointer') return false;
+        if(value['id'] <= 0) return false;
         return true;
     }
 
@@ -119,8 +116,12 @@ export default class _Object {
     static specialsIsImplementedBy(value: Object) {
         if(value === null) return false;
         if(typeof value !== 'object') return false;
-        if(typeof value.type === 'undefined') return false;
+        if(typeof value['type'] === 'undefined') return false;
         return true;
+    }
+
+    statics<T extends typeof _Object>(): T {
+        return this.constructor as T;
     }
 
     /**
@@ -150,9 +151,9 @@ export default class _Object {
     set(key: string, value: any) {
         // Check the key
         if(InternalKeys.Id === key 
-            || InternalKeys.CreatedAt === key 
-            || InternalKeys.UpdatedAt === key
-            || InternalKeys.DeletedAt === key) {
+            || InternalKeys.Timestamps.CreatedAt === key 
+            || InternalKeys.Timestamps.UpdatedAt === key
+            || InternalKeys.Timestamps.DeletedAt === key) {
             // If it is an internal key
             throw new Error(Error.Code.ForbiddenOperation, `Cannot manually set \`${key}\` because it is an internal key`);
         }
@@ -166,7 +167,7 @@ export default class _Object {
             this._keyMap.set(key, value.toPointer().toJSON());
         }
         else if(value instanceof Date) {
-            this._keyMap.set(key, toDatabaseDate(value));
+            this._keyMap.set(key, toDatabaseDate(value.toISOString()));
         }
         else this._keyMap.set(key, value);
 
@@ -182,9 +183,9 @@ export default class _Object {
     get(key: string): any {
         // Check the key
         if(InternalKeys.Id === key 
-            || InternalKeys.CreatedAt === key 
-            || InternalKeys.UpdatedAt === key
-            || InternalKeys.DeletedAt === key) {
+            || InternalKeys.Timestamps.CreatedAt === key 
+            || InternalKeys.Timestamps.UpdatedAt === key
+            || InternalKeys.Timestamps.DeletedAt === key) {
             // If it is an internal key
             throw new Error(Error.Code.ForbiddenOperation, `Cannot manually get \`${key}\` because it is an internal key`);
         }
@@ -193,10 +194,10 @@ export default class _Object {
         const value = this._keyMap.get(key);
 
         // If the value is for a pointer, return a new object
-        if(this.constructor.pointerIsImplementedBy(value)) {
-            return this.constructor.toObject(value);
+        if(this.statics().pointerIsImplementedBy(value)) {
+            return this.statics().toObject(value);
         }
-        else if(this.constructor.specialsIsImplementedBy(value)) {
+        else if(this.statics().specialsIsImplementedBy(value)) {
             return undefined;
         }
         // Otherwise, get the KeyMap value
@@ -281,12 +282,12 @@ export default class _Object {
         if(!this._isDirty) return this;
 
         // Prepare params
-        const sessionToken = this.constructor._storage.get(InternalKeys.Auth.SessionToken);
+        const sessionToken = this.statics()._storage.get(InternalKeys.Auth.SessionToken);
         const className = this.className;
         const keys = this._keyMap.toJSON();
         const id = this.id;
 
-        const result = await this.constructor._http.save({ sessionToken, className, keys, id });
+        const result = await this.statics()._http.save({ sessionToken, className, keys, id });
 
         const keyMap = new KeyMap(result);
         keyMap.remove(InternalKeys.Id);
@@ -303,7 +304,7 @@ export default class _Object {
      */
     async destroy(): Promise<this> {
         // Prepare params
-        const sessionToken = this.constructor._storage.get(InternalKeys.Auth.SessionToken);
+        const sessionToken = this.statics()._storage.get(InternalKeys.Auth.SessionToken);
         const className = this.className;
         const id = this.id;
 
@@ -311,7 +312,7 @@ export default class _Object {
             throw new Error(Error.Code.ForbiddenOperation, 'Cannot destroy an unsaved object');
         }
 
-        const result = await this.constructor._http.destroy({ sessionToken, className, id });
+        const result = await this.statics()._http.destroy({ sessionToken, className, id });
 
         const keyMap = new KeyMap(result);
         keyMap.remove(InternalKeys.Id);
@@ -328,11 +329,11 @@ export default class _Object {
      */
     async fetch() {
         // Prepare params
-        const sessionToken = this.constructor._storage.get('sessionToken');
+        const sessionToken = this.statics()._storage.get('sessionToken');
         const className = this.className;
         const id = this.id;
         
-        const result = await this.constructor._http.get({ sessionToken, className, id });
+        const result = await this.statics()._http.get({ sessionToken, className, id });
 
         const keyMap = new KeyMap(result);
         keyMap.remove(InternalKeys.Id);
@@ -361,7 +362,7 @@ export default class _Object {
         if(this._isPointer) 
             keys = { 
                 type: 'Pointer',
-                [this.constructor._supportLegacy? InternalKeys.Pointers.LegacyClassName
+                [this.statics()._supportLegacy? InternalKeys.Pointers.LegacyClassName
                     : InternalKeys.Pointers.ClassName]: this.className
             };
         else {
@@ -374,11 +375,11 @@ export default class _Object {
                     continue;
 
                 // Get the key descriptor
-                const keyDescriptor = Object.getOwnPropertyDescriptor(this.constructor.prototype, toCamelCase(key));
+                const keyDescriptor = getPropertyDescriptor(this, toCamelCase(key));
 
                 // Check if key descriptor exists
-                if(keyDescriptor && typeof keyDescriptor['get'] === 'function') {
-                    const getter = keyDescriptor['get'].bind(this);
+                if(keyDescriptor && typeof keyDescriptor.get === 'function') {
+                    const getter = keyDescriptor.get.bind(this);
                     keys[key] = getter();
                 }
                 else

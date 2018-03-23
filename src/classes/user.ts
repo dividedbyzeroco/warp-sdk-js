@@ -1,16 +1,12 @@
-// @flow
-/**
- * References
- */
 import _Object from './object';
 import Error from '../utils/error';
 import { toDateTime } from '../utils/format';
 import { InternalKeys } from '../utils/constants';
-import type { LogInOptionsType, BecomeOptionsType, LogOutOptionsType } from '../types/http';
+import { LogInOptionsType, BecomeOptionsType, LogOutOptionsType } from '../types/http';
 
 export default class User extends _Object {
 
-    static _currentUser: User | void;
+    static _currentUser: User | undefined;
 
     static _clearSession() {
         this._storage.remove(InternalKeys.Auth.SessionToken);
@@ -19,7 +15,7 @@ export default class User extends _Object {
         this._currentUser = undefined;
     }
 
-    static current(): this | void {
+    static current<T extends User>(): T | undefined {
         // If current user is undefined
         if(typeof this._currentUser === 'undefined') {
             // Get revokedAt and user
@@ -56,7 +52,7 @@ export default class User extends _Object {
         }
 
         // Return the current user
-        return this._currentUser;
+        return this._currentUser as T;
     }
 
     static async logIn(options: LogInOptionsType): Promise<User> {
@@ -95,27 +91,39 @@ export default class User extends _Object {
         this._clearSession();
     }
 
+    static get usernameKey() {
+        return InternalKeys.Auth.Username;
+    }
+
+    static get emailKey() {
+        return InternalKeys.Auth.Email;
+    }
+
+    static get passwordKey() {
+        return InternalKeys.Auth.Password;
+    }
+
     get className(): string {
         return InternalKeys.Auth.User;
     }
 
     get username(): string {
-        return this.get(InternalKeys.Auth.Username);
+        return this.get(this.statics<typeof User>().usernameKey);
     }
 
     get email(): string {
-        return this.get(InternalKeys.Auth.Email);
+        return this.get(this.statics<typeof User>().emailKey);
     }
 
-    set username(value: string): void {
-        this.set(InternalKeys.Auth.Username, value);
+    set username(value: string) {
+        this.set(this.statics<typeof User>().usernameKey, value);
     }
 
-    set email(value: string): void {
-        this.set(InternalKeys.Auth.Email, value);
+    set email(value: string) {
+        this.set(this.statics<typeof User>().emailKey, value);
     }
 
-    set password(value: string): void {
-        this.set(InternalKeys.Auth.Password, value);
+    set password(value: string) {
+        this.set(this.statics<typeof User>().passwordKey, value);
     }
 }

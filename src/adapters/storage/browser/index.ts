@@ -1,8 +1,4 @@
-// @flow
-/**
- * References
- */
-import type { 
+import { 
     IStorageAdapter, 
     StorageConfigType
 } from '../../../types/storage';
@@ -12,7 +8,7 @@ import type {
     _prefix: string;
     _client: typeof localStorage = localStorage;
 
-    constructor(config: StorageConfigType): void {
+    constructor(config: StorageConfigType) {
         // Get params
         const { prefix }  = config;
 
@@ -28,7 +24,7 @@ import type {
         if(typeof value !== 'undefined') this._client.setItem(this._getKey(key), value);
     }
 
-    get(key: string): string | void {
+    get(key: string): string | undefined {
         const item = this._client.getItem(this._getKey(key));
 
         if(item === null) return undefined;

@@ -1,7 +1,3 @@
-// @flow
-/**
- * References
- */
 import enforce from 'enforce-js';
 import _Object from './classes/object';
 import Query from './classes/query';
@@ -12,9 +8,9 @@ import Storage from './adapters/storage';
 import Collection from './utils/collection';
 import Error from './utils/error';
 import { InternalKeys } from './utils/constants';
-import type { IHttpAdapter } from './types/http';
-import type { IStorageAdapter } from './types/storage';
-import type { WarpOptionsType } from './types/warp';
+import { IHttpAdapter } from './types/http';
+import { IStorageAdapter } from './types/storage';
+import { WarpOptionsType } from './types/warp';
 
 class Warp {
     /**
@@ -84,7 +80,7 @@ class Warp {
 
         // Extend the query to allow for multiple instances of http and storage
         // Initialize the query
-        const query = class extends Query {};
+        const query = class extends Query<_Object> {};
         this._query = query.initialize(this._http, this._storage);
 
         // Extend the user to allow for multiple instances of http and storage
@@ -152,6 +148,10 @@ export default class _Warp {
     static get Function(): typeof _Function {
         return this.instance.Function;
     }
+
+    static extend(options: WarpOptionsType) {
+        return new Warp(options);
+    }
 }
 
 export {
@@ -159,4 +159,4 @@ export {
 };
 
 // Attach Warp to the window if used in a browser
-if(typeof window !== 'undefined') window.Warp = _Warp;
+if(typeof window !== 'undefined') window['Warp'] = _Warp;

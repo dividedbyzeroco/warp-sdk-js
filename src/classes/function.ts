@@ -1,24 +1,20 @@
-// @flow
-/**
- * References
- */
 import enforce from 'enforce-js';
 import { InternalKeys } from '../utils/constants';
-import type { IHttpAdapter } from '../types/http';
-import type { IStorageAdapter } from '../types/storage';
+import { IHttpAdapter } from '../types/http';
+import { IStorageAdapter } from '../types/storage';
 
 export default class _Function {
 
     static _http: IHttpAdapter;
     static _storage: IStorageAdapter;
 
-    static initialize(http: IHttpAdapter, storage: IStorageAdapter): any {
+    static initialize<T extends typeof _Function>(http: IHttpAdapter, storage: IStorageAdapter): T {
         this._http = http;
         this._storage = storage;
-        return this;
+        return this as T;
     }
 
-    static async run(functionName: string, keys?: {[name: string]: any}, callback: (result: any) => Promise<any>): any {
+    static async run(functionName: string, keys?: {[name: string]: any}, callback?: (result: any) => Promise<any>): Promise<any> {
         // Enforce
         enforce`${{functionName}} as a string`;
         enforce`${{keys}} as an optional object`;

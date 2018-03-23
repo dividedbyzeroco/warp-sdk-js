@@ -95,7 +95,7 @@ An `Object` is the representation of a single `row` inside a table. It contains 
 
 For example, a `Dog` class can have an instance of an `Object` called __corgi__, that has different `Keys` such as __name__, __age__, and __weight__.
 
-Among these `Keys` are three special ones that are automatically set by the server and cannot be manually edited:
+Among these `Keys` are three special ones that are automatically set by the server and cannot be manually edited.
 
 - `id`: a unique identifier that distinguishes an object inside a table
 - `created_at`: a timestamp that records the date and time when an object was created (UTC)
@@ -205,13 +205,11 @@ Like `.save()`, the `.destroy()` method also returns a promise.
 await dog.destroy();
 
 // Using promises
-dog.destroy().then(function() {
-    alert('The dog has been removed');
-});
+dog.destroy().then(() => alert('The dog has been removed');
 
 // Providing a callback
-dog.destroy(function() {
-    alert('The alien has been removed');
+dog.destroy(() => {
+    alert('The dog has been removed');
 });
 ```
 
@@ -413,9 +411,9 @@ The above query will return dogs with their respective location as pointers:
 ```javascript
 const dogs = await dogQuery.find();
 
-dogs.forEach(function(alien) {
+dogs.forEach(dog => {
     // Get the greeting
-    var greeting = 'I am ' + dog.get('name') + ' and I come from ' + alien.get('location').get('city');
+    var greeting = 'I am ' + dog.get('name') + ' and I come from ' + dog.get('location').get('city');
 
     console.log(greeting);
     return;
@@ -458,7 +456,7 @@ const dogs = await dogQuery.find();
 const firstDog = dogs.first();    
 
 // Returns a collection of Warp Objects that return true for the given function
-const oldDogsOnly = dogs.where(alien => alien.get('age') > 12);
+const oldDogsOnly = dogs.where(dog => dog.get('age') > 12);
 ```
 
 
