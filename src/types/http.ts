@@ -1,5 +1,5 @@
-import WarpServer from 'warp-server/typings';
-import { UserClass } from 'warp-server/typings/classes/user';
+import WarpServer from 'warp-server';
+import { UserClass } from 'warp-server/dist/classes/user';
 
 // @flow
 export interface IHttpAdapter {

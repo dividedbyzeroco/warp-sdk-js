@@ -3,7 +3,7 @@
   "version": "5.2.1",
   "description": "Warp JavaScript SDK",
   "main": "./dist/index.js",
-  "typings": "./dist/index.d.js",
+  "typings": "./typings/index.d.js",
   "scripts": {
     "build": "tsc",
     "package": "webpack dist/index.js --output pack/index.js",

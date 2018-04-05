@@ -1,6 +1,6 @@
-import WarpServer from 'warp-server/typings';
-import { UserClass } from 'warp-server/typings/classes/user';
-import { Warp as _Warp } from '../../../index';
+import WarpServer from 'warp-server';
+import { UserClass } from 'warp-server/dist/classes/user';
+import { Warp } from '../../../index';
 import Error from '../../../utils/error';
 import { InternalKeys } from '../../../utils/constants';
 import { 
@@ -49,7 +49,7 @@ import {
     getWarp(sessionToken?: string, currentUser?: UserClass) {
         const apiKey = this._api.apiKey;
         const api = this._api
-        return new _Warp({ platform: 'api', apiKey, api, sessionToken, currentUser });
+        return new Warp({ platform: 'api', apiKey, api, sessionToken, currentUser });
     }
 
     async logIn({ username, email, password }: LogInOptionsType): Promise<object> {
@@ -79,10 +79,10 @@ import {
         const currentUser = await this._getCurrentUser(sessionToken);
 
         // Get Warp
-        const Warp = this.getWarp(sessionToken, currentUser);
+        const _Warp = this.getWarp(sessionToken, currentUser);
         
         // Log out
-        let result: Object = (await this._api._userController.logOut({ Warp, sessionToken })).toJSON();
+        let result: Object = (await this._api._userController.logOut({ Warp: _Warp, sessionToken })).toJSON();
         
         // Return result
         return result;
@@ -176,10 +176,10 @@ import {
         const metadata = this.metadata;
 
         // Get Warp
-        const Warp = this.getWarp(sessionToken, currentUser);
+        const _Warp = this.getWarp(sessionToken, currentUser);
 
         // Destroy object
-        let result: Array<object> = (await this._api._functionController.run({ Warp, metadata, currentUser, functionName, keys })).toJSON();
+        let result: Array<object> = (await this._api._functionController.run({ Warp: _Warp, metadata, currentUser, functionName, keys })).toJSON();
         
         // Return result
         return result;

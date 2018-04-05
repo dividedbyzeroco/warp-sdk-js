@@ -1,5 +1,5 @@
-import WarpServer, { User } from 'warp-server/typings';
-import { UserClass } from 'warp-server/typings/classes/user';
+import WarpServer, { User } from 'warp-server';
+import { UserClass } from 'warp-server/dist/classes/user';
 
 export type WarpOptionsType = {
     apiKey: string,
