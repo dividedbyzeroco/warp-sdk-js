@@ -1,5 +1,3 @@
-import { IWarpServer } from 'warp-server/typings/types/api';
-import { UserClass } from 'warp-server/typings/classes/user';
 import { Warp } from '../../../index';
 import Error from '../../../utils/error';
 import { InternalKeys } from '../../../utils/constants';
@@ -18,9 +16,9 @@ import {
 
  export default class APIHttpAdapter implements IHttpAdapter {
 
-    _api: IWarpServer;
+    _api: any;
     _sessionToken: string | undefined;
-    _currentUser: UserClass | undefined;
+    _currentUser: any;
 
     constructor(config: HttpConfigType) {
         // Get params
@@ -46,7 +44,7 @@ import {
         return metadata;
     }
 
-    getWarp(sessionToken?: string, currentUser?: UserClass) {
+    getWarp(sessionToken?: string, currentUser?: any) {
         const apiKey = this._api.apiKey;
         const api = this._api
         return new Warp({ platform: 'api', apiKey, api, sessionToken, currentUser });
@@ -82,10 +80,10 @@ import {
         const _Warp = this.getWarp(sessionToken, currentUser);
         
         // Log out
-        //let result: Object = (await this._api._userController.logOut({ Warp: _Warp, sessionToken })).toJSON();
+        let result: Object = (await this._api._userController.logOut({ Warp: _Warp, sessionToken })).toJSON();
         
         // Return result
-        return {};
+        return result;
     }
 
     async find({
@@ -179,10 +177,10 @@ import {
         const _Warp = this.getWarp(sessionToken, currentUser);
 
         // Destroy object
-        //let result: Array<object> = (await this._api._functionController.run({ Warp: _Warp, metadata, currentUser, functionName, keys })).toJSON();
+        let result: Array<object> = (await this._api._functionController.run({ Warp: _Warp, metadata, currentUser, functionName, keys })).toJSON();
         
         // Return result
-        return;
+        return result;
     }    
 
     async _getCurrentUser(sessionToken: string | undefined) {

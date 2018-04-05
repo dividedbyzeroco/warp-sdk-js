@@ -1,5 +1,3 @@
-import { IWarpServer } from 'warp-server/typings/types/api';
-import { UserClass } from 'warp-server/typings/classes/user';
 import _Object from '../classes/object';
 import Query from '../classes/query';
 import User from '../classes/user';
@@ -12,9 +10,9 @@ export type WarpOptionsType = {
     apiKey: string,
     masterKey?: string,
     serverURL?: string,
-    api?: IWarpServer,
+    api?: any,
     sessionToken?: string,
-    currentUser?: UserClass,
+    currentUser?: any,
     platform?: string,
     timeout?: number,
     maxRequests?: number,
