@@ -1,9 +1,9 @@
-import WarpServer from 'warp-server';
+import IWarpServer from 'warp-server';
 import { UserClass } from 'warp-server/dist/classes/user';
 import { Warp } from '../../../index';
 import { IHttpAdapter, HttpConfigType, LogInOptionsType, BecomeOptionsType, LogOutOptionsType, FindOptionsType, GetOptionsType, SaveOptionsType, DestroyOptionsType, RunOptionsType } from '../../../types/http';
 export default class APIHttpAdapter implements IHttpAdapter {
-    _api: WarpServer;
+    _api: IWarpServer;
     _sessionToken: string | undefined;
     _currentUser: UserClass | undefined;
     constructor(config: HttpConfigType);

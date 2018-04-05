@@ -10,9 +10,9 @@ import Error from './utils/error';
 import { InternalKeys } from './utils/constants';
 import { IHttpAdapter } from './types/http';
 import { IStorageAdapter } from './types/storage';
-import { WarpOptionsType } from './types/warp';
+import { WarpOptionsType, IWarp } from './types/warp';
 
-class Warp {
+class Warp implements IWarp {
     /**
      * Private properties
      */

@@ -1,4 +1,4 @@
-import WarpServer from 'warp-server';
+import IWarpServer from 'warp-server';
 import { UserClass } from 'warp-server/dist/classes/user';
 import { Warp } from '../../../index';
 import Error from '../../../utils/error';
@@ -18,7 +18,7 @@ import {
 
  export default class APIHttpAdapter implements IHttpAdapter {
 
-    _api: WarpServer;
+    _api: IWarpServer;
     _sessionToken: string | undefined;
     _currentUser: UserClass | undefined;
 
@@ -179,10 +179,10 @@ import {
         const _Warp = this.getWarp(sessionToken, currentUser);
 
         // Destroy object
-        let result: Array<object> = (await this._api._functionController.run({ Warp: _Warp, metadata, currentUser, functionName, keys })).toJSON();
+        //let result: Array<object> = (await this._api._functionController.run({ Warp: _Warp, metadata, currentUser, functionName, keys })).toJSON();
         
         // Return result
-        return result;
+        return;
     }    
 
     async _getCurrentUser(sessionToken: string | undefined) {

@@ -5,8 +5,8 @@ import _Function from './classes/function';
 import Collection from './utils/collection';
 import { IHttpAdapter } from './types/http';
 import { IStorageAdapter } from './types/storage';
-import { WarpOptionsType } from './types/warp';
-declare class Warp {
+import { WarpOptionsType, IWarp } from './types/warp';
+declare class Warp implements IWarp {
     /**
      * Private properties
      */
