@@ -82,10 +82,10 @@ import {
         const _Warp = this.getWarp(sessionToken, currentUser);
         
         // Log out
-        let result: Object = (await this._api._userController.logOut({ Warp: _Warp, sessionToken })).toJSON();
+        //let result: Object = (await this._api._userController.logOut({ Warp: _Warp, sessionToken })).toJSON();
         
         // Return result
-        return result;
+        return {};
     }
 
     async find({
