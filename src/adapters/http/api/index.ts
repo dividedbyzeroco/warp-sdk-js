@@ -1,5 +1,5 @@
-import IWarpServer from 'warp-server';
-import { UserClass } from 'warp-server/dist/classes/user';
+import { IWarpServer } from 'warp-server/typings/types/api';
+import { UserClass } from 'warp-server/typings/classes/user';
 import { Warp } from '../../../index';
 import Error from '../../../utils/error';
 import { InternalKeys } from '../../../utils/constants';

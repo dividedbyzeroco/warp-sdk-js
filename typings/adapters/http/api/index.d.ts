@@ -1,5 +1,5 @@
-import IWarpServer from 'warp-server';
-import { UserClass } from 'warp-server/dist/classes/user';
+import { IWarpServer } from 'warp-server/typings/types/api';
+import { UserClass } from 'warp-server/typings/classes/user';
 import { Warp } from '../../../index';
 import { IHttpAdapter, HttpConfigType, LogInOptionsType, BecomeOptionsType, LogOutOptionsType, FindOptionsType, GetOptionsType, SaveOptionsType, DestroyOptionsType, RunOptionsType } from '../../../types/http';
 export default class APIHttpAdapter implements IHttpAdapter {
@@ -21,5 +21,5 @@ export default class APIHttpAdapter implements IHttpAdapter {
     save({sessionToken, className, keys, id}: SaveOptionsType): Promise<object>;
     destroy({sessionToken, className, id}: DestroyOptionsType): Promise<object>;
     run({sessionToken, functionName, keys}: RunOptionsType): Promise<any>;
-    _getCurrentUser(sessionToken: string | undefined): Promise<any>;
+    _getCurrentUser(sessionToken: string | undefined): Promise<UserClass | undefined>;
 }

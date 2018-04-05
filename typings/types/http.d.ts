@@ -1,5 +1,5 @@
-import WarpServer from 'warp-server';
-import { UserClass } from 'warp-server/dist/classes/user';
+import { IWarpServer } from 'warp-server/typings/types/api';
+import { UserClass } from 'warp-server/typings/classes/user';
 export interface IHttpAdapter {
     logIn(options: LogInOptionsType): Promise<object>;
     become(options: BecomeOptionsType): Promise<object>;
@@ -17,7 +17,7 @@ export declare type HttpConfigType = {
     apiKey?: string;
     masterKey?: string;
     serverURL?: string;
-    api?: WarpServer;
+    api?: IWarpServer;
     sessionToken?: string;
     currentUser?: UserClass;
     timeout?: number;

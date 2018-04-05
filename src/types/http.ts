@@ -1,5 +1,5 @@
-import WarpServer from 'warp-server';
-import { UserClass } from 'warp-server/dist/classes/user';
+import { IWarpServer } from 'warp-server/typings/types/api';
+import { UserClass } from 'warp-server/typings/classes/user';
 
 // @flow
 export interface IHttpAdapter {
@@ -21,7 +21,7 @@ export type HttpConfigType = {
     apiKey?: string,
     masterKey?: string,
     serverURL?: string,
-    api?: WarpServer,
+    api?: IWarpServer,
     sessionToken?: string,
     currentUser?: UserClass,
     timeout?: number,

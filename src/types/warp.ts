@@ -1,5 +1,5 @@
-import { IWarpServer } from 'warp-server/dist/types/api';
-import { UserClass } from 'warp-server/dist/classes/user';
+import { IWarpServer } from 'warp-server/typings/types/api';
+import { UserClass } from 'warp-server/typings/classes/user';
 import _Object from '../classes/object';
 import Query from '../classes/query';
 import User from '../classes/user';
