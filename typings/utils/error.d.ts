@@ -16,7 +16,7 @@ export default class WarpError extends Error {
         UsernameTaken: number;
         EmailTaken: number;
         InvalidAPIKey: number;
-        ModelNotFound: number;
+        ClassNotFound: number;
         FunctionNotFound: number;
         RequestTimeout: number;
         FunctionError: number;

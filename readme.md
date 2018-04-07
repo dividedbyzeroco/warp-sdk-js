@@ -61,13 +61,13 @@ Warp.initialize({ platform: 'node', apiKey: '12345678abcdefg', serverURL: 'http:
 ```
 
 ### Within Warp Server
-When using the SDK for Warp Server, the api automatically adds a configured copy of Warp inside the models and functions. To access it, simply retrieve Warp from the instance.
+When using the SDK for Warp Server, the api automatically adds a configured copy of Warp inside the classes and functions. To access it, simply retrieve Warp from the instance.
 
 ```javascript
-// Require Model
-import { Model } from 'warp-server';
+// Require Class
+import { Class } from 'warp-server';
 
-export default class Post extends Model.Class {
+export default class Post extends Class {
     
     static get className() { return 'post'; }
 
