@@ -1,4 +1,6 @@
-export default class Collection<T> {
+import _Object from '../classes/object';
+
+export default class Collection<T extends _Object> {
 
     _objects: Array<T>;
 
@@ -85,6 +87,13 @@ export default class Collection<T> {
      */
     toArray() {
         return this.map(object => object);
+    }
+
+    /**
+     * Convert the collection into an object literal
+     */
+    toJSON() {
+        return this.map(object => object.toJSON());
     }
 
     /**
