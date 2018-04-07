@@ -1,6 +1,6 @@
 {
   "name": "warp-sdk-js",
-  "version": "5.4.0",
+  "version": "5.5.0",
   "description": "Warp JavaScript SDK",
   "main": "./dist/index.js",
   "typings": "./typings/index.d.js",
