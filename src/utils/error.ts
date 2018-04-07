@@ -53,7 +53,7 @@ export default class WarpError extends Error {
         else if(this.code === this.statics().Code.ForbiddenOperation) {
             return this.statics().Status.Forbidden;
         }
-        else if(this.code === this.statics().Code.ModelNotFound
+        else if(this.code === this.statics().Code.ClassNotFound
             || this.code === this.statics().Code.FunctionNotFound) {
                 return this.statics().Status.NotFound;
         }
