@@ -207,7 +207,8 @@ export default class Query<T extends _Object> {
      * @param {String} key 
      * @param {String} value 
      */
-    contains(key: string, value: string): this {
+    contains(key: string | string[], value: string): this {
+        if(key instanceof Array) key = key.join('|');
         this._set(key, Constraints.Contains, value);
         return this;
     }
@@ -217,7 +218,8 @@ export default class Query<T extends _Object> {
      * @param {String} key 
      * @param {*} value 
      */
-    containsEither(key: string, value: Array<string>): this {
+    containsEither(key: string | string[], value: Array<string>): this {
+        if(key instanceof Array) key = key.join('|');
         this._set(key, Constraints.ContainsEither, value);
         return this;
     }
@@ -227,7 +229,8 @@ export default class Query<T extends _Object> {
      * @param {String} key 
      * @param {*} value 
      */
-    containsAll(key: string, value: Array<string>): this {
+    containsAll(key: string | string[], value: Array<string>): this {
+        if(key instanceof Array) key = key.join('|');
         this._set(key, Constraints.ContainsAll, value);
         return this;
     }
