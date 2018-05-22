@@ -185,15 +185,15 @@ import {
 
     async _send(url: string, method: string, sessionToken?: string, body?: {[name: string]: any}): Promise<Array<object> | object | void> {
         // Prepare headers
-        const headers = new Headers();
-        headers.append('X-Warp-API-Key', this._apiKey);
-        headers.append('Content-Type', method === 'GET' ? 'application/x-www-form-urlencode' : 'application/json');
+        const headers = {};
+        headers['X-Warp-API-Key'] = this._apiKey;
+        headers['Content-Type'] = method === 'GET' ? 'application/x-www-form-urlencode' : 'application/json';
         
         // Check if master key is provided
-        if(typeof this._masterKey === 'string') headers.append('X-Warp-Master-Key', this._masterKey);
+        if(typeof this._masterKey === 'string') headers['X-Warp-Master-Key'] = this._masterKey;
 
         // Check if session token is provided
-        if(typeof sessionToken === 'string') headers.append('X-Warp-Session-Token', sessionToken);
+        if(typeof sessionToken === 'string') headers['X-Warp-Session-Token'] = sessionToken;
 
         // Prepare fetch options
         const fetchOptions = {
