@@ -115,6 +115,10 @@ export default class User extends _Object {
         return this.get(this.statics<typeof User>().emailKey);
     }
 
+    get sessionToken(): string | void {
+        return this.statics<typeof User>()._storage.get(InternalKeys.Auth.SessionToken);
+    }
+
     set username(value: string) {
         this.set(this.statics<typeof User>().usernameKey, value);
     }
