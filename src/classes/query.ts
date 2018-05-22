@@ -514,9 +514,12 @@ export default class Query<T extends _Object> {
      * @param {String} select 
      */
     toSubquery(select: string) {
+        const classNameKey = this._class.prototype.statics()._supportLegacy? 
+            InternalKeys.Pointers.LegacyClassName
+            : InternalKeys.Pointers.ClassName
         const className = this._class.prototype.className;
         const where = this._where.toJSON();
 
-        return { className, where, select };
+        return { classNameKey: className, where, select };
     }
 }
