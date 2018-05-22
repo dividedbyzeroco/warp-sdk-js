@@ -36,7 +36,6 @@ class Warp implements IWarp {
         if(platform === 'browser') {
             // Enforce
             enforce`${{apiKey}} as a string`;
-            enforce`${{apiKey}} as an optional string`;
             enforce`${{timeout}} as an optional number`;
             enforce`${{maxRequests}} as an optional number`;
 
@@ -68,6 +67,27 @@ class Warp implements IWarp {
             // Set session token and currentUser
             if(typeof sessionToken !== 'undefined') this._storage.set(InternalKeys.Auth.SessionToken, sessionToken);
             if(typeof currentUser !== 'undefined') this._storage.set(InternalKeys.Auth.User, JSON.stringify(currentUser.toJSON()));
+        }
+
+        // If platform is 'node'
+        if(platform === 'node') {
+            // Enforce
+            enforce`${{apiKey}} as a string`;
+            enforce`${{timeout}} as an optional number`;
+            enforce`${{maxRequests}} as an optional number`;
+
+            if(typeof serverURL !== 'string')
+                throw new Error(Error.Code.MissingConfiguration, '`serverURL` must be a string');
+
+            // Modify serverURL to remove trailing slash
+            if(serverURL[serverURL.length - 1] === '/')
+                serverURL = serverURL.slice(0, serverURL.length - 2);
+
+            // Set http
+            this._http = Http.use('node', { apiKey, masterKey, serverURL, timeout, maxRequests });
+
+            // Set storage
+            this._storage = Storage.use('node', { prefix: serverURL });
         }
 
         // Set legacy support
