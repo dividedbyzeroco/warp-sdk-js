@@ -52,9 +52,8 @@ class Warp implements IWarp {
             // Set storage
             this._storage = Storage.use('browser', { prefix: serverURL });
         }
-
         // If platform is 'api'
-        if(platform === 'api') {
+        else if(platform === 'api') {
             if(typeof api === 'undefined')
                 throw new Error(Error.Code.MissingConfiguration, '`api` must be provided when using the api platform');
 
@@ -68,9 +67,8 @@ class Warp implements IWarp {
             if(typeof sessionToken !== 'undefined') this._storage.set(InternalKeys.Auth.SessionToken, sessionToken);
             if(typeof currentUser !== 'undefined') this._storage.set(InternalKeys.Auth.User, JSON.stringify(currentUser.toJSON()));
         }
-
         // If platform is 'node'
-        if(platform === 'node') {
+        else if(platform === 'node') {
             // Enforce
             enforce`${{apiKey}} as a string`;
             enforce`${{timeout}} as an optional number`;
@@ -89,6 +87,7 @@ class Warp implements IWarp {
             // Set storage
             this._storage = Storage.use('node', { prefix: serverURL });
         }
+        else throw new Error(Error.Code.MissingConfiguration, `Platform '${platform}' is unknown or not supported`);
 
         // Set legacy support
         this._supportLegacy = supportLegacy;
