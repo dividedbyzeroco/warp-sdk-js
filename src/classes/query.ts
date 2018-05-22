@@ -520,6 +520,6 @@ export default class Query<T extends _Object> {
         const className = this._class.prototype.className;
         const where = this._where.toJSON();
 
-        return { classNameKey: className, where, select };
+        return { [classNameKey]: className, where, select };
     }
 }
