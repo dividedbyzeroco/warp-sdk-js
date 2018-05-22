@@ -516,7 +516,7 @@ export default class Query<T extends _Object> {
     toSubquery(select: string) {
         const classNameKey = this._class.prototype.statics()._supportLegacy? 
             InternalKeys.Pointers.LegacyClassName
-            : InternalKeys.Pointers.ClassName
+            : InternalKeys.Pointers.ClassName;
         const className = this._class.prototype.className;
         const where = this._where.toJSON();
 
