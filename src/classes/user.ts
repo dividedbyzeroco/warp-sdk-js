@@ -3,6 +3,7 @@ import Error from '../utils/error';
 import { toDateTime } from '../utils/format';
 import { InternalKeys } from '../utils/constants';
 import { LogInOptionsType, BecomeOptionsType, LogOutOptionsType } from '../types/http';
+import KeyMap from '../utils/key-map';
 
 export default class User extends _Object {
 
@@ -21,10 +22,10 @@ export default class User extends _Object {
             // Get revokedAt and user
             const revokedAt = this._storage.get(InternalKeys.Auth.RevokedAt);
             const storedUser = this._storage.get(InternalKeys.Auth.User);
-            const revokedAtDate = toDateTime(revokedAt);
+            const revokedAtDate = typeof revokedAt !== 'undefined' && toDateTime(revokedAt);
             
             // Check if session expired
-            if(revokedAtDate.getTime() < toDateTime().getTime()) {
+            if(revokedAtDate && revokedAtDate.getTime() < toDateTime().getTime()) {
                 this._clearSession();
                 throw new Error(Error.Code.InvalidSessionToken, 'Session expired. Try logging in again.');
             }
@@ -38,8 +39,9 @@ export default class User extends _Object {
                     delete parsedUser[InternalKeys.Id];
 
                     // Create a new user
-                    const user = new this(parsedUser);
+                    const user = new this();
                     user._id = id;
+                    user._keyMap = new KeyMap(parsedUser);
                     user._isDirty = false;
 
                     // Set the new user as the current user
@@ -67,7 +69,7 @@ export default class User extends _Object {
     static async become({ sessionToken, revokedAt }: BecomeOptionsType): Promise<User> {
         // Get user details
         const user = await this._http.become({ sessionToken });
-        const revokedAtString = revokedAt? (new Date(revokedAt)).toISOString() : (new Date()).toISOString();
+        const revokedAtString = revokedAt? (new Date(revokedAt)).toISOString() : undefined;
 
         // Set the session token and the current user
         this._storage.set(InternalKeys.Auth.SessionToken, sessionToken);

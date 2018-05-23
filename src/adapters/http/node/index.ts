@@ -194,7 +194,7 @@ import {
 
         // Check if session token is provided
         if(typeof sessionToken === 'string') headers['X-Warp-Session-Token'] = sessionToken;
-
+        
         // Prepare fetch options
         const fetchOptions = {
             headers,
