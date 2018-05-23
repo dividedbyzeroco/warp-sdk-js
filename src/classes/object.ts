@@ -288,6 +288,7 @@ export default class _Object {
         const id = this.id;
         delete keys[InternalKeys.Timestamps.CreatedAt];
         delete keys[InternalKeys.Timestamps.UpdatedAt];
+        delete keys[InternalKeys.Timestamps.DeletedAt];
 
         const result = await this.statics()._http.save({ sessionToken, className, keys, id });
 
