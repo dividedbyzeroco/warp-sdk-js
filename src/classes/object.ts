@@ -286,6 +286,8 @@ export default class _Object {
         const className = this.className;
         const keys = this._keyMap.toJSON();
         const id = this.id;
+        delete keys[InternalKeys.Timestamps.CreatedAt];
+        delete keys[InternalKeys.Timestamps.UpdatedAt];
 
         const result = await this.statics()._http.save({ sessionToken, className, keys, id });
 
