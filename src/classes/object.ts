@@ -293,6 +293,7 @@ export default class _Object {
         const result = await this.statics()._http.save({ sessionToken, className, keys, id });
 
         const keyMap = new KeyMap(result);
+        this._id = keyMap.get(InternalKeys.Id);
         keyMap.remove(InternalKeys.Id);
         this._keyMap = keyMap;
 
