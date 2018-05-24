@@ -1837,6 +1837,12 @@ enforce-js@^1.2.6:
   dependencies:
     moment-timezone "^0.5.4"
 
+enforce-js@^1.2.7:
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/enforce-js/-/enforce-js-1.2.7.tgz#31029d93268d952bed228b49824cb9dd403f4bdb"
+  dependencies:
+    moment-timezone "^0.5.4"
+
 enhanced-resolve@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-4.0.0.tgz#e34a6eaa790f62fccd71d93959f56b2b432db10a"
