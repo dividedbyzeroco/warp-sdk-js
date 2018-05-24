@@ -86,8 +86,13 @@ export default class User extends _Object {
     }
 
     static async logOut({ sessionToken }: LogOutOptionsType): Promise<void> {
-        // Log out of session
-        await this._http.logOut({ sessionToken });
+        // Check if sessionToken is provided
+        if(typeof sessionToken === 'undefined')
+            sessionToken = this._storage.get(InternalKeys.Auth.SessionToken);
+
+        // If session is logged in, log out
+        if(typeof sessionToken !== 'undefined')
+            await this._http.logOut({ sessionToken });
 
         // Remove session details
         this._clearSession();
