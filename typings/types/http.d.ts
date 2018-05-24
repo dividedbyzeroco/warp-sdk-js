@@ -31,7 +31,7 @@ export declare type BecomeOptionsType = {
     revokedAt?: string;
 };
 export declare type LogOutOptionsType = {
-    sessionToken: string;
+    sessionToken: string | undefined;
 };
 export declare type FindOptionsType = {
     sessionToken?: string;
