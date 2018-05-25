@@ -13,6 +13,7 @@ export default class Query<T extends _Object> {
 
     static _http: IHttpAdapter;
     static _storage: IStorageAdapter;
+    static _objectClass: typeof _Object;
     _class: { new(): _Object };
     _select: Array<string> = [];
     _include: Array<string> = [];
@@ -28,7 +29,7 @@ export default class Query<T extends _Object> {
             const name: string = className;
 
             // Extend Warp.Object and use the new className
-            this._class = class extends _Object { get className(): string { return name; } };
+            this._class = class extends this.statics()._objectClass { get className(): string { return name; } };
         }
         // Check if className is a Warp.Object
         else if((new className) instanceof _Object) {
@@ -44,7 +45,11 @@ export default class Query<T extends _Object> {
      * @param {IHttpAdapter} http 
      * @param {IStorageAdapter} storage 
      */
-    static initialize<Q extends typeof Query>(http: IHttpAdapter, storage: IStorageAdapter): Q {
+    static initialize<Q extends typeof Query>(
+        http: IHttpAdapter, 
+        storage: IStorageAdapter, 
+        objectClass: typeof _Object): Q 
+    {
         this._http = http;
         this._storage = storage;
         return this as Q;
