@@ -52,6 +52,7 @@ export default class Query<T extends _Object> {
     {
         this._http = http;
         this._storage = storage;
+        this._objectClass = objectClass;
         return this as Q;
     }
 

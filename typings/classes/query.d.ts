@@ -6,6 +6,7 @@ import { IStorageAdapter } from '../types/storage';
 export default class Query<T extends _Object> {
     static _http: IHttpAdapter;
     static _storage: IStorageAdapter;
+    static _objectClass: typeof _Object;
     _class: {
         new (): _Object;
     };
@@ -23,7 +24,7 @@ export default class Query<T extends _Object> {
      * @param {IHttpAdapter} http
      * @param {IStorageAdapter} storage
      */
-    static initialize<Q extends typeof Query>(http: IHttpAdapter, storage: IStorageAdapter): Q;
+    static initialize<Q extends typeof Query>(http: IHttpAdapter, storage: IStorageAdapter, objectClass: typeof _Object): Q;
     statics<Q extends typeof Query>(): Q;
     /**
      * Set a key constraint
