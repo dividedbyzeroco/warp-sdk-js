@@ -191,17 +191,17 @@ export default class Query {
      * Find the Objects
      * @param {Function} callback
      */
-    find<T extends _Object>(callback?: (result: Collection) => Promise<any>): Promise<Collection>;
+    find<T extends _Object>(callback?: (result: Collection<T>) => Promise<any>): Promise<Collection<T>>;
     /**
      * Get the first Object from the query
      * @param {Function} callback
      */
-    first(callback?: (result: _Object | null) => Promise<any>): Promise<_Object | null>;
+    first<T extends _Object>(callback?: (result: _Object | null) => Promise<any>): Promise<T | null>;
     /**
      * Get an Object by its Id
      * @param {Function} callback
      */
-    get(id: number): Promise<_Object>;
+    get<T extends _Object>(id: number): Promise<T>;
     /**
      * Convert the query into a subquery
      * @param {String} select

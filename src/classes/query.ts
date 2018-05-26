@@ -398,7 +398,7 @@ export default class Query {
      * Find the Objects
      * @param {Function} callback 
      */
-    async find<T extends _Object>(callback?: (result: Collection) => Promise<any>): Promise<Collection> {
+    async find<T extends _Object>(callback?: (result: Collection<T>) => Promise<any>): Promise<Collection<T>> {
         // Prepare params
         const sessionToken = this.statics()._storage.get(InternalKeys.Auth.SessionToken);
         const className = this._class.prototype.className;
@@ -458,13 +458,13 @@ export default class Query {
      * Get the first Object from the query
      * @param {Function} callback 
      */
-    async first(callback?: (result: _Object | null) => Promise<any>): Promise<_Object | null> {
+    async first<T extends _Object>(callback?: (result: _Object | null) => Promise<any>): Promise<T | null> {
         // Prepare params
         this._skip = 0;
         this._limit = 1;
 
         // Find objects
-        const result: Collection = await this.find();
+        const result: Collection<T> = await this.find<T>();
 
         // If result length is 0, return null
         if(result.length === 0) return null;
@@ -486,7 +486,7 @@ export default class Query {
      * Get an Object by its Id
      * @param {Function} callback 
      */
-    async get(id: number): Promise<_Object> {
+    async get<T extends _Object>(id: number): Promise<T> {
         // Prepare params
         const sessionToken = this.statics()._storage.get(InternalKeys.Auth.SessionToken);
         const className = this._class.prototype.className;
@@ -504,7 +504,7 @@ export default class Query {
         
         // Create a new object
         let objectClass = this._class;
-        let object = new objectClass();
+        let object = new objectClass() as T;
 
         // Automatically set the id, keys, and isDirty flag
         object._id = id;
