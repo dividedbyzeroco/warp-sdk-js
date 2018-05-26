@@ -94,17 +94,20 @@ class Warp implements IWarp {
 
         // Extend the object to allow for multiple instances of http and storage
         // Initialize the object
-        const _object = class extends _Object {};
-        this._object = _object.initialize(this._http, this._storage, this._supportLegacy);
+        const _object = _Object.extend();
+        _object.initialize(this._http, this._storage, this._supportLegacy)
+        this._object = _object;
 
         // Extend the query to allow for multiple instances of http and storage
         // Initialize the query
-        const query = class extends Query<_Object> {};
-        this._query = query.initialize(this._http, this._storage, this._object);
+        const query = Query.extend(_object);
+        query.initialize(this._http, this._storage, this._object);
+        this._query = query;
 
         // Extend the user to allow for multiple instances of http and storage
-        const user = class extends User {};
-        this._user = user.initialize(this._http, this._storage, this._supportLegacy);
+        const user = User.extendAsUser();
+        user.initialize(this._http, this._storage, this._supportLegacy)
+        this._user = user;
 
         // Extend the function to allow for multiple instances of http and storage
         // Initialize the function

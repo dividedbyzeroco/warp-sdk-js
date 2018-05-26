@@ -7,6 +7,7 @@ import { IHttpAdapter } from '../types/http';
 import { IStorageAdapter } from '../types/storage';
 import { JsonFunctionsType } from '../types/object';
 import { getPropertyDescriptor } from '../utils/props';
+import Query from './query';
 
 export default class _Object {
 
@@ -69,16 +70,23 @@ export default class _Object {
         this._supportLegacy = supportLegacy;
         return this as T;
     }
-    
+
     /**
      * Create a new Obejct with only the Id
      * @param {Number} id 
      * @param {String} className 
      */
-    static createWithoutData(id: number, className?: string) {
+    static fromId(id: number, className?: string) {
         const object = new this(className);
         object._id = id;
         return object;
+    }
+    
+    /**
+     * Alias of fromId
+     */
+    static createWithoutData(id: number, className?: string) {
+        return this.fromId(id, className);
     }
 
     /**
@@ -118,6 +126,10 @@ export default class _Object {
         if(typeof value !== 'object') return false;
         if(typeof value['type'] === 'undefined') return false;
         return true;
+    }
+
+    static extend() {
+        return class extends this {};
     }
 
     statics<T extends typeof _Object>(): T {

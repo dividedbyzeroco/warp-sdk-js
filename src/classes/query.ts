@@ -14,7 +14,7 @@ export default class Query<T extends _Object> {
     static _http: IHttpAdapter;
     static _storage: IStorageAdapter;
     static _objectClass: typeof _Object;
-    _class: { new(): _Object };
+    _class: typeof _Object;
     _select: Array<string> = [];
     _include: Array<string> = [];
     _where: ConstraintMap = new ConstraintMap();
@@ -22,7 +22,7 @@ export default class Query<T extends _Object> {
     _skip: number;
     _limit: number;
 
-    constructor(className: { new(): T } | string) {
+    constructor(className: typeof _Object | string) {
         // Check if className is a string
         if(typeof className === 'string') {
             // Get the name as a string
@@ -54,6 +54,10 @@ export default class Query<T extends _Object> {
         this._storage = storage;
         this._objectClass = objectClass;
         return this as Q;
+    }
+
+    static extend(U: typeof _Object) {
+        return class extends this<U> {};
     }
 
     statics<Q extends typeof Query>(): Q {

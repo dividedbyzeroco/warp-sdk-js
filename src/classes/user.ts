@@ -110,6 +110,10 @@ export default class User extends _Object {
         return InternalKeys.Auth.Password;
     }
 
+    static extendAsUser() {
+        return class extends this {};
+    }
+
     get className(): string {
         return InternalKeys.Auth.User;
     }
