@@ -26,6 +26,10 @@ export default class _Object {
      * @param {Number} id
      * @param {String} className
      */
+    static fromId(id: number, className?: string): _Object;
+    /**
+     * Alias of fromId
+     */
     static createWithoutData(id: number, className?: string): _Object;
     /**
      * Convert an API Pointer to an Object

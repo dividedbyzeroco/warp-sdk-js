@@ -7,18 +7,14 @@ export default class Query<T extends _Object> {
     static _http: IHttpAdapter;
     static _storage: IStorageAdapter;
     static _objectClass: typeof _Object;
-    _class: {
-        new (): _Object;
-    };
+    _class: typeof _Object;
     _select: Array<string>;
     _include: Array<string>;
     _where: ConstraintMap;
     _sort: Array<string>;
     _skip: number;
     _limit: number;
-    constructor(className: {
-        new (): T;
-    } | string);
+    constructor(className: typeof _Object | string);
     /**
      * Initialize the query
      * @param {IHttpAdapter} http
@@ -211,7 +207,7 @@ export default class Query<T extends _Object> {
      * @param {String} select
      */
     toSubquery(select: string): {
-        [x: string]: any;
+        [x: string]: {};
         where: {};
         select: string;
     };

@@ -9,7 +9,7 @@ import ConstraintMap, { Constraints } from '../utils/constraint-map';
 import { IHttpAdapter } from '../types/http';
 import { IStorageAdapter } from '../types/storage';
 
-export default class Query<T extends _Object> {
+export default class Query {
 
     static _http: IHttpAdapter;
     static _storage: IStorageAdapter;
@@ -54,10 +54,6 @@ export default class Query<T extends _Object> {
         this._storage = storage;
         this._objectClass = objectClass;
         return this as Q;
-    }
-
-    static extend(U: typeof _Object) {
-        return class extends this<U> {};
     }
 
     statics<Q extends typeof Query>(): Q {
@@ -251,7 +247,7 @@ export default class Query<T extends _Object> {
      * @param {String} select 
      * @param {Object} value 
      */
-    foundIn(key: string, select: string, value: Query<_Object>): this {
+    foundIn(key: string, select: string, value: Query): this {
         this._set(key, Constraints.FoundIn, value.toSubquery(select));
         return this;
     }
@@ -261,7 +257,7 @@ export default class Query<T extends _Object> {
      * @param {String} key
      * @param {Array} value 
      */
-    foundInEither(key: string, value: Array<Query<_Object>>): this {
+    foundInEither(key: string, value: Array<Query>): this {
         this._set(key, Constraints.FoundInEither, value.map(item => {
             const select = Object.keys(item)[0];
             const query = item[select];
@@ -275,7 +271,7 @@ export default class Query<T extends _Object> {
      * @param {String} key
      * @param {Array} value 
      */
-    foundInAll(key: string, value: Array<Query<_Object>>): this {
+    foundInAll(key: string, value: Array<Query>): this {
         this._set(key, Constraints.FoundInAll, value.map(item => {
             const select = Object.keys(item)[0];
             const query = item[select];
@@ -290,7 +286,7 @@ export default class Query<T extends _Object> {
      * @param {String} select 
      * @param {Object} value 
      */
-    notFoundIn(key: string, select: string, value: Query<_Object>): this {
+    notFoundIn(key: string, select: string, value: Query): this {
         this._set(key, Constraints.NotFoundIn, value.toSubquery(select));
         return this;
     }
@@ -402,7 +398,7 @@ export default class Query<T extends _Object> {
      * Find the Objects
      * @param {Function} callback 
      */
-    async find<T extends _Object>(callback?: (result: Collection<T>) => Promise<any>): Promise<Collection<T>> {
+    async find<T extends _Object>(callback?: (result: Collection) => Promise<any>): Promise<Collection> {
         // Prepare params
         const sessionToken = this.statics()._storage.get(InternalKeys.Auth.SessionToken);
         const className = this._class.prototype.className;
@@ -446,7 +442,7 @@ export default class Query<T extends _Object> {
         }
 
         // Get collection
-        const collection = new Collection<T>(objects);
+        const collection = new Collection(objects);
 
         // If callback is provided, use callback
         if(typeof callback === 'function') {
@@ -462,13 +458,13 @@ export default class Query<T extends _Object> {
      * Get the first Object from the query
      * @param {Function} callback 
      */
-    async first(callback?: (result: T | null) => Promise<any>): Promise<T | null> {
+    async first(callback?: (result: _Object | null) => Promise<any>): Promise<_Object | null> {
         // Prepare params
         this._skip = 0;
         this._limit = 1;
 
         // Find objects
-        const result: Collection<T> = await this.find<T>();
+        const result: Collection = await this.find();
 
         // If result length is 0, return null
         if(result.length === 0) return null;
@@ -490,7 +486,7 @@ export default class Query<T extends _Object> {
      * Get an Object by its Id
      * @param {Function} callback 
      */
-    async get(id: number): Promise<T> {
+    async get(id: number): Promise<_Object> {
         // Prepare params
         const sessionToken = this.statics()._storage.get(InternalKeys.Auth.SessionToken);
         const className = this._class.prototype.className;
@@ -508,7 +504,7 @@ export default class Query<T extends _Object> {
         
         // Create a new object
         let objectClass = this._class;
-        let object = new objectClass() as T;
+        let object = new objectClass();
 
         // Automatically set the id, keys, and isDirty flag
         object._id = id;

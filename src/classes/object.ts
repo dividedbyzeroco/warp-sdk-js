@@ -128,10 +128,6 @@ export default class _Object {
         return true;
     }
 
-    static extend() {
-        return class extends this {};
-    }
-
     statics<T extends typeof _Object>(): T {
         return this.constructor as T;
     }

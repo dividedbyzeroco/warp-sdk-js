@@ -1,10 +1,10 @@
 import _Object from '../classes/object';
 
-export default class Collection<T extends _Object> {
+export default class Collection {
 
-    _objects: Array<T>;
+    _objects: Array<_Object>;
 
-    constructor(objects: Array<T>) {
+    constructor(objects: Array<_Object>) {
         this._objects = objects;
     }
 
@@ -19,14 +19,14 @@ export default class Collection<T extends _Object> {
     /**
      * Get the first item from the collection
      */
-    first(): T | null {
+    first(): _Object | null {
         return this._objects.length > 0? this._objects[0] : null;
     }
 
     /**
      * Get the last Object from the collection
      */
-    last(): T | null {
+    last(): _Object | null {
         return this._objects.length > 0? this._objects[this._objects.length - 1] : null;
     }
 
@@ -34,9 +34,9 @@ export default class Collection<T extends _Object> {
      * Return Objects that pass a given evaluator
      * @param {Function} evaluator 
      */
-    where(evaluator: (object: T) => boolean): Collection<T> {
+    where(evaluator: (object: _Object) => boolean): Collection {
         const objects = [...this._objects];
-        const map: Array<T> = [];
+        const map: Array<_Object> = [];
 
         for(let object of objects) {
             if(evaluator(object)) {
@@ -52,7 +52,7 @@ export default class Collection<T extends _Object> {
      * Map Objects into an array using an iterator
      * @param {Function} iterator 
      */
-    map(iterator: (object: T) => any): Array<any> {
+    map(iterator: (object: _Object) => any): Array<any> {
         const objects = [...this._objects];
         const map: Array<any> = [];
 
@@ -67,7 +67,7 @@ export default class Collection<T extends _Object> {
      * Iterate through each item
      * @param {Function} iterator 
      */
-    forEach(iterator: (object: T) => void): void {
+    forEach(iterator: (object: _Object) => void): void {
         const objects = [...this._objects];
 
         for(let object of objects) {
@@ -100,7 +100,7 @@ export default class Collection<T extends _Object> {
      * Run a promise iterator over every Object, in series
      * @param {Function} iterator
      */
-    async each(iterator: (object: T) => Promise<any>): Promise<void> {
+    async each(iterator: (object: _Object) => Promise<any>): Promise<void> {
         // Get objects
         const objects = [...this._objects];
 
@@ -114,7 +114,7 @@ export default class Collection<T extends _Object> {
     /**
      * Run a promise iterator over every Object, in parallel
      */
-    async all(iterator: (object: T) => Promise<any>): Promise<void> {
+    async all(iterator: (object: _Object) => Promise<any>): Promise<void> {
         // Define iterators
         const iterators = this.map(object => iterator(object));
 
@@ -122,7 +122,7 @@ export default class Collection<T extends _Object> {
         return;
     }
 
-    [Symbol.iterator](): Iterator<T | undefined> {
+    [Symbol.iterator](): Iterator<_Object | undefined> {
         // Set index to 0
         let _index = 0;
 
