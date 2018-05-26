@@ -9,12 +9,12 @@ import ConstraintMap, { Constraints } from '../utils/constraint-map';
 import { IHttpAdapter } from '../types/http';
 import { IStorageAdapter } from '../types/storage';
 
-export default class Query<T extends _Object> {
+export default class Query<T extends typeof _Object> {
 
     static _http: IHttpAdapter;
     static _storage: IStorageAdapter;
     static _objectClass: typeof _Object;
-    _class: typeof _Object;
+    _class: T;
     _select: Array<string> = [];
     _include: Array<string> = [];
     _where: ConstraintMap = new ConstraintMap();
@@ -22,14 +22,16 @@ export default class Query<T extends _Object> {
     _skip: number;
     _limit: number;
 
-    constructor(className: typeof _Object | string) {
+    constructor(className: T | string) {
         // Check if className is a string
         if(typeof className === 'string') {
             // Get the name as a string
             const name: string = className;
 
             // Extend Warp.Object and use the new className
-            this._class = class extends this.statics()._objectClass { get className(): string { return name; } };
+            const objectClass = this.statics()._objectClass as T;
+            class subclass extends objectClass { get className(): string { return name; } };
+            this._class = subclass;
         }
         // Check if className is a Warp.Object
         else if((new className) instanceof _Object) {
@@ -247,7 +249,7 @@ export default class Query<T extends _Object> {
      * @param {String} select 
      * @param {Object} value 
      */
-    foundIn(key: string, select: string, value: Query<_Object>): this {
+    foundIn(key: string, select: string, value: Query<typeof _Object>): this {
         this._set(key, Constraints.FoundIn, value.toSubquery(select));
         return this;
     }
@@ -257,7 +259,7 @@ export default class Query<T extends _Object> {
      * @param {String} key
      * @param {Array} value 
      */
-    foundInEither(key: string, value: Array<Query<_Object>>): this {
+    foundInEither(key: string, value: Array<Query<typeof _Object>>): this {
         this._set(key, Constraints.FoundInEither, value.map(item => {
             const select = Object.keys(item)[0];
             const query = item[select];
@@ -271,7 +273,7 @@ export default class Query<T extends _Object> {
      * @param {String} key
      * @param {Array} value 
      */
-    foundInAll(key: string, value: Array<Query<_Object>>): this {
+    foundInAll(key: string, value: Array<Query<typeof _Object>>): this {
         this._set(key, Constraints.FoundInAll, value.map(item => {
             const select = Object.keys(item)[0];
             const query = item[select];
@@ -286,7 +288,7 @@ export default class Query<T extends _Object> {
      * @param {String} select 
      * @param {Object} value 
      */
-    notFoundIn(key: string, select: string, value: Query<_Object>): this {
+    notFoundIn(key: string, select: string, value: Query<typeof _Object>): this {
         this._set(key, Constraints.NotFoundIn, value.toSubquery(select));
         return this;
     }
@@ -296,7 +298,7 @@ export default class Query<T extends _Object> {
      * @param {String} key
      * @param {Array} value 
      */
-    notFoundInEither(key: string, value: Array<Object>): this {
+    notFoundInEither(key: string, value: Array<typeof _Object>): this {
         this._set(key, Constraints.NotFoundInEither, value.map(item => {
             const select = Object.keys(item)[0];
             const query = item[select];
@@ -398,7 +400,7 @@ export default class Query<T extends _Object> {
      * Find the Objects
      * @param {Function} callback 
      */
-    async find<T extends _Object>(callback?: (result: Collection<T>) => Promise<any>): Promise<Collection<T>> {
+    async find<U extends T>(callback?: (result: Collection<U['prototype']>) => Promise<any>): Promise<Collection<U['prototype']>> {
         // Prepare params
         const sessionToken = this.statics()._storage.get(InternalKeys.Auth.SessionToken);
         const className = this._class.prototype.className;
@@ -422,7 +424,7 @@ export default class Query<T extends _Object> {
         });
 
         // Iterate through the result
-        const objects: Array<T> = [];
+        const objects: Array<U['prototype']> = [];
         for(let data of result) {
             // Get the object id
             let id = data[InternalKeys.Id];
@@ -430,7 +432,7 @@ export default class Query<T extends _Object> {
 
             // Create a new object
             let objectClass = this._class;
-            let object = new objectClass() as T;
+            let object = new objectClass() as U['prototype'];
 
             // Automatically set the id, keys, and isDirty flag
             object._id = id;
@@ -442,7 +444,7 @@ export default class Query<T extends _Object> {
         }
 
         // Get collection
-        const collection = new Collection<T>(objects);
+        const collection = new Collection<U['prototype']>(objects);
 
         // If callback is provided, use callback
         if(typeof callback === 'function') {
@@ -458,13 +460,13 @@ export default class Query<T extends _Object> {
      * Get the first Object from the query
      * @param {Function} callback 
      */
-    async first<T extends _Object>(callback?: (result: T | null) => Promise<any>): Promise<T | null> {
+    async first<U extends T>(callback?: (result: U['prototype'] | null) => Promise<any>): Promise<U['prototype'] | null> {
         // Prepare params
         this._skip = 0;
         this._limit = 1;
 
         // Find objects
-        const result: Collection<T> = await this.find<T>();
+        const result: Collection<U['prototype']> = await this.find<U>();
 
         // If result length is 0, return null
         if(result.length === 0) return null;

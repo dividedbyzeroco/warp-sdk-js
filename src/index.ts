@@ -100,7 +100,7 @@ class Warp implements IWarp {
 
         // Extend the query to allow for multiple instances of http and storage
         // Initialize the query
-        class query<T extends _object> extends Query<T> {};
+        class query<T extends typeof _object> extends Query<T> {};
         query.initialize(this._http, this._storage, this._object);
         this._query = query;
 
