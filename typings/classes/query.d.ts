@@ -3,7 +3,7 @@ import Collection from '../utils/collection';
 import ConstraintMap from '../utils/constraint-map';
 import { IHttpAdapter } from '../types/http';
 import { IStorageAdapter } from '../types/storage';
-export default class Query<T extends _Object> {
+export default class Query {
     static _http: IHttpAdapter;
     static _storage: IStorageAdapter;
     static _objectClass: typeof _Object;
@@ -131,26 +131,26 @@ export default class Query<T extends _Object> {
      * @param {String} select
      * @param {Object} value
      */
-    foundIn(key: string, select: string, value: Query<_Object>): this;
+    foundIn(key: string, select: string, value: Query): this;
     /**
      * Assert that the key matches a key in any of the given subqueries
      * @param {String} key
      * @param {Array} value
      */
-    foundInEither(key: string, value: Array<Query<_Object>>): this;
+    foundInEither(key: string, value: Array<Query>): this;
     /**
      * Assert that the key matches a key in all of the given subqueries
      * @param {String} key
      * @param {Array} value
      */
-    foundInAll(key: string, value: Array<Query<_Object>>): this;
+    foundInAll(key: string, value: Array<Query>): this;
     /**
      * Assert that the key does not match a key in the given subquery
      * @param {String} key
      * @param {String} select
      * @param {Object} value
      */
-    notFoundIn(key: string, select: string, value: Query<_Object>): this;
+    notFoundIn(key: string, select: string, value: Query): this;
     /**
      * Assert that the key does not match a key in all of the given subqueries
      * @param {String} key
@@ -191,17 +191,17 @@ export default class Query<T extends _Object> {
      * Find the Objects
      * @param {Function} callback
      */
-    find<T extends _Object>(callback?: (result: Collection<T>) => Promise<any>): Promise<Collection<T>>;
+    find<T extends _Object>(callback?: (result: Collection) => Promise<any>): Promise<Collection>;
     /**
      * Get the first Object from the query
      * @param {Function} callback
      */
-    first(callback?: (result: T | null) => Promise<any>): Promise<T | null>;
+    first(callback?: (result: _Object | null) => Promise<any>): Promise<_Object | null>;
     /**
      * Get an Object by its Id
      * @param {Function} callback
      */
-    get(id: number): Promise<T>;
+    get(id: number): Promise<_Object>;
     /**
      * Convert the query into a subquery
      * @param {String} select

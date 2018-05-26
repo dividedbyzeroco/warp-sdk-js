@@ -1,32 +1,32 @@
 import _Object from '../classes/object';
-export default class Collection<T extends _Object> {
-    _objects: Array<T>;
-    constructor(objects: Array<T>);
+export default class Collection {
+    _objects: Array<_Object>;
+    constructor(objects: Array<_Object>);
     readonly length: number;
     count(): number;
     /**
      * Get the first item from the collection
      */
-    first(): T | null;
+    first(): _Object | null;
     /**
      * Get the last Object from the collection
      */
-    last(): T | null;
+    last(): _Object | null;
     /**
      * Return Objects that pass a given evaluator
      * @param {Function} evaluator
      */
-    where(evaluator: (object: T) => boolean): Collection<T>;
+    where(evaluator: (object: _Object) => boolean): Collection;
     /**
      * Map Objects into an array using an iterator
      * @param {Function} iterator
      */
-    map(iterator: (object: T) => any): Array<any>;
+    map(iterator: (object: _Object) => any): Array<any>;
     /**
      * Iterate through each item
      * @param {Function} iterator
      */
-    forEach(iterator: (object: T) => void): void;
+    forEach(iterator: (object: _Object) => void): void;
     /**
      * Alias of toArray()
      */
@@ -43,10 +43,10 @@ export default class Collection<T extends _Object> {
      * Run a promise iterator over every Object, in series
      * @param {Function} iterator
      */
-    each(iterator: (object: T) => Promise<any>): Promise<void>;
+    each(iterator: (object: _Object) => Promise<any>): Promise<void>;
     /**
      * Run a promise iterator over every Object, in parallel
      */
-    all(iterator: (object: T) => Promise<any>): Promise<void>;
-    [Symbol.iterator](): Iterator<T | undefined>;
+    all(iterator: (object: _Object) => Promise<any>): Promise<void>;
+    [Symbol.iterator](): Iterator<_Object | undefined>;
 }
