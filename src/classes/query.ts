@@ -9,7 +9,7 @@ import ConstraintMap, { Constraints } from '../utils/constraint-map';
 import { IHttpAdapter } from '../types/http';
 import { IStorageAdapter } from '../types/storage';
 
-export default class Query {
+export default class Query<T extends _Object> {
 
     static _http: IHttpAdapter;
     static _storage: IStorageAdapter;
@@ -247,7 +247,7 @@ export default class Query {
      * @param {String} select 
      * @param {Object} value 
      */
-    foundIn(key: string, select: string, value: Query): this {
+    foundIn(key: string, select: string, value: Query<_Object>): this {
         this._set(key, Constraints.FoundIn, value.toSubquery(select));
         return this;
     }
@@ -257,7 +257,7 @@ export default class Query {
      * @param {String} key
      * @param {Array} value 
      */
-    foundInEither(key: string, value: Array<Query>): this {
+    foundInEither(key: string, value: Array<Query<_Object>>): this {
         this._set(key, Constraints.FoundInEither, value.map(item => {
             const select = Object.keys(item)[0];
             const query = item[select];
@@ -271,7 +271,7 @@ export default class Query {
      * @param {String} key
      * @param {Array} value 
      */
-    foundInAll(key: string, value: Array<Query>): this {
+    foundInAll(key: string, value: Array<Query<_Object>>): this {
         this._set(key, Constraints.FoundInAll, value.map(item => {
             const select = Object.keys(item)[0];
             const query = item[select];
@@ -286,7 +286,7 @@ export default class Query {
      * @param {String} select 
      * @param {Object} value 
      */
-    notFoundIn(key: string, select: string, value: Query): this {
+    notFoundIn(key: string, select: string, value: Query<_Object>): this {
         this._set(key, Constraints.NotFoundIn, value.toSubquery(select));
         return this;
     }
@@ -442,7 +442,7 @@ export default class Query {
         }
 
         // Get collection
-        const collection = new Collection(objects);
+        const collection = new Collection<T>(objects);
 
         // If callback is provided, use callback
         if(typeof callback === 'function') {
@@ -458,7 +458,7 @@ export default class Query {
      * Get the first Object from the query
      * @param {Function} callback 
      */
-    async first<T extends _Object>(callback?: (result: _Object | null) => Promise<any>): Promise<T | null> {
+    async first<T extends _Object>(callback?: (result: T | null) => Promise<any>): Promise<T | null> {
         // Prepare params
         this._skip = 0;
         this._limit = 1;

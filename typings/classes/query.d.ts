@@ -3,7 +3,7 @@ import Collection from '../utils/collection';
 import ConstraintMap from '../utils/constraint-map';
 import { IHttpAdapter } from '../types/http';
 import { IStorageAdapter } from '../types/storage';
-export default class Query {
+export default class Query<T extends _Object> {
     static _http: IHttpAdapter;
     static _storage: IStorageAdapter;
     static _objectClass: typeof _Object;
@@ -131,26 +131,26 @@ export default class Query {
      * @param {String} select
      * @param {Object} value
      */
-    foundIn(key: string, select: string, value: Query): this;
+    foundIn(key: string, select: string, value: Query<_Object>): this;
     /**
      * Assert that the key matches a key in any of the given subqueries
      * @param {String} key
      * @param {Array} value
      */
-    foundInEither(key: string, value: Array<Query>): this;
+    foundInEither(key: string, value: Array<Query<_Object>>): this;
     /**
      * Assert that the key matches a key in all of the given subqueries
      * @param {String} key
      * @param {Array} value
      */
-    foundInAll(key: string, value: Array<Query>): this;
+    foundInAll(key: string, value: Array<Query<_Object>>): this;
     /**
      * Assert that the key does not match a key in the given subquery
      * @param {String} key
      * @param {String} select
      * @param {Object} value
      */
-    notFoundIn(key: string, select: string, value: Query): this;
+    notFoundIn(key: string, select: string, value: Query<_Object>): this;
     /**
      * Assert that the key does not match a key in all of the given subqueries
      * @param {String} key
@@ -196,7 +196,7 @@ export default class Query {
      * Get the first Object from the query
      * @param {Function} callback
      */
-    first<T extends _Object>(callback?: (result: _Object | null) => Promise<any>): Promise<T | null>;
+    first<T extends _Object>(callback?: (result: T | null) => Promise<any>): Promise<T | null>;
     /**
      * Get an Object by its Id
      * @param {Function} callback
