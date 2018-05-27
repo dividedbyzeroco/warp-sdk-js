@@ -3,7 +3,7 @@ import { InternalKeys } from '../utils/constants';
 import { IHttpAdapter } from '../types/http';
 import { IStorageAdapter } from '../types/storage';
 
-export default class _Function {
+export class _Function {
 
     static _http: IHttpAdapter;
     static _storage: IStorageAdapter;

@@ -1,8 +1,8 @@
 import enforce from 'enforce-js';
-import _Object from './classes/object';
-import Query from './classes/query';
-import User from './classes/user';
-import _Function from './classes/function';
+import { _Object } from './classes/object';
+import { Query } from './classes/query';
+import { User } from './classes/user';
+import { _Function } from './classes/function';
 import Http from './adapters/http';
 import Storage from './adapters/storage';
 import Collection from './utils/collection';
@@ -100,7 +100,7 @@ class Warp implements IWarp {
 
         // Extend the query to allow for multiple instances of http and storage
         // Initialize the query
-        class query<T extends typeof _object> extends Query<T> {};
+        class query<T extends typeof _Object> extends Query<T> {};
         query.initialize(this._http, this._storage, this._object);
         this._query = query;
 

@@ -1,4 +1,4 @@
-import _Object from '../classes/object';
+import { _Object } from '../classes/object';
 export default class Collection<T extends _Object> {
     _objects: Array<T>;
     constructor(objects: Array<T>);

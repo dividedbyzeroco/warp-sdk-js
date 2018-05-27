@@ -1,5 +1,5 @@
 import enforce from 'enforce-js';
-import _Object from './object';
+import { _Object } from './object';
 import Error from '../utils/error';
 import KeyMap from '../utils/key-map';
 import Collection from '../utils/collection';
@@ -9,7 +9,7 @@ import ConstraintMap, { Constraints } from '../utils/constraint-map';
 import { IHttpAdapter } from '../types/http';
 import { IStorageAdapter } from '../types/storage';
 
-export default class Query<T extends typeof _Object> {
+export class Query<T extends typeof _Object> {
 
     static _http: IHttpAdapter;
     static _storage: IStorageAdapter;
@@ -400,7 +400,7 @@ export default class Query<T extends typeof _Object> {
      * Find the Objects
      * @param {Function} callback 
      */
-    async find<U extends T>(callback?: (result: Collection<U['prototype']>) => Promise<any>): Promise<Collection<U['prototype']>> {
+    async find(callback?: (result: Collection<T['prototype']>) => Promise<any>): Promise<Collection<T['prototype']>> {
         // Prepare params
         const sessionToken = this.statics()._storage.get(InternalKeys.Auth.SessionToken);
         const className = this._class.prototype.className;
@@ -424,7 +424,7 @@ export default class Query<T extends typeof _Object> {
         });
 
         // Iterate through the result
-        const objects: Array<U['prototype']> = [];
+        const objects: Array<T['prototype']> = [];
         for(let data of result) {
             // Get the object id
             let id = data[InternalKeys.Id];
@@ -432,7 +432,7 @@ export default class Query<T extends typeof _Object> {
 
             // Create a new object
             let objectClass = this._class;
-            let object = new objectClass() as U['prototype'];
+            let object = new objectClass();
 
             // Automatically set the id, keys, and isDirty flag
             object._id = id;
@@ -444,7 +444,7 @@ export default class Query<T extends typeof _Object> {
         }
 
         // Get collection
-        const collection = new Collection<U['prototype']>(objects);
+        const collection = new Collection<T['prototype']>(objects);
 
         // If callback is provided, use callback
         if(typeof callback === 'function') {
@@ -460,13 +460,13 @@ export default class Query<T extends typeof _Object> {
      * Get the first Object from the query
      * @param {Function} callback 
      */
-    async first<U extends T>(callback?: (result: U['prototype'] | null) => Promise<any>): Promise<U['prototype'] | null> {
+    async first(callback?: (result: T['prototype'] | null) => Promise<any>): Promise<T['prototype'] | null> {
         // Prepare params
         this._skip = 0;
         this._limit = 1;
 
         // Find objects
-        const result: Collection<U['prototype']> = await this.find<U>();
+        const result: Collection<T['prototype']> = await this.find();
 
         // If result length is 0, return null
         if(result.length === 0) return null;
@@ -488,7 +488,7 @@ export default class Query<T extends typeof _Object> {
      * Get an Object by its Id
      * @param {Function} callback 
      */
-    async get<T extends _Object>(id: number): Promise<T> {
+    async get(id: number): Promise<T['prototype']> {
         // Prepare params
         const sessionToken = this.statics()._storage.get(InternalKeys.Auth.SessionToken);
         const className = this._class.prototype.className;
@@ -506,7 +506,7 @@ export default class Query<T extends typeof _Object> {
         
         // Create a new object
         let objectClass = this._class;
-        let object = new objectClass() as T;
+        let object = new objectClass();
 
         // Automatically set the id, keys, and isDirty flag
         object._id = id;

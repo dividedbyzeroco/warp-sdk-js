@@ -1,7 +1,7 @@
-import _Object from './classes/object';
-import Query from './classes/query';
-import User from './classes/user';
-import _Function from './classes/function';
+import { _Object } from './classes/object';
+import { Query } from './classes/query';
+import { User } from './classes/user';
+import { _Function } from './classes/function';
 import Collection from './utils/collection';
 import { IHttpAdapter } from './types/http';
 import { IStorageAdapter } from './types/storage';

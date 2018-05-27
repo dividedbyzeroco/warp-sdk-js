@@ -1,11 +1,11 @@
-import _Object from './object';
+import { _Object } from './object';
 import Error from '../utils/error';
 import { toDateTime } from '../utils/format';
 import { InternalKeys } from '../utils/constants';
 import { LogInOptionsType, BecomeOptionsType, LogOutOptionsType } from '../types/http';
 import KeyMap from '../utils/key-map';
 
-export default class User extends _Object {
+export class User extends _Object {
 
     static _currentUser: User | undefined;
 

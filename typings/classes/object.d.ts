@@ -2,7 +2,7 @@ import KeyMap from '../utils/key-map';
 import { IHttpAdapter } from '../types/http';
 import { IStorageAdapter } from '../types/storage';
 import { JsonFunctionsType } from '../types/object';
-export default class _Object {
+export declare class _Object {
     static _http: IHttpAdapter;
     static _storage: IStorageAdapter;
     static _supportLegacy: boolean;

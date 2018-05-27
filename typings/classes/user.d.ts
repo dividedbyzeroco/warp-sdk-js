@@ -1,6 +1,6 @@
-import _Object from './object';
+import { _Object } from './object';
 import { LogInOptionsType, BecomeOptionsType, LogOutOptionsType } from '../types/http';
-export default class User extends _Object {
+export declare class User extends _Object {
     static _currentUser: User | undefined;
     static _clearSession(): void;
     static current<T extends User>(): T | undefined;

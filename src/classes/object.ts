@@ -7,9 +7,9 @@ import { IHttpAdapter } from '../types/http';
 import { IStorageAdapter } from '../types/storage';
 import { JsonFunctionsType } from '../types/object';
 import { getPropertyDescriptor } from '../utils/props';
-import Query from './query';
+import { Query } from './query';
 
-export default class _Object {
+export class _Object {
 
     static _http: IHttpAdapter;
     static _storage: IStorageAdapter;
