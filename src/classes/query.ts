@@ -504,6 +504,9 @@ export class Query<T extends typeof _Object> {
             id
         });
         
+        // Remove the internal key id
+        delete data[InternalKeys.Id];
+        
         // Create a new object
         let objectClass = this._class;
         let object = new objectClass();
