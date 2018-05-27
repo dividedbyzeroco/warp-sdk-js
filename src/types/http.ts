@@ -36,7 +36,7 @@ export type BecomeOptionsType = {
 };
 
 export type LogOutOptionsType = {
-    sessionToken: string | undefined
+    sessionToken?: string | undefined
 };
 
 export type FindOptionsType = {

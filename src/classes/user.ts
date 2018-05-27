@@ -16,6 +16,10 @@ export class User extends _Object {
         this._currentUser = undefined;
     }
 
+    /**
+     * Get the currently logged in user
+     * @returns {Warp.user}
+     */
     static current<T extends User>(): T | undefined {
         // If current user is undefined
         if(typeof this._currentUser === 'undefined') {
@@ -57,6 +61,11 @@ export class User extends _Object {
         return this._currentUser as T;
     }
 
+    /**
+     * Log in to an account
+     * @param options
+     * @returns {Warp.User}
+     */
     static async logIn(options: LogInOptionsType): Promise<User> {
         // Get session details
         const session = await this._http.logIn(options);
@@ -66,6 +75,11 @@ export class User extends _Object {
         return await this.become({ sessionToken, revokedAt });
     }
 
+    /**
+     * Log in to an active session
+     * @param options
+     * @returns {Warp.User}
+     */
     static async become({ sessionToken, revokedAt }: BecomeOptionsType): Promise<User> {
         // Get user details
         const user = await this._http.become({ sessionToken });
@@ -85,6 +99,10 @@ export class User extends _Object {
             return current;
     }
 
+    /**
+     * Log out of the current session
+     * @param options
+     */
     static async logOut({ sessionToken }: LogOutOptionsType): Promise<void> {
         // Check if sessionToken is provided
         if(typeof sessionToken === 'undefined')
@@ -95,6 +113,14 @@ export class User extends _Object {
             await this._http.logOut({ sessionToken });
 
         // Remove session details
+        this._clearSession();
+    }
+
+    /**
+     * Clear current session without logging out
+     * > WARNING: Session will not be revoked
+     */
+    static clearSession() {
         this._clearSession();
     }
 
