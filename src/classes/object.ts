@@ -235,7 +235,7 @@ export class _Object {
         const keyMap = this._keyMap;
 
         return {
-            set: (path: string, value: Object) => {
+            set: (path: string, value: any) => {
                 // Enforce
                 enforce`${{path}} as a string`;
         
@@ -243,7 +243,7 @@ export class _Object {
                 const setJSON = { type: 'SetJson', path, value };
                 keyMap.set(key, setJSON);
             },
-            append: (path: string, value: Object | Array<any>) => {
+            append: (path: string, value: any) => {
                 // Enforce
                 enforce`${{path}} as a string`;
         

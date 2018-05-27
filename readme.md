@@ -13,6 +13,14 @@ The __Warp JS SDK__ is the official JavaScript library for **[Warp Server](http:
     - **[Updating Objects](#updating-objects)**
     - **[Destroying Objects](#deleting-objects)**
     - **[Pointers](#pointers)**
+    - **[JSON Data](#json-data)**
+- **[Authentication](#authentication)**
+    - **[Logging In](#logging-in)**
+    - **[Getting Current User](#getting-current-user)**
+    - **[Becoming a User](#becoming-a-user)**
+    - **[Getting the Session Token](#getting-the-session-token)**
+    - **[Logging Out](#logging-out)**
+    - **[Clearing a Session](#clearing-a-session)**
 - **[Queries](#queries)**
     - **[Constraints](#constraints)**
     - **[Subqueries](#subqueries)**
@@ -247,6 +255,113 @@ shitzu.set('location', location); // Set the object directly
 
 // Save the object
 await shitzu.save();
+```
+
+### JSON Data
+
+Since the introduction of `MySQL 5.7`, JSON data has slowly become a reliable unstructured data type for SQL databases. For Warp, you can easily manipulate this data type using the json functions.
+
+To set the value of a JSON column, use the `.json.set()` method.
+
+```javascript
+const dog = new Warp.Object('dog');
+const dogMeta = { height: 11.5, weight: 55.3, nicknames: ['blackie','brownie'] };
+dog.json('metadata').set('$', dogMeta);
+
+await dog.save();
+
+dog.json('metadata').set('$.weight', 56);
+
+await dog.save();
+```
+
+If you have arrays inside the column, you can use `.json.append()` to add append them to the list.
+
+```javascript
+dog.json('metadata').append('$.nicknames', 'bingo');
+
+await dog.save();
+```
+
+## Authentication
+
+Authentication is an important aspect of modern web apps. For Warp, there are several functions built in that can help you handle this feature.
+
+> NOTE: The Warp Server you are hosting must have authentication set up before you can start using it here.
+
+### Logging In
+
+To log in to Warp, use the `.logIn()` method from `Warp.User`.
+
+```javascript
+const username = 'old_macdonald';
+const password = 'hadAf4rm';
+
+const authenticatedUser = await Warp.User.logIn({ username, password });
+```
+
+Alternatively, you can use the `email` to log in.
+
+```javascript
+const email = 'old_macdonald@farm.com';
+const password = 'hadAf4rm';
+
+const authenticatedUser = await Warp.User.logIn({ email, password });
+```
+
+> NOTE: The examples use es6 shorthand syntax for object literals. The example can be rewritten as { email: email, password: password }
+
+### Getting Current User
+
+If you are using `Warp` for `browsers`, you can retrieve the currently logged in user, using the `.current()` method.
+
+```javascript
+const authenticatedUser = Warp.User.current();
+```
+
+For other platforms (e.g. `node`, `api`), you can only retrieve it via the `.logIn()` or `.become()` functions.
+
+### Becoming a User
+
+If you already have the `sessionToken` of an existing user and want to turn the current session into that one, use the `.become()` method.
+
+```javascript
+const sessionToken = 'someSessionToken-39tu2hg9f04hg';
+
+const authenticatedUser = await Warp.become({ sessionToken });
+```
+
+### Getting the Session Token
+
+To retrieve the session token of the authenticated user, use the `.sessionToken` getter.
+
+```javascript
+const sessionToken = authenticatedUser.sessionToken;
+const currentSessionToken = Warp.User.current().sessionToken;
+```
+
+### Logging Out
+
+To log out of a current session, use the `.logOut()` method.
+
+```javascript
+await Warp.User.logOut();
+```
+
+If you have the specific `sessionToken` to log out, you can pass it inside the function
+
+```javascript
+const sessionToken = 'someSessionToken-39tu2hg9f04hg';
+
+await Warp.User.logOut({ sessionToken });
+```
+
+### Clearing the Session
+
+To clear the current session without logging out (i.e. without revoking the session token), use the `.clearSession()` method. This is useful when you want to clear the cache of the browser without logging out.
+
+```javascript
+Warp.User.clearSession();
 ```
 
 ## Queries
