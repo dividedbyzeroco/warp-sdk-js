@@ -309,12 +309,16 @@ export class _Object {
             return map;
         }, {});
 
+        // Get result
         const result = await this.statics()._http.save({ sessionToken, className, keys, id });
 
-        const keyMap = new KeyMap(result);
-        this._id = keyMap.get(InternalKeys.Id);
-        keyMap.remove(InternalKeys.Id);
-        this._keyMap = keyMap;
+        // Set Id
+        this._id = result[InternalKeys.Id];
+        delete result[InternalKeys.Id]
+
+        // Set new keyMap values
+        for(let [key, value] of Object.entries(result))
+            this._keyMap.set(key, value);
 
         // Flag data as clean/saved
         this._isDirty = false;
