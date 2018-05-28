@@ -19,6 +19,7 @@ export class _Object {
     _createdAt: string;
     _updatedAt: string;
     _keyMap: KeyMap = new KeyMap();
+    _dirtyKeys: {[name: string]: boolean} = {};
     _isDirty: boolean = false;
     _isPointer: boolean;
 
@@ -181,6 +182,9 @@ export class _Object {
 
         // Flag data as dirty/unsaved
         this._isDirty = true;
+
+        // Add to dirty keys
+        this._dirtyKeys[key] = true;
     }
 
     /**
@@ -292,11 +296,18 @@ export class _Object {
         // Prepare params
         const sessionToken = this.statics()._storage.get(InternalKeys.Auth.SessionToken);
         const className = this.className;
-        const keys = this._keyMap.toJSON();
+        const currentKeys = this._keyMap.toJSON();
         const id = this.id;
-        delete keys[InternalKeys.Timestamps.CreatedAt];
-        delete keys[InternalKeys.Timestamps.UpdatedAt];
-        delete keys[InternalKeys.Timestamps.DeletedAt];
+        delete currentKeys[InternalKeys.Timestamps.CreatedAt];
+        delete currentKeys[InternalKeys.Timestamps.UpdatedAt];
+        delete currentKeys[InternalKeys.Timestamps.DeletedAt];
+
+        // Get dirty keys
+        const keys = Object.entries(currentKeys).reduce((map, [key, value]) => {
+            if(this._dirtyKeys[key])
+                map[key] = value;
+            return map;
+        }, {});
 
         const result = await this.statics()._http.save({ sessionToken, className, keys, id });
 
@@ -307,6 +318,7 @@ export class _Object {
 
         // Flag data as clean/saved
         this._isDirty = false;
+        this._dirtyKeys = {};
 
         return this;
     }
@@ -332,6 +344,7 @@ export class _Object {
 
         // Flag data as clean/saved
         this._isDirty = false;
+        this._dirtyKeys = {};
 
         return this;
     }

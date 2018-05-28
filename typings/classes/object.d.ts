@@ -11,6 +11,9 @@ export declare class _Object {
     _createdAt: string;
     _updatedAt: string;
     _keyMap: KeyMap;
+    _dirtyKeys: {
+        [name: string]: boolean;
+    };
     _isDirty: boolean;
     _isPointer: boolean;
     constructor(...args: Array<any>);
