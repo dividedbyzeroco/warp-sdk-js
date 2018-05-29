@@ -2,6 +2,7 @@ import { _Object } from './object';
 import { LogInOptionsType, BecomeOptionsType, LogOutOptionsType } from '../types/http';
 export declare class User extends _Object {
     static _currentUser: User | undefined;
+    _sessionToken: string;
     static _clearSession(): void;
     /**
      * Get the currently logged in user
