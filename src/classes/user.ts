@@ -8,6 +8,7 @@ import KeyMap from '../utils/key-map';
 export class User extends _Object {
 
     static _currentUser: User | undefined;
+    _sessionToken: string;
 
     static _clearSession() {
         this._storage.remove(InternalKeys.Auth.SessionToken);
@@ -26,6 +27,7 @@ export class User extends _Object {
             // Get revokedAt and user
             const revokedAt = this._storage.get(InternalKeys.Auth.RevokedAt);
             const storedUser = this._storage.get(InternalKeys.Auth.User);
+            const sessionToken = this._storage.get(InternalKeys.Auth.SessionToken);
             const revokedAtDate = typeof revokedAt !== 'undefined' && toDateTime(revokedAt);
             
             // Check if session expired
@@ -47,6 +49,7 @@ export class User extends _Object {
                     user._id = id;
                     user._keyMap = new KeyMap(parsedUser);
                     user._isDirty = false;
+                    user._sessionToken = sessionToken || '';
 
                     // Set the new user as the current user
                     this._currentUser = user;
@@ -85,18 +88,27 @@ export class User extends _Object {
         const user = await this._http.become({ sessionToken });
         const revokedAtString = revokedAt? (new Date(revokedAt)).toISOString() : undefined;
 
+        if(typeof user === 'undefined')
+            throw new Error(Error.Code.InvalidSessionToken, 'Invalid session token');
+
         // Set the session token and the current user
         this._storage.set(InternalKeys.Auth.SessionToken, sessionToken);
         this._storage.set(InternalKeys.Auth.RevokedAt, revokedAtString);
         this._storage.set(InternalKeys.Auth.User, JSON.stringify(user));
 
-        // Get current user
-        const current = this.current();
+        // Get id
+        const id = user[InternalKeys.Id];
+        delete user[InternalKeys.Id];
 
-        if(typeof current === 'undefined')
-            throw new Error(Error.Code.InvalidSessionToken, 'Invalid session token');
-        else
-            return current;
+        // Get current user
+        const current = new this();
+        current._id = id;
+        current._keyMap = new KeyMap(user);
+        current._isDirty = false;
+        current._sessionToken = sessionToken;
+
+        // Return the current user
+        return current;
     }
 
     /**
@@ -149,7 +161,7 @@ export class User extends _Object {
     }
 
     get sessionToken(): string | void {
-        return this.statics<typeof User>()._storage.get(InternalKeys.Auth.SessionToken);
+        return this._sessionToken;
     }
 
     set username(value: string) {
