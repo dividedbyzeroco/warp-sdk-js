@@ -176,8 +176,8 @@ import {
         // Get Warp
         const _Warp = this.getWarp(sessionToken, currentUser);
 
-        // Destroy object
-        let result: Array<object> = await this._api._functionController.run({ Warp: _Warp, metadata, currentUser, functionName, keys });
+        // Return result object
+        let result: any = await this._api._functionController.run({ Warp: _Warp, metadata, currentUser, functionName, keys });
         
         // Return result
         return result;
