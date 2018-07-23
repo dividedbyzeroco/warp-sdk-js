@@ -20,12 +20,12 @@ export declare class User extends _Object {
      * @param options
      * @returns {Warp.User}
      */
-    static become({sessionToken, revokedAt}: BecomeOptionsType): Promise<User>;
+    static become({ sessionToken, revokedAt }: BecomeOptionsType): Promise<User>;
     /**
      * Log out of the current session
      * @param options
      */
-    static logOut({sessionToken}: LogOutOptionsType): Promise<void>;
+    static logOut(options: LogOutOptionsType | void): Promise<void>;
     /**
      * Clear current session without logging out
      * > WARNING: Session will not be revoked
@@ -37,6 +37,6 @@ export declare class User extends _Object {
     readonly className: string;
     username: string;
     email: string;
-    readonly sessionToken: string | void;
     password: string;
+    readonly sessionToken: string | void;
 }

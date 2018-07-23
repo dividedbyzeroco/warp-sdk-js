@@ -18,7 +18,7 @@ declare class Warp implements IWarp {
     _query: typeof Query;
     _user: typeof User;
     _function: typeof _Function;
-    constructor({platform, apiKey, masterKey, serverURL, api, sessionToken, currentUser, timeout, maxRequests, supportLegacy}: WarpOptionsType);
+    constructor({ platform, apiKey, masterKey, serverURL, api, sessionToken, currentUser, timeout, maxRequests, supportLegacy }: WarpOptionsType);
     readonly Object: typeof _Object;
     readonly Query: typeof Query;
     readonly User: typeof User;
