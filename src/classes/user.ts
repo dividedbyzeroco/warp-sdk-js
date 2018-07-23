@@ -115,10 +115,10 @@ export class User extends _Object {
      * Log out of the current session
      * @param options
      */
-    static async logOut({ sessionToken }: LogOutOptionsType): Promise<void> {
-        // Check if sessionToken is provided
-        if(typeof sessionToken === 'undefined')
-            sessionToken = this._storage.get(InternalKeys.Auth.SessionToken);
+    static async logOut(options: LogOutOptionsType | void): Promise<void> {
+        // If options is defined, return session token
+        // Otherwise, get session token from storage
+        let sessionToken = options ? options.sessionToken : this._storage.get(InternalKeys.Auth.SessionToken);
 
         // If session is logged in, log out
         if(typeof sessionToken !== 'undefined')
@@ -158,6 +158,10 @@ export class User extends _Object {
 
     get email(): string {
         return this.get(this.statics<typeof User>().emailKey);
+    }
+
+    get password(): string {
+        return '';
     }
 
     get sessionToken(): string | void {

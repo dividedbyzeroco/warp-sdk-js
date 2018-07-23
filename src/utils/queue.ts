@@ -26,46 +26,44 @@ export default class Queue {
         this._requests++;
 
         return await new Promise((resolve, reject) => {
-            // Prepare timeout and finish flags
+            // Prepare timeout
             let hasTimedOut = false;
-            let hasFinished = false;
             
-            // Execute the request
-            request.then(result => {
-                // If it has not yet timed out, resolve
-                if(!hasTimedOut) {
-                    // Set has finished to true
-                    hasFinished = true;
-
-                    // Decrease number of requests
-                    this._requests--;
-    
-                    return resolve(result);
-                }
-            })
-            .catch(err => {
-                // Check if it has timed out
-                if(hasTimedOut) return;
-
-                // Decrease number of requests
-                this._requests--;
-
-                // Catch error
-                hasFinished = true;
-                reject(err);
-            });
-
             // Prepare timer
-            setTimeout(() => {
-                // Check if it has finished
-                if(hasFinished) return;
-
+            const timer = setTimeout(() => {
                 // Change timeout indicator
                 hasTimedOut = true;
 
                 // Return an error
                 reject(new Error(Error.Code.InternalServerError, 'Request timed out'));
             }, this._timeout * 1000);
+            
+            // Execute the request
+            request.then(result => {
+                // Decrease number of requests
+                this._requests--;
+
+                // If it has not yet timed out, resolve
+                if(!hasTimedOut) {
+                    // Clear timer
+                    clearTimeout(timer); 
+    
+                    return resolve(result);
+                }
+            })
+            .catch(err => {
+                // Decrease number of requests
+                this._requests--;
+
+                // Check if it has timed out
+                if(hasTimedOut) return;
+
+                // Clear timer
+                clearTimeout(timer);
+
+                // Catch error
+                return reject(err);
+            });
         });
     }
 }
